@@ -28,7 +28,7 @@ export class AppIndex extends LitElement {
     router.setRoutes([
       { path: '/', component: 'app-home' },
       {
-        path: "/about",
+        path: "/email",
         component: "app-about",
         action: async() => {
           await import('./app-about.js');
