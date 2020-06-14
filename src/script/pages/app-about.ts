@@ -34,6 +34,12 @@ export class AppAbout extends LitElement {
         border-radius: 20px;
         padding: 8px;
       }
+
+      #content {
+        overflow-y: scroll;
+        width: 100%;
+        background: white;
+      }
     `;
   }
 
@@ -65,7 +71,7 @@ export class AppAbout extends LitElement {
 
         <h2>${this.email?.subject}</h2>
 
-        ${this.email ? html`<div .innerHTML="${this.email?.body.content}"></div>` : html`<div id="loading">Loading...</div>`}
+        ${this.email ? html`<div id="content" .innerHTML="${this.email?.body.content}"></div>` : html`<div id="loading">Loading...</div>`}
       </div>
     `;
   }
