@@ -1,4 +1,4 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 
 import '@pwabuilder/pwaauth';
 
@@ -7,6 +7,8 @@ export class AppHeader extends LitElement {
 
   @property({ type: String }) title: string = 'PWA Starter';
   @property({ type: Object }) user: any = null;
+
+  @internalProperty() authed: boolean = false;
 
   static get styles() {
     return css`
@@ -17,6 +19,12 @@ export class AppHeader extends LitElement {
         padding-left: 16px;
         padding-right: 16px;
         height: 3.6em;
+
+        position: sticky;
+        top: 0;
+        background: #ffffff57;
+        backdrop-filter: blur(10px);
+        z-index: 1;
       }
 
       header h1 {
@@ -45,6 +53,15 @@ export class AppHeader extends LitElement {
         width: 8em;
         border-radius: 4px;
       }
+
+      span {
+        color: white;
+        background: var(--app-color-primary);
+        padding: 6px;
+        border-radius: 20px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
     `;
   }
 
@@ -53,7 +70,31 @@ export class AppHeader extends LitElement {
   }
 
   async firstUpdated() {
+    const pwaAuth = this.shadowRoot?.querySelector('pwa-auth');
 
+    const name = localStorage.getItem('name');
+
+    if (name) {
+      this.authed = true;
+    }
+
+    pwaAuth?.addEventListener("signin-completed", (ev: any) => {
+      const signIn = ev.detail;
+      if (signIn.error) {
+        console.error("Sign in failed", signIn.error);
+      } else {
+        console.log(signIn.providerData);
+        if (signIn.providerData.accessToken) {
+          localStorage.setItem('token', signIn.providerData.accessToken);
+        }
+        
+        localStorage.setItem('name', signIn.providerData.account.name);
+
+        this.authed = true;
+
+        location.reload();
+      }
+    });
   }
 
   render() {
@@ -61,8 +102,7 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Mail</h1>
 
-        <mgt-msal-provider client-id="24438f49-5cef-4d68-9107-14294261cb89"></mgt-msal-provider>
-        <mgt-login></mgt-login>
+        ${this.authed === false ? html`<pwa-auth microsoftkey="24438f49-5cef-4d68-9107-14294261cb89" menuPlacement="end"></pwa-auth>` : html`<span>${localStorage.getItem('name')}</span>`}
       </header>
     `;
   }

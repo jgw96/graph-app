@@ -12,6 +12,14 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return css`
+      #introBlock {
+        font-weight: bold;
+        text-align: center;
+        background: white;
+        border-radius: 20px;
+        padding: 6px;
+      }
+
       ul {
         list-style: none;
         padding: 0;
@@ -26,12 +34,62 @@ export class AppHome extends LitElement {
         border-radius: 4px;
 
         margin-bottom: 10px;
+
+        backdrop-filter: blur(10px);
+        background: #d3d3d3bf;
+      }
+
+      @media(min-width: 1000px) {
+        ul {
+          padding-left: 12em;
+          padding-right: 12em;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        ul {
+          display: grid;
+          padding-left: 14em;
+          padding-right: 14em;
+          grid-gap: 10px;
+          grid-template-columns: 50% 50%;
+        }
+
+        ul li {
+          display: flex;
+          flex-direction: column;
+        }
+
+        ul li #nameBlock {
+          flex-grow: 1;
+        }
+
+        #introBlock {
+          margin-left: 16em;
+          margin-right: 16em;
+        }
       }
 
       ul li h3 {
         margin-bottom: 5px;
         font-size: 16px;
         margin-top: 10px;
+      }
+
+      #actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      #actions button {
+        background: var(--app-color-primary);
+        color: white;
+        border: none;
+        font-weight: bold;
+        font-size: 1em;
+        padding: 6px;
+        border-radius: 6px;
+        width: 5em;
       }
 
       #nameBlock {
@@ -60,10 +118,10 @@ export class AppHome extends LitElement {
     return html`
       <div>
 
-        <ul>
+        ${this.mail ? html`<ul>
           ${
-            this.mail?.map((email) => {
-              return html`
+        this.mail?.map((email) => {
+          return html`
                 <li>
                   <h3>${email.subject}</h3>
                   <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
@@ -73,9 +131,10 @@ export class AppHome extends LitElement {
                   </div>
                 </li>
               `
-            })
-          }
-        </ul>
+        })}
+        </ul>` : html`<div id="introBlock">
+        Sign in to quickly access your latest email and save them for offline use! Powered by the Microsoft Graph.
+      </div>`}
 
         <pwa-install>Install PWA Starter</pwa-install>
       </div>

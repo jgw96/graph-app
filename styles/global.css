@@ -1,8 +1,8 @@
-
 /*
   This file is used for all of your global styles and CSS variables.
   Check here https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties for more info on using CSS variables.
 */
+
 :root {
   --app-color-primary: #686bd2;
   --font-family: sans-serif;
@@ -12,4 +12,12 @@ html, body {
   font-family: var(--font-family);
   padding: 0;
   margin: 0;
+}
+
+html {
+  background-image: url(/assets/backdrop.svg);
+  background-repeat: none;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: bottom left;
 }
