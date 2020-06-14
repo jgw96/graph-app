@@ -72,7 +72,7 @@ export class AppHeader extends LitElement {
   async firstUpdated() {
     const pwaAuth = this.shadowRoot?.querySelector('pwa-auth');
 
-    const name = localStorage.getItem('name');
+    const name = localStorage.getItem('msal.idtoken');
 
     if (name) {
       this.authed = true;
@@ -102,7 +102,7 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Mail</h1>
 
-        ${this.authed === false ? html`<pwa-auth microsoftkey="24438f49-5cef-4d68-9107-14294261cb89" menuPlacement="end"></pwa-auth>` : html`<span>${localStorage.getItem('name')}</span>`}
+        ${this.authed === false ? html`<pwa-auth credentialmode="none" microsoftkey="24438f49-5cef-4d68-9107-14294261cb89" menuPlacement="end"></pwa-auth>` : html`<span>${localStorage.getItem('name')}</span>`}
       </header>
     `;
   }
