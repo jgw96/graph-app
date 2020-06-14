@@ -1,10 +1,10 @@
 {
-  "name": "PWA Starter",
+  "name": "Mail Offline",
   "display": "standalone",
   "start_url": "/",
   "short_name": "starter",
   "theme_color": "#686bd2",
-  "description": "This is a PWA Starter app",
+  "description": "Access your latest outlook messages offline!",
   "orientation": "any",
   "background_color": "#686bd2",
   "related_applications": [],
