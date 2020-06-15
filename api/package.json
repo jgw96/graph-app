@@ -10,7 +10,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/functions": "^1.0.2-beta2",
+    "@azure/functions": "^1.0.2-beta2"
   },
   "devDependencies": {
     "@azure/functions": "^1.0.2-beta2",
