@@ -12,6 +12,12 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return css`
+      pwa-install {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+      }
+
       #introBlock {
         font-weight: bold;
         text-align: center;
