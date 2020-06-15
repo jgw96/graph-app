@@ -7,7 +7,7 @@ self.addEventListener("message", (event) => {
 });
 
 workbox.routing.registerRoute(
-  ({url}) => url.href.includes('https://graph.microsoft.com/beta/me/messages'),
+  ({url}) => url.href.includes('https://graph.microsoft.com/me/messages'),
   new workbox.strategies.CacheFirst({
       cacheName: 'stories',
       plugins: [

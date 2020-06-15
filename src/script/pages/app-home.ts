@@ -13,7 +13,7 @@ export class AppHome extends LitElement {
   static get styles() {
     return css`
       pwa-install {
-        position: absolute;
+        position: fixed;
         bottom: 16px;
         right: 16px;
       }
@@ -44,6 +44,12 @@ export class AppHome extends LitElement {
         backdrop-filter: blur(10px);
         background: #d3d3d3bf;
       }
+
+      ul li:nth-child(-n+8) {
+        animation-name: slidein;
+        animation-duration: 300ms;
+      }
+
 
       @media(min-width: 1000px) {
         ul {
@@ -104,6 +110,17 @@ export class AppHome extends LitElement {
 
       ul li #name {
         color: var(--app-color-primary);
+      }
+
+      @keyframes slidein {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
     `;
   }

@@ -23,6 +23,15 @@ export class AppAbout extends LitElement {
         border-radius: 50%;
       }
 
+      #detailActions {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      #detailActions button {
+        margin-right: 6px;
+      }
+
       #loading {
         font-weight: bold;
         background: var(--app-color-primary);
@@ -62,12 +71,29 @@ export class AppAbout extends LitElement {
     Router.go("/");
   }
 
+  async share() {
+    if ((navigator as any).share) {
+      await (navigator as any).share({
+        title: 'Shared Email',
+        text: 'Check out this email',
+        url: location.href,
+      })
+    }
+  }
+
   render() {
     return html`
       <div>
-        <button @click="${() => this.back()}" id="back" aria-label="back button">
-          <ion-icon name="arrow-back-outline"></ion-icon>
-        </button>
+
+        <div id="detailActions">
+          <button @click="${() => this.back()}" id="back" aria-label="back button">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </button>
+
+          <button @click="${() => this.share()}" id="back" aria-label="back button">
+            <ion-icon name="share-outline"></ion-icon>
+          </button>
+        </div>
 
         <h2>${this.email?.subject}</h2>
 
