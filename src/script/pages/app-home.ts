@@ -136,7 +136,7 @@ export class AppHome extends LitElement {
         Sign in to quickly access your latest email and save them for offline use! Powered by the Microsoft Graph.
       </div>`}
 
-        <pwa-install>Install PWA Starter</pwa-install>
+        <pwa-install>Install Offline Mail</pwa-install>
       </div>
 
 
