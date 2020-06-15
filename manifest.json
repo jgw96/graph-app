@@ -2,7 +2,7 @@
   "name": "Mail Offline",
   "display": "standalone",
   "start_url": "/",
-  "short_name": "Mail",
+  "short_name": "Mail Offline",
   "theme_color": "#686bd2",
   "description": "Access your latest outlook messages offline!",
   "orientation": "any",
