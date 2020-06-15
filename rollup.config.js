@@ -7,6 +7,7 @@ import copy from 'rollup-plugin-copy';
 
 export default {
   input: 'index.html',
+  exclude: "api",
   output: {
     dir: 'dist',
     format: 'es',
