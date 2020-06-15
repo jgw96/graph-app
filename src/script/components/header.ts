@@ -1,6 +1,5 @@
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 
-import '@pwabuilder/pwaauth';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
@@ -102,7 +101,8 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Mail</h1>
 
-        ${this.authed === false ? html`<pwa-auth credentialmode="none" microsoftkey="24438f49-5cef-4d68-9107-14294261cb89" menuPlacement="end"></pwa-auth>` : html`<span>${localStorage.getItem('name')}</span>`}
+        <mgt-msal-provider client-id="24438f49-5cef-4d68-9107-14294261cb89"></mgt-msal-provider>
+        <mgt-login></mgt-login>
       </header>
     `;
   }
