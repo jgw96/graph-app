@@ -115,7 +115,7 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Offline Mail</h1>
 
-        <mgt-msal-provider client-id="2d508361-d68e-4da6-8ef1-e36bd3404d57"></mgt-msal-provider>
+        <mgt-msal-provider client-id="2d508361-d68e-4da6-8ef1-e36bd3404d57" login-type="popup"></mgt-msal-provider>
         <mgt-login></mgt-login>
       </header>
     `;
