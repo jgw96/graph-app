@@ -124,6 +124,10 @@ export class AppHome extends LitElement {
         ul li #name {
           color: white;
         }
+
+        #introBlock {
+          color: white;
+        }
       }
 
       @keyframes slidein {
