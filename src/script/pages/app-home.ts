@@ -130,7 +130,9 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    this.mail = await getMail();
+    setTimeout(async () => {
+      this.mail = await getMail();
+    }, 300);
   }
 
   read(id: string) {
