@@ -24,6 +24,8 @@ export class AppHome extends LitElement {
         background: white;
         border-radius: 20px;
         padding: 6px;
+        padding: 2em;
+        background: #a9a9a947;
       }
 
       ul {
@@ -37,7 +39,7 @@ export class AppHome extends LitElement {
         padding-right: 10px;
         padding-top: 1px;
         padding-bottom: 10px;
-        border-radius: 4px;
+        border-radius: 10px;
 
         margin-bottom: 10px;
 
@@ -102,6 +104,7 @@ export class AppHome extends LitElement {
         padding: 6px;
         border-radius: 6px;
         width: 5em;
+        cursor: pointer;
       }
 
       #nameBlock {
@@ -110,6 +113,17 @@ export class AppHome extends LitElement {
 
       ul li #name {
         color: var(--app-color-primary);
+      }
+
+      @media(prefers-color-scheme: dark) {
+        ul li {
+          background: #474747ba;
+          color: white;
+        }
+
+        ul li #name {
+          color: white;
+        }
       }
 
       @keyframes slidein {
@@ -131,8 +145,20 @@ export class AppHome extends LitElement {
 
   async firstUpdated() {
     setTimeout(async () => {
-      this.mail = await getMail();
+      await this.getSavedAndUpdate();
     }, 300);
+  }
+
+  async getSavedAndUpdate() {
+    const mail = sessionStorage.getItem('latestmail');
+
+    if (mail) {
+      this.mail = JSON.parse(mail);
+    }
+    else {
+      this.mail = await getMail();
+      sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
+    }
   }
 
   read(id: string) {

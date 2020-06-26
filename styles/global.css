@@ -20,4 +20,17 @@ html {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: bottom left;
+  background-size: 40%;
+}
+
+@media (max-width: 600px) {
+  html {
+    background-size: 90%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #292929;
+  }
 }

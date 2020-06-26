@@ -61,6 +61,20 @@ export class AppHeader extends LitElement {
         padding-left: 16px;
         padding-right: 16px;
       }
+
+      @media(prefers-color-scheme: dark) {
+        header {
+          background: rgba(41, 41, 41, 0.61);
+        }
+
+        header h1 {
+          color: white;
+        }
+
+        header mgt-login {
+          --color: white;
+        }
+      }
     `;
   }
 
@@ -99,7 +113,7 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header>
-        <h1>Mail</h1>
+        <h1>Offline Mail</h1>
 
         <mgt-msal-provider client-id="24438f49-5cef-4d68-9107-14294261cb89"></mgt-msal-provider>
         <mgt-login></mgt-login>
