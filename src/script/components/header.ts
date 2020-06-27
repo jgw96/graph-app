@@ -83,31 +83,10 @@ export class AppHeader extends LitElement {
   }
 
   async firstUpdated() {
-    const pwaAuth = this.shadowRoot?.querySelector('pwa-auth');
-
-    const name = localStorage.getItem('msal.idtoken');
-
-    if (name) {
-      this.authed = true;
-    }
-
-    pwaAuth?.addEventListener("signin-completed", (ev: any) => {
-      const signIn = ev.detail;
-      if (signIn.error) {
-        console.error("Sign in failed", signIn.error);
-      } else {
-        console.log(signIn.providerData);
-        if (signIn.providerData.accessToken) {
-          localStorage.setItem('token', signIn.providerData.accessToken);
-        }
-        
-        localStorage.setItem('name', signIn.providerData.account.name);
-
-        this.authed = true;
-
-        location.reload();
-      }
-    });
+    const mgtLogin = this.shadowRoot?.querySelector('mgt-login');
+    mgtLogin?.addEventListener('loginCompleted', () => {
+      location.reload();
+    })
   }
 
   render() {

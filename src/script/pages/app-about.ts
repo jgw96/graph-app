@@ -23,6 +23,10 @@ export class AppAbout extends LitElement {
         border-radius: 50%;
       }
 
+      #detailAction {
+        flex: 1;
+      }
+
       #detailAction h2 {
         margin-right: 4em;
       }
@@ -59,10 +63,13 @@ export class AppAbout extends LitElement {
 
         overflow-y: auto;
         border-radius: 10px;
+        background: white;
+        height: 90vh;
+        flex: 2;
       }
 
       #detailBlock {
-        height: 91vh;
+        height: 88.8vh;
       }
 
       @media (min-width: 800px) {
