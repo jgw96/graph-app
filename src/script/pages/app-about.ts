@@ -34,28 +34,13 @@ export class AppAbout extends LitElement {
       #detailActions {
         display: flex;
         justify-content: flex-start;
+        animation-name: slidein;
+        animation-duration: 380ms;
       }
 
       #detailActions button {
         margin-right: 6px;
         cursor: pointer;
-      }
-
-      #loading {
-        font-weight: bold;
-        background: var(--app-color-primary);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 20px;
-        padding: 8px;
-
-        width: -webkit-fill-available;
-        height: 2em;
-        padding: 4px;
-        margin-right: 25%;
-        margin-left: 25%;
       }
 
       #content {
@@ -66,6 +51,63 @@ export class AppAbout extends LitElement {
         background: white;
         height: 90vh;
         flex: 2;
+      }
+
+      #loading:empty {
+        margin: auto;
+        width: 90&;
+        height: 500px; /* change height to see repeat-y behavior */
+        
+        background-image:
+          radial-gradient( circle 50px at 50px 50px, lightgray 99%, transparent 0 ),
+          linear-gradient( 100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 80% ),
+          linear-gradient( lightgray 20px, transparent 0 ),
+          linear-gradient( lightgray 20px, transparent 0 ),
+          linear-gradient( lightgray 20px, transparent 0 ),
+          linear-gradient( lightgray 20px, transparent 0 );
+    
+        background-repeat: repeat-y;
+    
+        background-size:
+          100px 200px, /* circle */
+          50px 200px, /* highlight */
+          150px 200px,
+          350px 200px,
+          300px 200px,
+          250px 200px;
+    
+        background-position:
+          0 0, /* circle */
+          0 0, /* highlight */
+          120px 0,
+          120px 40px,
+          120px 80px,
+          120px 120px;
+    
+        animation: shine 1s infinite;
+      }
+    
+      @keyframes shine {
+        to {
+          background-position:
+            0 0,
+            100% 0, /* move highlight to right */
+            120px 0,
+            120px 40px,
+            120px 80px,
+            120px 120px;
+        }
+      }
+
+      @keyframes slidein {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
 
       #detailBlock {
@@ -157,7 +199,7 @@ export class AppAbout extends LitElement {
           <h2>${this.email?.subject}</h2>
         </section>
 
-        ${this.email ? html`<div id="content" .innerHTML="${this.email?.body.content}"></div>` : html`<div id="loading">Loading...</div>`}
+        ${this.email ? html`<div id="content" .innerHTML="${this.email?.body.content}"></div>` : html`<div id="loading"></div>`}
       </div>
     `;
   }

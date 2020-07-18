@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@azure/functions": "^1.2.2",
+    "@dile/dile-toast": "^1.0.0",
     "@pwabuilder/pwaauth": "^0.9.7",
     "@pwabuilder/pwainstall": "^1.6.2",
     "@vaadin/router": "^1.7.2",

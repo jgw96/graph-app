@@ -2,20 +2,21 @@ import { LitElement, css, html, customElement, property } from 'lit-element';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
+import '@dile/dile-toast/dile-toast';
 import { getMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
 
-  @property({ type: Array }) mail: any[] | null = null;
+  @property({ type: Array }) mail: any[] | null = [];
 
   static get styles() {
     return css`
       pwa-install {
         position: fixed;
         bottom: 16px;
-        right: 16px;
+        left: 16px;
       }
 
       #introBlock {
@@ -95,7 +96,7 @@ export class AppHome extends LitElement {
         justify-content: flex-end;
       }
 
-      #actions button {
+      #actions button, #homeToolbar button {
         background: var(--app-color-primary);
         color: white;
         border: none;
@@ -115,6 +116,34 @@ export class AppHome extends LitElement {
         color: var(--app-color-primary);
       }
 
+      #homeToolbar {
+        position: fixed;
+          bottom: 0;
+          backdrop-filter: blur(10px);
+          left: 0;
+          right: 0;
+          padding: 12px;
+          display: flex;
+          justify-content: flex-end;
+          background: #ffffff69;
+      }
+
+      #homeToolbar button {
+        display: flex;
+        width: 6em;
+        justify-content: space-around;
+        background: var(--app-color-secondary);
+      }
+
+      #homeToolbar button:hover {
+        background: var(--app-color-primary);
+      }
+
+      #myToast {
+        --dile-toast-success-color: var(--app-color-primary);
+        --dile-toast-border-radius: 6px;
+      }
+
       @media(prefers-color-scheme: dark) {
         ul li {
           background: #474747ba;
@@ -127,6 +156,10 @@ export class AppHome extends LitElement {
 
         #introBlock {
           color: white;
+        }
+
+        #homeToolbar {
+          background: rgb(29 29 29 / 78%);
         }
       }
 
@@ -160,6 +193,8 @@ export class AppHome extends LitElement {
       this.mail = JSON.parse(mail);
     }
     else {
+      this.mail = null;
+      
       this.mail = await getMail();
       sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
     }
@@ -167,6 +202,15 @@ export class AppHome extends LitElement {
 
   read(id: string) {
     Router.go(`/email?id=${id}`);
+  }
+
+  async refresh() {
+    const newMail = await getMail();
+
+    this.mail = [...newMail];
+    
+    let toastElement: any = this.shadowRoot?.getElementById('myToast');
+    toastElement?.open('Inbox Refreshed...', 'success');
   }
 
   render() {
@@ -187,11 +231,22 @@ export class AppHome extends LitElement {
                 </li>
               `
         })}
-        </ul>` : html`<div id="introBlock">
+        </ul> 
+
+        <div id="homeToolbar">
+          <button @click="${() => this.refresh()}">
+            Refresh
+            <ion-icon name="reload"></ion-icon>
+          </button>
+        </div>
+        
+        ` : html`<div id="introBlock">
         Sign in to quickly access your latest email and save them for offline use! Powered by the Microsoft Graph.
       </div>`}
 
         <pwa-install>Install Offline Mail</pwa-install>
+
+        <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>
 
 
