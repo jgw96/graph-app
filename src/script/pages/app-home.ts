@@ -97,7 +97,7 @@ export class AppHome extends LitElement {
       }
 
       #actions button, #homeToolbar button {
-        background: var(--app-color-primary);
+        background-color: var(--app-color-primary);
         color: white;
         border: none;
         font-weight: bold;
@@ -130,9 +130,14 @@ export class AppHome extends LitElement {
 
       #homeToolbar button {
         display: flex;
-        width: 6em;
+        width: initial;
         justify-content: space-around;
-        background: var(--app-color-secondary);
+        background-color: var(--app-color-secondary);
+      }
+
+      #homeToolbar #newEmailButton {
+        background-color: var(--app-color-primary);
+        margin-left: 12px;
       }
 
       #homeToolbar button:hover {
@@ -204,6 +209,10 @@ export class AppHome extends LitElement {
     Router.go(`/email?id=${id}`);
   }
 
+  newEmail() {
+    Router.go("/newEmail");
+  }
+
   async refresh() {
     const newMail = await getMail();
 
@@ -237,6 +246,11 @@ export class AppHome extends LitElement {
           <button @click="${() => this.refresh()}">
             Refresh
             <ion-icon name="reload"></ion-icon>
+          </button>
+
+          <button id="newEmailButton" @click="${() => this.newEmail()}">
+            New email
+            <ion-icon name="add"></ion-icon>
           </button>
         </div>
         

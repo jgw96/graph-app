@@ -21,5 +21,44 @@ export async function getAnEmail(id: string) {
 
     return mail;
   }
+}
 
+export async function sendMail(subject: string, body: string, recipients: any[]) {
+  const sendMail = {
+    message: {
+      subject: subject,
+      body: {
+        contentType: "Text",
+        content: body
+      },
+      toRecipients:
+        recipients
+      /*[
+        {
+          emailAddress: {
+            address: "fannyd@contoso.onmicrosoft.com"
+          }
+        }
+      ],
+      ccRecipients: [
+        {
+          emailAddress: {
+            address: "danas@contoso.onmicrosoft.com"
+          }
+        }
+      ]*/
+    },
+    saveToSentItems: "true"
+  };
+
+  let provider = (window as any).mgt.Providers.globalProvider;
+
+  if (provider) {
+    let graphClient = provider.graph.client;
+
+    let res = await graphClient.api('/me/sendMail').middlewareOptions((window as any).mgt.prepScopes('mail.send'))
+      .post(sendMail);
+
+    return res;
+  }
 }

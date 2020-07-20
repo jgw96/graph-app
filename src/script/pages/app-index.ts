@@ -65,6 +65,14 @@ export class AppIndex extends LitElement {
         action: async() => {
           await import('./app-about.js');
         },
+      } as any),
+      ({
+        path: "/newEmail",
+        animate: true,
+        component: "app-new",
+        action: async() => {
+          await import('./app-new.js');
+        },
       } as any)
     ]);
   }
