@@ -56,8 +56,7 @@ export async function sendMail(subject: string, body: string, recipients: any[])
   if (provider) {
     let graphClient = provider.graph.client;
 
-    let res = await graphClient.api('/me/sendMail').middlewareOptions((window as any).mgt.prepScopes('mail.send'))
-      .post(sendMail);
+    let res = await graphClient.api('/me/sendMail').middlewareOptions((window as any).mgt.prepScopes('mail.send')).post(sendMail);
 
     return res;
   }

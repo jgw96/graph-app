@@ -247,11 +247,6 @@ export class AppHome extends LitElement {
             Refresh
             <ion-icon name="reload"></ion-icon>
           </button>
-
-          <button id="newEmailButton" @click="${() => this.newEmail()}">
-            New email
-            <ion-icon name="add"></ion-icon>
-          </button>
         </div>
         
         ` : html`<div id="introBlock">

@@ -22,4 +22,8 @@ workbox.routing.registerRoute(
   })
 );
 
+self.addEventListener('notificationclick', (event) => {
+  clients.openWindow(event.notification.body.split("Mail: ").pop());
+})
+
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);

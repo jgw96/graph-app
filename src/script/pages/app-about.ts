@@ -1,17 +1,22 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { getAnEmail } from '../services/mail';
 
+
 import { Router } from '@vaadin/router';
+
+declare var TimestampTrigger: any;
 
 
 @customElement('app-about')
 export class AppAbout extends LitElement {
 
   @property() email: any = null;
+  @property({ type: String }) reminderTime: string = "";
+  @property({ type: Boolean }) showReminder: boolean = false;
 
   static get styles() {
     return css`
-      #back {
+      .back {
         background: var(--app-color-primary);
         color: white;
         border: none;
@@ -51,6 +56,40 @@ export class AppAbout extends LitElement {
         background: white;
         height: 90vh;
         flex: 2;
+      }
+
+      #reminder {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--app-color-primary);
+        display: flex;
+        flex-direction: column;
+        /* width: 92%; */
+        padding-bottom: 2em;
+        padding-top: 2em;
+        padding-left: 2em;
+        padding-right: 2em;
+        height: 12em;
+        animation-name: slidein;
+        animation-duration: 300ms;
+      }
+
+      #reminder button {
+        margin-top: 2em;
+        padding: 8px;
+        background: white;
+        border: none;
+        color: var(--app-color-primary);
+        font-weight: bold;
+        border-radius: 6px;
+        font-size: 18px;
+      }
+
+      #reminder button#cancelButton {
+        margin-top: 12px;
+        color: red;
       }
 
       #loading:empty {
@@ -181,17 +220,76 @@ export class AppAbout extends LitElement {
     }
   }
 
+  handleDate(event: any) {
+    console.log(event.target.value);
+    this.reminderTime = event.target.value;
+  }
+
+  askPermission() {
+    return new Promise(function (resolve, reject) {
+      const permissionResult = Notification.requestPermission(function (result) {
+        resolve(result);
+      });
+
+      if (permissionResult) {
+        permissionResult.then(resolve, reject);
+      }
+    })
+      .then(function (permissionResult) {
+        if (permissionResult !== 'granted') {
+          throw new Error('We weren\'t granted permission.');
+        }
+      });
+  }
+
+  async setReminder() {
+    try {
+      await this.askPermission();
+
+      const r: any = await navigator.serviceWorker.getRegistration();
+      console.log(r);
+
+      if (r) {
+        r.showNotification("Mail Reminder", {
+          tag: Math.random(),
+          body: `Your reminder from Mail: ${location.href}`,
+          showTrigger: new TimestampTrigger(Date.now() + (new Date(this.reminderTime).getTime() - Date.now())),
+          icon: "/assets/icons/icon_512.png"
+        });
+
+      };
+
+      this.showReminder = false;
+    }
+    catch {
+      console.log("couldnt set reminder");
+      this.showReminder = false;
+    }
+  }
+
+  setupReminder() {
+    this.showReminder = true;
+  }
+
+  cancel() {
+    this.showReminder = false;
+  }
+
   render() {
     return html`
       <div id="detailBlock">
 
         <section id="detailAction">
           <div id="detailActions">
-            <button @click="${() => this.back()}" id="back" aria-label="back button">
+            <button @click="${() => this.setupReminder()}" class="back" aria-label="alarm button">
+              <ion-icon name="alarm-outline"></ion-icon>
+            </button>
+
+            <button @click="${() => this.back()}" class="back" aria-label="back button">
               <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
 
-            <button @click="${() => this.share()}" id="back" aria-label="back button">
+            <button @click="${() => this.share()}" class="back" aria-label="share button">
               <ion-icon name="share-outline"></ion-icon>
             </button>
           </div>
@@ -200,6 +298,15 @@ export class AppAbout extends LitElement {
         </section>
 
         ${this.email ? html`<div id="content" .innerHTML="${this.email?.body.content}"></div>` : html`<div id="loading"></div>`}
+
+        ${this.showReminder ? html`<div id="reminder">
+            <label for="reminder-time">Set a Reminder:</label>
+            <input type="datetime-local" id="reminder-time"
+                  name="reminder-time" @change="${this.handleDate}" .value="${this.reminderTime}">
+                  <button @click="${() => this.setReminder()}">Set</button>
+                  <button id="cancelButton" @click="${() => this.cancel()}">Cancel</button>
+        </div>` : null}
+
       </div>
     `;
   }
