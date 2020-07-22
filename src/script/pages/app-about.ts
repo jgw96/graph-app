@@ -38,9 +38,13 @@ export class AppAbout extends LitElement {
 
       #detailActions {
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         animation-name: slidein;
         animation-duration: 380ms;
+      }
+
+      #detailActions div {
+        display: flex;
       }
 
       #detailActions button {
@@ -63,7 +67,8 @@ export class AppAbout extends LitElement {
         bottom: 0;
         left: 0;
         right: 0;
-        background: var(--app-color-primary);
+        background: #1c1b1bde;
+        backdrop-filter: blur(10px);
         display: flex;
         flex-direction: column;
         /* width: 92%; */
@@ -90,6 +95,10 @@ export class AppAbout extends LitElement {
       #reminder button#cancelButton {
         margin-top: 12px;
         color: red;
+      }
+
+      #reminder input {
+        width: 98%;
       }
 
       #loading:empty {
@@ -171,8 +180,12 @@ export class AppAbout extends LitElement {
           right: 0;
           padding: 12px;
           display: flex;
-          justify-content: flex-end;
+          justify-content: space-between;
           background: #ffffff69;
+        }
+
+        #detailActions div {
+          display: flex;
         }
       }
 
@@ -281,17 +294,20 @@ export class AppAbout extends LitElement {
 
         <section id="detailAction">
           <div id="detailActions">
-            <button @click="${() => this.setupReminder()}" class="back" aria-label="alarm button">
-              <ion-icon name="alarm-outline"></ion-icon>
-            </button>
-
             <button @click="${() => this.back()}" class="back" aria-label="back button">
               <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
 
-            <button @click="${() => this.share()}" class="back" aria-label="share button">
-              <ion-icon name="share-outline"></ion-icon>
-            </button>
+            <div>
+
+              <button @click="${() => this.setupReminder()}" class="back" aria-label="alarm button">
+                <ion-icon name="alarm-outline"></ion-icon>
+              </button>
+
+              <button @click="${() => this.share()}" class="back" aria-label="share button">
+                <ion-icon name="share-outline"></ion-icon>
+              </button>
+            </div>
           </div>
 
           <h2>${this.email?.subject}</h2>
