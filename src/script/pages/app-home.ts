@@ -17,6 +17,7 @@ export class AppHome extends LitElement {
         position: fixed;
         bottom: 16px;
         left: 16px;
+        --install-button-color: var(--app-color-primary) !important;
       }
 
       #introBlock {

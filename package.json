@@ -17,7 +17,7 @@
     "@azure/functions": "^1.2.2",
     "@dile/dile-toast": "^1.0.0",
     "@pwabuilder/pwaauth": "^0.9.7",
-    "@pwabuilder/pwainstall": "^1.6.2",
+    "@pwabuilder/pwainstall": "^1.6.4",
     "@vaadin/router": "^1.7.2",
     "idb-keyval": "^3.2.0",
     "lit-element": "^2.3.1"

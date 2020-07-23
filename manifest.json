@@ -1,8 +1,8 @@
 {
-  "name": "Mail Offline",
+  "name": "Offline Mail",
   "display": "standalone",
   "start_url": "/",
-  "short_name": "Mail Offline",
+  "short_name": "Offline Mail",
   "theme_color": "#686bd2",
   "description": "Access your latest outlook messages offline!",
   "orientation": "any",
@@ -15,8 +15,8 @@
       "sizes": "512x512"
     },
     {
-      "src": "assets/icons/icon_192.png",
-      "sizes": "192x192"
+      "src": "assets/icons/icon_256.png",
+      "sizes": "256x256"
     },
     {
       "src": "assets/icons/icon_48.png",
@@ -29,13 +29,10 @@
   ],
   "screenshots": [
     {
-      "src": "assets/screenshots/screen.png"
+      "src": "assets/screenshots/offline_screen.png"
     },
     {
-      "src": "assets/screenshots/screen.png"
-    },
-    {
-      "src": "assets/screenshots/screen.png"
+      "src": "assets/screenshots/offline_screen_mobile.png"
     }
   ],
   "features": [
