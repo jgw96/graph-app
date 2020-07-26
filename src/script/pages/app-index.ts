@@ -57,23 +57,28 @@ export class AppIndex extends LitElement {
     // For more info on using the @vaadin/router check here https://vaadin.com/router
     const router = new Router(this.shadowRoot?.querySelector('#routerOutlet'));
     router.setRoutes([
-      ({ path: '/', component: 'app-home', animate: true } as any),
-      ({
-        path: "/email",
-        animate: true,
-        component: "app-about",
-        action: async() => {
-          await import('./app-about.js');
-        },
-      } as any),
-      ({
-        path: "/newEmail",
-        animate: true,
-        component: "app-new",
-        action: async() => {
-          await import('./app-new.js');
-        },
-      } as any)
+      {
+        path: "",
+        children: [
+          ({ path: '/', component: 'app-home', animate: true } as any),
+          ({
+            path: "/email",
+            animate: true,
+            component: "app-about",
+            action: async() => {
+              await import('./app-about.js');
+            },
+          } as any),
+          ({
+            path: "/newEmail",
+            animate: true,
+            component: "app-new",
+            action: async() => {
+              await import('./app-new.js');
+            },
+          } as any)
+        ]
+      }
     ]);
   }
 

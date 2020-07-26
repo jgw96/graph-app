@@ -1,4 +1,4 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.1/workbox-sw.js');
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
 /**
  * Copyright 2020 Google Inc.
@@ -87,6 +87,18 @@ workbox.routing.registerRoute(
         }),
       ],
   })
+);
+
+const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('sentEmail', {
+  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
+});
+
+workbox.routing.registerRoute(
+  ({url}) => url.href.includes('me/sendEmail'),
+  new workbox.strategies.NetworkOnly({
+    plugins: [bgSyncPlugin]
+  }),
+  'POST'
 );
 
 self.addEventListener('notificationclick', (event) => {

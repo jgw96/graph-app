@@ -39,5 +39,14 @@
     "Cross Platform",
     "fast",
     "simple"
+  ],
+  "shorcuts": [
+    {
+      "name": "New Email",
+      "short_name": "New Email",
+      "description": "Send a new email",
+      "url": "/newEmail",
+      "icons": [{ "src": "assets/icons/mail-outline.svg", "sizes": "48x48" }]
+    }
   ]
 }

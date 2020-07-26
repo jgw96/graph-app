@@ -33,6 +33,7 @@ export class AppHome extends LitElement {
       ul {
         list-style: none;
         padding: 0;
+        margin-bottom: 4em;
       }
 
       ul li {
@@ -107,6 +108,11 @@ export class AppHome extends LitElement {
         border-radius: 6px;
         width: 5em;
         cursor: pointer;
+        align-items: center;
+      }
+
+      #actions button ion-icon, #homeToolbar button ion-icon {
+        margin-left: 6px;
       }
 
       #nameBlock {
@@ -133,6 +139,7 @@ export class AppHome extends LitElement {
         display: flex;
         width: initial;
         justify-content: space-around;
+        align-items: center;
         background-color: var(--app-color-secondary);
       }
 
@@ -200,7 +207,7 @@ export class AppHome extends LitElement {
     }
     else {
       this.mail = null;
-      
+
       this.mail = await getMail();
       sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
     }
@@ -218,7 +225,7 @@ export class AppHome extends LitElement {
     const newMail = await getMail();
 
     this.mail = [...newMail];
-    
+
     let toastElement: any = this.shadowRoot?.getElementById('myToast');
     toastElement?.open('Inbox Refreshed...', 'success');
   }
@@ -247,6 +254,11 @@ export class AppHome extends LitElement {
           <button @click="${() => this.refresh()}">
             Refresh
             <ion-icon name="reload"></ion-icon>
+          </button>
+
+          <button id="newEmailButton" @click="${() => this.newEmail()}">
+            New Email
+            <ion-icon name="add"></ion-icon>
           </button>
         </div>
         

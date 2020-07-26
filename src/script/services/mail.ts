@@ -4,7 +4,7 @@ export async function getMail() {
 
   if (provider) {
     let graphClient = provider.graph.client;
-    let mail = await graphClient.api('/me/messages').middlewareOptions((window as any).mgt.prepScopes('mail.read')).get();
+    let mail = await graphClient.api('/me/messages').get();
     console.log(mail.value);
 
     return mail.value;
@@ -16,7 +16,7 @@ export async function getAnEmail(id: string) {
 
   if (provider) {
     let graphClient = provider.graph.client;
-    let mail = await graphClient.api(`/me/messages/${id}`).middlewareOptions((window as any).mgt.prepScopes('mail.read')).get();
+    let mail = await graphClient.api(`/me/messages/${id}`).get();
     console.log(mail.value);
 
     return mail;
@@ -56,7 +56,7 @@ export async function sendMail(subject: string, body: string, recipients: any[])
   if (provider) {
     let graphClient = provider.graph.client;
 
-    let res = await graphClient.api('/me/sendMail').middlewareOptions((window as any).mgt.prepScopes('mail.send')).post(sendMail);
+    let res = await graphClient.api('/me/sendMail').post(sendMail);
 
     return res;
   }

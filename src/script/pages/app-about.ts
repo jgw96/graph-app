@@ -16,16 +16,8 @@ export class AppAbout extends LitElement {
 
   static get styles() {
     return css`
-      .back {
-        background: var(--app-color-primary);
-        color: white;
-        border: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 8px;
-        font-size: 1.4em;
-        border-radius: 50%;
+      #detailActions button.back {
+        background-color: var(--app-color-secondary);
       }
 
       #detailAction {
@@ -34,6 +26,7 @@ export class AppAbout extends LitElement {
 
       #detailAction h2 {
         margin-right: 4em;
+        color: white !important;
       }
 
       #detailActions {
@@ -50,16 +43,38 @@ export class AppAbout extends LitElement {
       #detailActions button {
         margin-right: 6px;
         cursor: pointer;
+
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: var(--app-color-primary);
+        color: white;
+        border: none;
+        font-weight: bold;
+        font-size: 1em;
+        padding: 8px;
+        border-radius: 6px;
+        height: initial;
+        cursor: pointer;
+      }
+
+      #detailActions button ion-icon {
+        margin-left: 6px;
       }
 
       #content {
         width: 100%;
+        height: 100%;
 
         overflow-y: auto;
         border-radius: 10px;
         background: white;
-        height: 90vh;
         flex: 2;
+      }
+
+      #content iframe {
+        height: 100%;
+        width: 100%;
       }
 
       #reminder {
@@ -160,6 +175,7 @@ export class AppAbout extends LitElement {
 
       #detailBlock {
         height: 88.8vh;
+        margin-top: 2em;
       }
 
       @media (min-width: 800px) {
@@ -186,6 +202,12 @@ export class AppAbout extends LitElement {
 
         #detailActions div {
           display: flex;
+        }
+      }
+
+      @media (prefers-color-scheme: light) {
+        #detailAction h2 {
+          color: white !important;
         }
       }
 
@@ -295,16 +317,22 @@ export class AppAbout extends LitElement {
         <section id="detailAction">
           <div id="detailActions">
             <button @click="${() => this.back()}" class="back" aria-label="back button">
-              <ion-icon name="arrow-back-outline"></ion-icon>
+              Back
+
+              <ion-icon name="chevron-back-outline"></ion-icon>
             </button>
 
             <div>
 
-              <button @click="${() => this.setupReminder()}" class="back" aria-label="alarm button">
+              <button @click="${() => this.setupReminder()}" aria-label="alarm button">
+                Reminder
+
                 <ion-icon name="alarm-outline"></ion-icon>
               </button>
 
-              <button @click="${() => this.share()}" class="back" aria-label="share button">
+              <button @click="${() => this.share()}" aria-label="share button">
+                Share
+
                 <ion-icon name="share-outline"></ion-icon>
               </button>
             </div>
@@ -313,7 +341,9 @@ export class AppAbout extends LitElement {
           <h2>${this.email?.subject}</h2>
         </section>
 
-        ${this.email ? html`<div id="content" .innerHTML="${this.email?.body.content}"></div>` : html`<div id="loading"></div>`}
+        ${this.email ? html`<div id="content">
+          <iframe .srcdoc="${this.email?.body.content}"></iframe>
+      </div>` : html`<div id="loading"></div>`}
 
         ${this.showReminder ? html`<div id="reminder">
             <label for="reminder-time">Set a Reminder:</label>

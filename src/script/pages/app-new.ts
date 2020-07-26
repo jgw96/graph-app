@@ -1,15 +1,19 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
+import '@dile/dile-toast/dile-toast';
+
 import { sendMail } from '../services/mail';
+import { Router } from '@vaadin/router';
+
 
 @customElement('app-new')
 export class AppNew extends LitElement {
 
-    @property({ type: String}) subject: string = '';
-    @property({ type: String }) body: string = '';
-    @property({ type: String }) address: string = '';
+  @property({ type: String }) subject: string = '';
+  @property({ type: String }) body: string = '';
+  @property({ type: String }) address: string = '';
 
-    static get styles() {
-        return css`
+  static get styles() {
+    return css`
         #newEmailActions {
             position: fixed;
               bottom: 0;
@@ -25,6 +29,7 @@ export class AppNew extends LitElement {
           #newEmailActions button {
             display: flex;
             justify-content: space-around;
+            align-items: center;
             background-color: var(--app-color-primary);
             color: white;
             border: none;
@@ -34,6 +39,11 @@ export class AppNew extends LitElement {
             border-radius: 6px;
             width: 5em;
             cursor: pointer;
+          }
+          
+          #backButton {
+            margin-right: 12px;
+            background-color: var(--app-color-secondary) !important;
           }
 
           #subjectBar {
@@ -60,36 +70,51 @@ export class AppNew extends LitElement {
               }
           }
         `
+  }
+
+  async send() {
+    const recip = [
+      {
+        emailAddress: {
+          address: this.address
+        }
+      }
+    ]
+
+    try {
+      await sendMail(this.subject, this.body, recip);
+
+      let toastElement: any = this.shadowRoot?.getElementById('myToast');
+      await toastElement?.open('Mail Sent...', 'success');
+
+      Router.go("/");
     }
+    catch (err) {
+      console.error(err);
 
-    async send() {
-        console.log(this.subject, this.body, this.address);
-
-        const recip = [
-            {
-                emailAddress: {
-                    address: this.address
-                }
-            }
-        ]
-        await sendMail(this.subject, this.body, recip);
+      let toastElement: any = this.shadowRoot?.getElementById('myToast');
+      await toastElement?.open('Error sending email', 'error');
     }
+  }
+  
+  goBack() {
+    Router.go("/");
+  }
 
-    updateSubject(event: any) {
-        this.subject = event.target.value;
-    }
+  updateSubject(event: any) {
+    this.subject = event.target.value;
+  }
 
-    updateBody(event: any) {
-        this.body = event.target.value;
-    }
+  updateBody(event: any) {
+    this.body = event.target.value;
+  }
 
-    updateAddress(event: any) {
-        this.address = event.target.value;
-    }
+  updateAddress(event: any) {
+    this.address = event.target.value;
+  }
 
-    render() {
-        return html`
-
+  render() {
+    return html`
         <div>
           <div id="subjectBar">
             <input @change="${(event: any) => this.updateAddress(event)}" type="text" id="recip" placeholder="test@email.com">
@@ -99,9 +124,21 @@ export class AppNew extends LitElement {
           <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
 
           <div id="newEmailActions">
-            <button @click="${() => this.send()}">Send</button>
+            <button @click="${() => this.goBack()}" id="backButton">
+              Back
+
+              <ion-icon name="chevron-back-outline"></ion-icon>
+             </button>
+
+            <button @click="${() => this.send()}">
+              Send
+
+              <ion-icon name="mail-outline"></ion-icon>
+            </button>
           </div>
         </div>
-        `
-    }
+
+        <dile-toast id="myToast" duration="3000"></dile-toast>
+    `
+  }
 }
