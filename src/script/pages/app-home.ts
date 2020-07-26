@@ -196,7 +196,7 @@ export class AppHome extends LitElement {
   async firstUpdated() {
     setTimeout(async () => {
       await this.getSavedAndUpdate();
-    }, 300);
+    }, 800);
   }
 
   async getSavedAndUpdate() {
