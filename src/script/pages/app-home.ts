@@ -200,17 +200,8 @@ export class AppHome extends LitElement {
   }
 
   async getSavedAndUpdate() {
-    const mail = sessionStorage.getItem('latestmail');
-
-    if (mail) {
-      this.mail = JSON.parse(mail);
-    }
-    else {
-      this.mail = null;
-
-      this.mail = await getMail();
-      sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
-    }
+    this.mail = await getMail();
+    sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
   }
 
   read(id: string) {

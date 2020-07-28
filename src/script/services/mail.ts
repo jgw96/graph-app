@@ -1,26 +1,72 @@
 
-export async function getMail() {
-  let provider = (window as any).mgt.Providers.globalProvider;
+import { getToken } from '../services/auth';
 
-  if (provider) {
-    let graphClient = provider.graph.client;
-    let mail = await graphClient.api('/me/messages').get();
+
+export async function getMail() {
+  /*const options = {
+    authProvider: (window as any).msalInstance, // An instance created from previous step
+  };
+  const client = Client.initWithMiddleware(options);
+
+  if (client) {
+    let mail = await client.api('/me/messages').get();
     console.log(mail.value);
 
     return mail.value;
-  }
+  }*/
+
+  console.log('getMail')
+
+  const token = await getToken();
+  console.log('token', token);
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "GET",
+    headers: headers
+  };
+  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  console.log('mail', data);
+
+  return data.value;
+
 }
 
 export async function getAnEmail(id: string) {
-  let provider = (window as any).mgt.Providers.globalProvider;
+  /*const options = {
+    authProvider: (window as any).msalInstance, // An instance created from previous step
+  };
+  const client = Client.initWithMiddleware(options);
 
-  if (provider) {
-    let graphClient = provider.graph.client;
-    let mail = await graphClient.api(`/me/messages/${id}`).get();
+  if (client) {
+    let mail = await client.api(`/me/messages/${id}`).get();
     console.log(mail.value);
 
     return mail;
-  }
+  }*/
+
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "GET",
+    headers: headers
+  };
+  const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}`;
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  return data.value;
+
 }
 
 export async function sendMail(subject: string, body: string, recipients: any[]) {
@@ -51,13 +97,31 @@ export async function sendMail(subject: string, body: string, recipients: any[])
     saveToSentItems: "true"
   };
 
-  let provider = (window as any).mgt.Providers.globalProvider;
+  /*const options = {
+    authProvider: (window as any).msalInstance, // An instance created from previous step
+  };
+  const client = Client.initWithMiddleware(options);
 
-  if (provider) {
-    let graphClient = provider.graph.client;
-
-    let res = await graphClient.api('/me/sendMail').post(sendMail);
+  if (client) {
+    let res = await client.api('/me/sendMail').post(sendMail);
 
     return res;
-  }
+  }*/
+
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(sendMail)
+  };
+  const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  return data;
 }

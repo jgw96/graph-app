@@ -1,5 +1,7 @@
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 
+import '../components/app-login';
+
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
@@ -84,9 +86,11 @@ export class AppHeader extends LitElement {
 
   async firstUpdated() {
     const mgtLogin = this.shadowRoot?.querySelector('mgt-login');
-    mgtLogin?.addEventListener('loginCompleted', () => {
+    console.log(mgtLogin);
+
+   /* mgtLogin?.addEventListener('loginCompleted', () => {
       location.reload();
-    })
+    })*/
   }
 
   render() {
@@ -94,9 +98,7 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Offline Mail</h1>
 
-        <mgt-msal-provider client-id="2d508361-d68e-4da6-8ef1-e36bd3404d57" login-type="redirect" scopes="user.read,people.read,mail.read,mail.send"
-                  ></mgt-msal-provider>
-        <mgt-login></mgt-login>
+        <app-login></app-login>
       </header>
     `;
   }
