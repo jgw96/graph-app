@@ -73,13 +73,26 @@ export class AppNew extends LitElement {
   }
 
   async send() {
-    const recip = [
+    let addresses = this.address.split(",");
+    console.log(addresses);
+
+    let recip: any[] = [];
+
+    addresses.forEach((address) => {
+      recip.push({
+        emailAddress: {
+          address: address.trim()
+        }
+      })
+    });
+
+    /*const recip = [
       {
         emailAddress: {
           address: this.address
         }
       }
-    ]
+    ];*/
 
     try {
       await sendMail(this.subject, this.body, recip);

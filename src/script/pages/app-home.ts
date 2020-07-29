@@ -1,4 +1,5 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
@@ -10,12 +11,15 @@ import { Router } from '@vaadin/router';
 export class AppHome extends LitElement {
 
   @property({ type: Array }) mail: any[] | null = [];
+  @property({ type: Array }) mailCopy: any[] | null = [];
+
+  @property({ type: String }) activeCat: string = 'all';
 
   static get styles() {
     return css`
       pwa-install {
         position: fixed;
-        bottom: 16px;
+        bottom: 12px;
         left: 16px;
         --install-button-color: var(--app-color-primary) !important;
       }
@@ -53,6 +57,27 @@ export class AppHome extends LitElement {
       ul li:nth-child(-n+14) {
         animation-name: slidein;
         animation-duration: 300ms;
+      }
+
+      #filterActions button {
+        background-color: transparent;
+        border-radius: 0;
+        color: grey;
+        font-weight: bold;
+        font-size: 1em;
+        width: 5em;
+        cursor: pointer;
+        align-items: center;
+        border-width: initial;
+        border-style: none;
+        border-color: initial;
+        border-image: initial;
+        padding: 6px;
+      }
+
+      #filterActions button.selected {
+        border-bottom: solid 2px var(--app-color-primary);
+        color: var(--app-color-primary);
       }
 
 
@@ -200,8 +225,33 @@ export class AppHome extends LitElement {
   }
 
   async getSavedAndUpdate() {
-    this.mail = await getMail();
+    this.mailCopy = await getMail();
+    this.mail = this.mailCopy;
     sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
+  }
+
+  getFocused() {
+    let focused: any[] = [];
+
+    this.mailCopy?.forEach((mail) => {
+      if (mail.inferenceClassification === 'focused') {
+        focused.push(mail);
+      }
+    });
+
+    this.mail = [...focused];
+  }
+
+  getOther() {
+    let other: any[] = [];
+
+    this.mailCopy?.forEach((mail) => {
+      if (mail.inferenceClassification === 'other') {
+        other.push(mail);
+      }
+    });
+
+    this.mail = [...other];
   }
 
   read(id: string) {
@@ -221,11 +271,32 @@ export class AppHome extends LitElement {
     toastElement?.open('Inbox Refreshed...', 'success');
   }
 
+  setCat(cat: string) {
+    this.activeCat = cat;
+
+    if (cat === 'focused') {
+      this.getFocused();
+    }
+    else if (cat === 'other') {
+      this.getOther()
+    }
+    else if (cat === 'all') {
+      this.getSavedAndUpdate();
+    }
+  }
+
   render() {
     return html`
       <div>
 
-        ${this.mail ? html`<ul>
+        ${this.mail && this.mail.length > 0 ? html`
+          <div id="filterActions">
+          <button class=${classMap({ "selected": this.activeCat === 'all' })} @click="${() => this.setCat('all')}">All</button>
+            <button class=${classMap({ "selected": this.activeCat === 'focused' })} @click="${() => this.setCat('focused')}">Focused</button>
+            <button class=${classMap({ "selected": this.activeCat === 'other' })} @click="${() => this.setCat('other')}">Other</button>
+          </div>
+        
+        <ul>
           ${
         this.mail?.map((email) => {
           return html`

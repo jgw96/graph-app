@@ -65,19 +65,21 @@ export async function getAnEmail(id: string) {
   const response = await fetch(graphEndpoint, options);
   const data = await response.json();
 
-  return data.value;
+  console.log(data);
+
+  return data;
 
 }
 
 export async function sendMail(subject: string, body: string, recipients: any[]) {
   const sendMail = {
-    message: {
-      subject: subject,
-      body: {
-        contentType: "Text",
-        content: body
+    "message": {
+      "subject": subject,
+      "body": {
+        "contentType": "Text",
+        "content": body
       },
-      toRecipients:
+      "toRecipients":
         recipients
       /*[
         {
@@ -94,7 +96,7 @@ export async function sendMail(subject: string, body: string, recipients: any[])
         }
       ]*/
     },
-    saveToSentItems: "true"
+    "saveToSentItems": "true"
   };
 
   /*const options = {
@@ -115,13 +117,14 @@ export async function sendMail(subject: string, body: string, recipients: any[])
   headers.append("Authorization", bearer);
   const options = {
     method: "POST",
-    headers: headers,
+    headers: {
+      'Authorization': bearer,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify(sendMail)
   };
   const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
 
-  const response = await fetch(graphEndpoint, options);
-  const data = await response.json();
-
-  return data;
+  await fetch(graphEndpoint, options);
 }
