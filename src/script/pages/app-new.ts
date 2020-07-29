@@ -1,8 +1,13 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
+
+import { classMap } from 'lit-html/directives/class-map';
+
 import '@dile/dile-toast/dile-toast';
 
 import { sendMail } from '../services/mail';
 import { Router } from '@vaadin/router';
+
+import '../components/app-contacts';
 
 
 @customElement('app-new')
@@ -64,6 +69,20 @@ export class AppNew extends LitElement {
             margin-bottom: 6px;
           }
 
+          #addressBlock {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          #addressBlock #recip {
+            width: 100%;
+          }
+
+          #addressBlock #recip.contacts {
+            width: 82%;
+          }
+
           @media(prefers-color-scheme: dark) {
               #newEmailActions {
                 background: rgb(29 29 29 / 78%);
@@ -86,14 +105,6 @@ export class AppNew extends LitElement {
       })
     });
 
-    /*const recip = [
-      {
-        emailAddress: {
-          address: this.address
-        }
-      }
-    ];*/
-
     try {
       await sendMail(this.subject, this.body, recip);
 
@@ -109,7 +120,7 @@ export class AppNew extends LitElement {
       await toastElement?.open('Error sending email', 'error');
     }
   }
-  
+
   goBack() {
     Router.go("/");
   }
@@ -126,11 +137,36 @@ export class AppNew extends LitElement {
     this.address = event.target.value;
   }
 
+  handleContacts(ev: CustomEvent) {
+    let recip: any[] = [];
+
+    ev.detail.data.forEach((address: any) => {
+      recip.push({
+        emailAddress: {
+          address: address.trim()
+        }
+      })
+    });
+
+    console.log(recip);
+
+    if (this.address.length > 0) {
+      this.address = this.address + ',' + recip[0].emailAddress.address;
+    }
+    else {
+      this.address = recip[0].emailAddress.address;
+    }
+  }
+
   render() {
     return html`
         <div>
           <div id="subjectBar">
-            <input @change="${(event: any) => this.updateAddress(event)}" type="text" id="recip" placeholder="test@email.com">
+            <div id="addressBlock">
+              <input class=${classMap({ "contacts": 'contacts' in navigator && 'ContactsManager' in window })} .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip" placeholder="test@email.com">
+              <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
+            </div>
+
             <input @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject" placeholder="Subject..">
           </div>
 

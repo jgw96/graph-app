@@ -84,15 +84,6 @@ export class AppHeader extends LitElement {
     super();
   }
 
-  async firstUpdated() {
-    const mgtLogin = this.shadowRoot?.querySelector('mgt-login');
-    console.log(mgtLogin);
-
-   /* mgtLogin?.addEventListener('loginCompleted', () => {
-      location.reload();
-    })*/
-  }
-
   render() {
     return html`
       <header>
