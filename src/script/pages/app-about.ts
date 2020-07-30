@@ -105,6 +105,7 @@ export class AppAbout extends LitElement {
         font-weight: bold;
         border-radius: 6px;
         font-size: 18px;
+        cursor: pointer;
       }
 
       #reminder button#cancelButton {
@@ -185,12 +186,30 @@ export class AppAbout extends LitElement {
           background: #ffffff8f;
           backdrop-filter: blur(10px);
         }
+
+        #detailActions {
+          margin-right: 1em;
+        }
+
+        #reminder {
+          left: 6em;
+          right: 6em;
+          position: absolute;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        #reminder {
+          left: 22em;
+          right: 22em;
+          position: absolute;
+        }
       }
 
       @media (max-width: 800px) {
         #detailActions {
           position: fixed;
-          bottom: 0;
+          bottom: -3px;
           backdrop-filter: blur(10px);
           left: 0;
           right: 0;
