@@ -21,6 +21,7 @@
     "@pwabuilder/pwaauth": "^0.9.7",
     "@pwabuilder/pwainstall": "^1.6.4",
     "@vaadin/router": "^1.7.2",
+    "browser-nativefs": "^0.10.2",
     "idb-keyval": "^3.2.0",
     "lit-element": "^2.3.1"
   },
