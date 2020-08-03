@@ -17,6 +17,8 @@ export class AppNew extends LitElement {
   @property({ type: String }) body: string = '';
   @property({ type: String }) address: string = '';
 
+  @property({}) attachment: any = null;
+
   static get styles() {
     return css`
         #newEmailActions {
@@ -42,8 +44,12 @@ export class AppNew extends LitElement {
             font-size: 1em;
             padding: 6px;
             border-radius: 6px;
-            width: 5em;
+            min-width: 5em;
             cursor: pointer;
+          }
+
+          #attachButton {
+            margin-right: 12px;
           }
           
           #backButton {
@@ -83,6 +89,14 @@ export class AppNew extends LitElement {
             width: 82%;
           }
 
+          #attachedImage {
+            width: 100%;
+            margin-bottom: 4em;
+            margin-top: 1em;
+            height: 100%;
+            border-radius: 6px;
+          }
+
           @media(prefers-color-scheme: dark) {
               #newEmailActions {
                 background: rgb(29 29 29 / 78%);
@@ -106,7 +120,7 @@ export class AppNew extends LitElement {
     });
 
     try {
-      await sendMail(this.subject, this.body, recip);
+      await sendMail(this.subject, this.body, recip, this.attachment);
 
       let toastElement: any = this.shadowRoot?.getElementById('myToast');
       await toastElement?.open('Mail Sent...', 'success');
@@ -158,6 +172,16 @@ export class AppNew extends LitElement {
     }
   }
 
+  async attachFile() {
+    const module = await import('browser-nativefs');
+
+    const blob = await module.fileOpen({
+      mimeTypes: ['image/*'],
+    });
+
+    this.attachment = blob;
+  }
+
   render() {
     return html`
         <div>
@@ -172,6 +196,8 @@ export class AppNew extends LitElement {
 
           <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
 
+          ${this.attachment ? html`<img id="attachedImage" src=${URL.createObjectURL(this.attachment)}>` : null}
+
           <div id="newEmailActions">
             <button @click="${() => this.goBack()}" id="backButton">
               Back
@@ -179,8 +205,14 @@ export class AppNew extends LitElement {
               <ion-icon name="chevron-back-outline"></ion-icon>
              </button>
 
-            <button @click="${() => this.send()}">
-              Send
+             ${this.attachment ? html`<button id="attachButton">Attached</button>` : html`<button @click="${() => this.attachFile()}" id="attachButton">
+               Attach File
+
+               <ion-icon name="document-outline"></ion-icon>
+             </button>`}
+
+             <button @click="${() => this.send()}">
+               Send
 
               <ion-icon name="mail-outline"></ion-icon>
             </button>

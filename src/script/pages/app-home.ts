@@ -239,7 +239,9 @@ export class AppHome extends LitElement {
       }
     });
 
-    this.mail = [...focused];
+    if (focused.length > 1) {
+      this.mail = [...focused];
+    }
   }
 
   getOther() {
@@ -251,7 +253,9 @@ export class AppHome extends LitElement {
       }
     });
 
-    this.mail = [...other];
+    if (other.length > 1) {
+      this.mail = [...other];
+    }
   }
 
   read(id: string) {

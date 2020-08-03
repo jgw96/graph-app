@@ -71,60 +71,77 @@ export async function getAnEmail(id: string) {
 
 }
 
-export async function sendMail(subject: string, body: string, recipients: any[]) {
-  const sendMail = {
-    "message": {
-      "subject": subject,
-      "body": {
-        "contentType": "Text",
-        "content": body
+export async function sendMail(subject: string, body: string, recipients: any[], attachment: any) {
+  let sendMail = null;
+
+  if (attachment) {
+    console.log('attachment', attachment);
+    const reader = new FileReader();
+
+    reader.readAsDataURL(attachment);
+    reader.onloadend = () => {
+      let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
+
+      sendMail = {
+        "message": {
+          "subject": subject,
+          "body": {
+            "contentType": "Text",
+            "content": body
+          },
+          "toRecipients":
+            recipients
+        },
+        "saveToSentItems": "true",
+        "hasAttachments": true,
+        "attachment": {
+          "@odata.type": "#microsoft.graph.fileAttachment",
+          "name": "smile",
+          "contentBytes": base64String
+        }
+      };
+    }
+
+    URL.revokeObjectURL(attachment);
+
+  }
+  else {
+    sendMail = {
+      "message": {
+        "subject": subject,
+        "body": {
+          "contentType": "Text",
+          "content": body
+        },
+        "toRecipients":
+          recipients
       },
-      "toRecipients":
-        recipients
-      /*[
-        {
-          emailAddress: {
-            address: "fannyd@contoso.onmicrosoft.com"
-          }
-        }
-      ],
-      ccRecipients: [
-        {
-          emailAddress: {
-            address: "danas@contoso.onmicrosoft.com"
-          }
-        }
-      ]*/
-    },
-    "saveToSentItems": "true"
-  };
+      "saveToSentItems": "true"
+    };
+  }
 
-  /*const options = {
-    authProvider: (window as any).msalInstance, // An instance created from previous step
-  };
-  const client = Client.initWithMiddleware(options);
+  if (sendMail) {
+    const token = await getToken();
 
-  if (client) {
-    let res = await client.api('/me/sendMail').post(sendMail);
+    const headers = new Headers();
+    const bearer = "Bearer " + token;
+    headers.append("Authorization", bearer);
+    const options = {
+      method: "POST",
+      headers: {
+        'Authorization': bearer,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(sendMail)
+    };
+    const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
 
-    return res;
-  }*/
-
-  const token = await getToken();
-
-  const headers = new Headers();
-  const bearer = "Bearer " + token;
-  headers.append("Authorization", bearer);
-  const options = {
-    method: "POST",
-    headers: {
-      'Authorization': bearer,
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(sendMail)
-  };
-  const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
-
-  await fetch(graphEndpoint, options);
+    try {
+      await fetch(graphEndpoint, options);
+    }
+    catch (err) {
+      console.error("error sending message", err);
+    }
+  }
 }
