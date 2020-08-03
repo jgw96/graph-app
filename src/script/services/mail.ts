@@ -71,7 +71,7 @@ export async function getAnEmail(id: string) {
 
 }
 
-export async function sendMail(subject: string, body: string, recipients: any[], attachment: any) {
+export async function sendMail(subject: string, body: string, recipients: any[], attachment: File) {
   let sendMail = null;
 
   if (attachment) {
@@ -79,8 +79,16 @@ export async function sendMail(subject: string, body: string, recipients: any[],
     const reader = new FileReader();
 
     reader.readAsDataURL(attachment);
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
       let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
+
+      let attachFile = {
+        "@odata.type": "#microsoft.graph.fileAttachment",
+        "name": attachment.name,
+        "contentBytes": base64String
+      };
+
+      console.log(attachFile);
 
       sendMail = {
         "message": {
@@ -90,19 +98,41 @@ export async function sendMail(subject: string, body: string, recipients: any[],
             "content": body
           },
           "toRecipients":
-            recipients
+            recipients,
+          "attachments": [
+            attachFile
+          ]
         },
-        "saveToSentItems": "true",
-        "hasAttachments": true,
-        "attachment": {
-          "@odata.type": "#microsoft.graph.fileAttachment",
-          "name": "smile",
-          "contentBytes": base64String
-        }
+        "saveToSentItems": "true"
       };
-    }
 
-    URL.revokeObjectURL(attachment);
+      if (sendMail) {
+        const token = await getToken();
+
+        const headers = new Headers();
+        const bearer = "Bearer " + token;
+        headers.append("Authorization", bearer);
+        const options = {
+          method: "POST",
+          headers: {
+            'Authorization': bearer,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(sendMail)
+        };
+        const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
+
+        try {
+          await fetch(graphEndpoint, options);
+
+          URL.revokeObjectURL(base64String);
+        }
+        catch (err) {
+          console.error("error sending message", err);
+        }
+      }
+    }
 
   }
   else {
@@ -118,30 +148,30 @@ export async function sendMail(subject: string, body: string, recipients: any[],
       },
       "saveToSentItems": "true"
     };
-  }
 
-  if (sendMail) {
-    const token = await getToken();
+    if (sendMail) {
+      const token = await getToken();
 
-    const headers = new Headers();
-    const bearer = "Bearer " + token;
-    headers.append("Authorization", bearer);
-    const options = {
-      method: "POST",
-      headers: {
-        'Authorization': bearer,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(sendMail)
-    };
-    const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
+      const headers = new Headers();
+      const bearer = "Bearer " + token;
+      headers.append("Authorization", bearer);
+      const options = {
+        method: "POST",
+        headers: {
+          'Authorization': bearer,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(sendMail)
+      };
+      const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
 
-    try {
-      await fetch(graphEndpoint, options);
-    }
-    catch (err) {
-      console.error("error sending message", err);
+      try {
+        await fetch(graphEndpoint, options);
+      }
+      catch (err) {
+        console.error("error sending message", err);
+      }
     }
   }
 }

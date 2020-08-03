@@ -219,6 +219,14 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
+
+    let mail = sessionStorage.getItem('latestmail');
+
+    if (mail) {
+      this.mailCopy = JSON.parse(mail);
+      this.mail = this.mailCopy;
+    }
+    
     setTimeout(async () => {
       await this.getSavedAndUpdate();
     }, 800);
@@ -227,6 +235,7 @@ export class AppHome extends LitElement {
   async getSavedAndUpdate() {
     this.mailCopy = await getMail();
     this.mail = this.mailCopy;
+
     sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
   }
 
