@@ -5,7 +5,7 @@ import { classMap } from 'lit-html/directives/class-map';
 import '@pwabuilder/pwainstall';
 import '@dile/dile-toast/dile-toast';
 import { getMail } from '../services/mail';
-import { Router } from '@vaadin/router';
+// import { Router } from '@vaadin/router';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -211,6 +211,11 @@ export class AppHome extends LitElement {
           opacity: 1;
         }
       }
+
+      ul {
+        padding: initial;
+        width: 47.2%;
+      }
     `;
   }
 
@@ -219,15 +224,27 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
+    let savedMail = sessionStorage.getItem('latestmail');
+
+    if (savedMail) {
+      this.mail = JSON.parse(savedMail);
+    };
+
     setTimeout(async () => {
+
       await this.getSavedAndUpdate();
     }, 800);
   }
 
   async getSavedAndUpdate() {
+
     this.mailCopy = await getMail();
-    this.mail = this.mailCopy;
-    sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
+
+    if (this.mailCopy) {
+      this.mail = this.mailCopy;
+
+      sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
+    }
   }
 
   getFocused() {
@@ -258,12 +275,40 @@ export class AppHome extends LitElement {
     }
   }
 
-  read(id: string) {
-    Router.go(`/email?id=${id}`);
+  async read(id: string) {
+    // Router.go(`/email?id=${id}`);
+
+    console.log(id);
+
+    sessionStorage.setItem('mailId', id);
+
+    const comp: any = await import('./dual-about');
+    console.log(comp);
+
+    const modalElement: any = document.createElement('ion-modal');
+    modalElement.component = 'dual-about';
+    modalElement.cssClass = "dualScreen";
+    modalElement.showBackdrop = false;
+
+    // present the modal
+    document.body.appendChild(modalElement);
+    return modalElement.present();
+
   }
 
-  newEmail() {
-    Router.go("/newEmail");
+  async newEmail() {
+    // Router.go("/newEmail");
+
+    await import('./dual-new')
+
+    const modalElement: any = document.createElement('ion-modal');
+    modalElement.component = 'dual-new';
+    modalElement.cssClass = "dualScreen";
+    modalElement.showBackdrop = false;
+
+    // present the modal
+    document.body.appendChild(modalElement);
+    return modalElement.present();
   }
 
   async refresh() {
