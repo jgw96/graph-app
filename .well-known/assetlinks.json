@@ -1,0 +1,5 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target" : { "namespace": "android_app", "package_name": "net.azurestaticapps.thankful_flower_0709a8a1e.twa",
+                   "sha256_cert_fingerprints": ["1A:88:0B:D8:7E:D7:32:A4:B1:C7:B2:CB:68:F3:64:04:0F:3F:10:E9:01:EF:B5:B7:66:8D:40:8E:40:83:0D:64"] }
+    }]
