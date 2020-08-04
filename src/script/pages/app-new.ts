@@ -29,8 +29,14 @@ export class AppNew extends LitElement {
               right: 0;
               padding: 12px;
               display: flex;
-              justify-content: flex-end;
+              
+              justify-content: space-between;
+              align-items: center;
               background: #ffffff69;
+          }
+
+          #newEmailActions #newEmailSubActions {
+            display: flex;
           }
     
           #newEmailActions button {
@@ -90,17 +96,53 @@ export class AppNew extends LitElement {
           }
 
           #attachedImage {
-            width: 100%;
-            margin-bottom: 4em;
-            margin-top: 1em;
-            height: 100%;
-            border-radius: 6px;
+            position: absolute;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            left: 0;
+            right: 0;
+            bottom: 3.4em;
+            background: #686bd2;
+            color: white;
+            padding-left: 12px;
+            animation-name: slideinleft;
+            animation-duration: 300ms;
+          }
+
+          #attachedImage img {
+            width: 6em;
+          }
+
+          @media (min-width: 800px) {
+            #attachedImage {
+              border-radius: 6px;
+              right: initial;
+              min-width: 16em;
+              left: 16px;
+              bottom: 4em;
+            }
+
+            #attachedImage img {
+              border-radius: 0 6px 6px 0;
+            }
           }
 
           @media(prefers-color-scheme: dark) {
               #newEmailActions {
                 background: rgb(29 29 29 / 78%);
               }
+          }
+
+          @keyframes slideinleft {
+            from {
+              transform: translateX(-20px);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
           }
         `
   }
@@ -196,8 +238,6 @@ export class AppNew extends LitElement {
 
           <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
 
-          ${this.attachment ? html`<img id="attachedImage" src=${URL.createObjectURL(this.attachment)}>` : null}
-
           <div id="newEmailActions">
             <button @click="${() => this.goBack()}" id="backButton">
               Back
@@ -205,18 +245,22 @@ export class AppNew extends LitElement {
               <ion-icon name="chevron-back-outline"></ion-icon>
              </button>
 
-             ${this.attachment ? html`<button id="attachButton">Attached</button>` : html`<button @click="${() => this.attachFile()}" id="attachButton">
-               Attach File
+             <div id="newEmailSubActions">
+              ${this.attachment ? html`<button id="attachButton">Attached</button>` : html`<button @click="${() => this.attachFile()}" id="attachButton">
+                Attach File
 
-               <ion-icon name="document-outline"></ion-icon>
-             </button>`}
+                <ion-icon name="document-outline"></ion-icon>
+              </button>`}
 
-             <button @click="${() => this.send()}">
-               Send
+              <button @click="${() => this.send()}">
+                Send
 
-              <ion-icon name="mail-outline"></ion-icon>
-            </button>
+                <ion-icon name="mail-outline"></ion-icon>
+              </button>
+            </div>
           </div>
+
+          ${this.attachment ? html`<div id="attachedImage"><span>Attached: ${this.attachment.name}</span><img src=${URL.createObjectURL(this.attachment)}></div>` : null}
         </div>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

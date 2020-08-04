@@ -304,7 +304,7 @@ export class AppHome extends LitElement {
 
         ${this.mail && this.mail.length > 0 ? html`
           <div id="filterActions">
-          <button class=${classMap({ "selected": this.activeCat === 'all' })} @click="${() => this.setCat('all')}">All</button>
+            <button class=${classMap({ "selected": this.activeCat === 'all' })} @click="${() => this.setCat('all')}">All</button>
             <button class=${classMap({ "selected": this.activeCat === 'focused' })} @click="${() => this.setCat('focused')}">Focused</button>
             <button class=${classMap({ "selected": this.activeCat === 'other' })} @click="${() => this.setCat('other')}">Other</button>
           </div>
