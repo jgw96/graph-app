@@ -46,7 +46,7 @@
       "short_name": "New Email",
       "description": "Send a new email",
       "url": "/newEmail",
-      "icons": [{ "src": "assets/icons/mail-outline.svg", "sizes": "48x48" }]
+      "icons": [{ "src": "assets/icons/mail-outline.png", "sizes": "48x48" }]
     }
   ]
 }
