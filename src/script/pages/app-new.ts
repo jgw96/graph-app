@@ -8,6 +8,7 @@ import { sendMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
 import '../components/app-contacts';
+import '../components/app-drawing';
 
 
 @customElement('app-new')
@@ -108,10 +109,30 @@ export class AppNew extends LitElement {
             padding-left: 12px;
             animation-name: slideinleft;
             animation-duration: 300ms;
+            max-height: 3em;
           }
 
           #attachedImage img {
             width: 6em;
+          }
+
+          #drawingButton {
+            position: absolute;
+            bottom: 4em;
+            right: 16px;
+            background: var(--app-color-secondary);
+            color: white;
+            color: white;
+            font-weight: bold;
+            font-size: 1em;
+            min-width: 5em;
+            cursor: pointer;
+            border-width: initial;
+            border-style: none;
+            border-color: initial;
+            border-image: initial;
+            padding: 6px;
+            border-radius: 6px;
           }
 
           @media (min-width: 800px) {
@@ -224,6 +245,21 @@ export class AppNew extends LitElement {
     this.attachment = blob;
   }
 
+  async attachDrawing() {
+    const modalElement: any = document.createElement('ion-modal');
+    modalElement.component = 'app-drawing';
+    modalElement.showBackdrop = false;
+
+    // present the modal
+    document.body.appendChild(modalElement);
+    modalElement.present();
+
+    const data = await modalElement.onDidDismiss();
+    console.log(data);
+
+    this.attachment = data.data.data;
+  }
+
   render() {
     return html`
         <div>
@@ -238,6 +274,12 @@ export class AppNew extends LitElement {
 
           <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
 
+          <button id="drawingButton" @click="${() => this.attachDrawing()}">
+            Attach Drawing
+
+            <ion-icon name="pencil-outline"></ion-icon>
+          </button>
+
           <div id="newEmailActions">
             <button @click="${() => this.goBack()}" id="backButton">
               Back
@@ -246,6 +288,7 @@ export class AppNew extends LitElement {
              </button>
 
              <div id="newEmailSubActions">
+
               ${this.attachment ? html`<button id="attachButton">Attached</button>` : html`<button @click="${() => this.attachFile()}" id="attachButton">
                 Attach File
 
