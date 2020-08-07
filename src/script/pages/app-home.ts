@@ -28,10 +28,21 @@ export class AppHome extends LitElement {
         font-weight: bold;
         text-align: center;
         background: white;
-        border-radius: 20px;
+        border-radius: 6px;
         padding: 6px;
         padding: 2em;
         background: #a9a9a947;
+
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 30em;
+        backdrop-filter: blur(10px);
+      }
+
+      #introBlock img {
+        height: 24em;
       }
 
       ul {
@@ -46,7 +57,7 @@ export class AppHome extends LitElement {
         padding-right: 10px;
         padding-top: 1px;
         padding-bottom: 10px;
-        border-radius: 10px;
+        border-radius: 6px;
 
         margin-bottom: 10px;
 
@@ -86,6 +97,11 @@ export class AppHome extends LitElement {
           padding-left: 12em;
           padding-right: 12em;
         }
+
+        #introBlock {
+          margin-left: 16em;
+          margin-right: 16em;
+        }
       }
 
       @media (min-width: 1200px) {
@@ -107,8 +123,8 @@ export class AppHome extends LitElement {
         }
 
         #introBlock {
-          margin-left: 16em;
-          margin-right: 16em;
+          margin-left: 24em;
+          margin-right: 24em;
         }
       }
 
@@ -124,7 +140,6 @@ export class AppHome extends LitElement {
       }
 
       #actions button, #homeToolbar button {
-        background-color: var(--app-color-primary);
         color: white;
         border: none;
         font-weight: bold;
@@ -134,6 +149,8 @@ export class AppHome extends LitElement {
         width: 5em;
         cursor: pointer;
         align-items: center;
+
+        background-color: var(--app-color-primary);
       }
 
       #actions button ion-icon, #homeToolbar button ion-icon {
@@ -169,7 +186,7 @@ export class AppHome extends LitElement {
       }
 
       #homeToolbar #newEmailButton {
-        background-color: var(--app-color-primary);
+        background: var(--app-color-primary);
         margin-left: 12px;
       }
 
@@ -338,7 +355,10 @@ export class AppHome extends LitElement {
         </div>
         
         ` : html`<div id="introBlock">
+        <img src="/assets/screenshots/offline_screen_mobile.png" alt="screenshot of app">
         Sign in to quickly access your latest email and save them for offline use! Powered by the Microsoft Graph.
+
+        <app-login></app-login>
       </div>`}
 
         <pwa-install>Install Offline Mail</pwa-install>

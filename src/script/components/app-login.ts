@@ -32,10 +32,9 @@ export class AppLogin extends LitElement {
             width: initial;
             justify-content: space-around;
             align-items: center;
-            background-color: transparent;
-            border: solid 1px;
-            border-color: var(--app-color-primary);
-            color: var(--app-color-primary);
+            background-color: var(--app-color-primary);
+            color: white;
+            border: none;
             font-weight: bold;
             font-size: 14px;
             cursor: pointer;
