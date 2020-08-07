@@ -18,7 +18,7 @@ export class AppNew extends LitElement {
   @property({ type: String }) body: string = '';
   @property({ type: String }) address: string = '';
 
-  @property({}) attachment: any = null;
+  @property({ type: Array }) attachments: any = [];
 
   static get styles() {
     return css`
@@ -96,24 +96,37 @@ export class AppNew extends LitElement {
             width: 82%;
           }
 
+          #attachmentsList {
+            margin: 0;
+            padding: 0;
+            margin-top: 1em;
+            margin-bottom: 4em;
+            display: flex;
+            overflow-x: scroll;
+          }
+
+          #attachmentsList::-webkit-scrollbar {
+            display: none;
+          }
+
           #attachedImage {
-            position: absolute;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            left: 0;
-            right: 0;
             bottom: 3.4em;
             background: #686bd2;
             color: white;
-            padding-left: 12px;
             animation-name: slideinleft;
             animation-duration: 300ms;
             max-height: 3em;
+            margin-left: 12px;
+            border-radius: 6px;
           }
 
           #attachedImage img {
-            width: 6em;
+            height: 3em;
+            object-fit: contain;
+            border-radius: 0 6px 6px 0;
           }
 
           #drawingButton {
@@ -135,11 +148,14 @@ export class AppNew extends LitElement {
             border-radius: 6px;
           }
 
+          h2 {
+            font-size: 2em;
+          }
+
           @media (min-width: 800px) {
             #attachedImage {
               border-radius: 6px;
               right: initial;
-              min-width: 16em;
               left: 16px;
               bottom: 4em;
             }
@@ -152,6 +168,10 @@ export class AppNew extends LitElement {
           @media(prefers-color-scheme: dark) {
               #newEmailActions {
                 background: rgb(29 29 29 / 78%);
+              }
+
+              h2 {
+                color: white;
               }
           }
 
@@ -183,7 +203,7 @@ export class AppNew extends LitElement {
     });
 
     try {
-      await sendMail(this.subject, this.body, recip, this.attachment);
+      await sendMail(this.subject, this.body, recip, this.attachments);
 
       let toastElement: any = this.shadowRoot?.getElementById('myToast');
       await toastElement?.open('Mail Sent...', 'success');
@@ -242,7 +262,7 @@ export class AppNew extends LitElement {
       mimeTypes: ['image/*'],
     });
 
-    this.attachment = blob;
+    this.attachments = [...this.attachments, blob];
   }
 
   async attachDrawing() {
@@ -257,7 +277,7 @@ export class AppNew extends LitElement {
     const data = await modalElement.onDidDismiss();
     console.log(data);
 
-    this.attachment = data.data.data;
+    this.attachments = [...this.attachments, data.data.data];
   }
 
   render() {
@@ -289,11 +309,11 @@ export class AppNew extends LitElement {
 
              <div id="newEmailSubActions">
 
-              ${this.attachment ? html`<button id="attachButton">Attached</button>` : html`<button @click="${() => this.attachFile()}" id="attachButton">
+              <button @click="${() => this.attachFile()}" id="attachButton">
                 Attach File
 
                 <ion-icon name="document-outline"></ion-icon>
-              </button>`}
+              </button>
 
               <button @click="${() => this.send()}">
                 Send
@@ -303,7 +323,15 @@ export class AppNew extends LitElement {
             </div>
           </div>
 
-          ${this.attachment ? html`<div id="attachedImage"><span>Attached: ${this.attachment.name}</span><img src=${URL.createObjectURL(this.attachment)}></div>` : null}
+          ${this.attachments.length > 0 ? html`<h2>Attachments</h2> <ul id="attachmentsList">
+            ${
+              this.attachments.map((attachment: any) => {
+                return html`
+                <div id="attachedImage"><img src=${URL.createObjectURL(attachment)}></div>
+                `
+              })
+            }
+          </ul>` : null }
         </div>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

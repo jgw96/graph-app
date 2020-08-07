@@ -105,7 +105,11 @@ export class AppDrawing extends LitElement {
             </div>
 
             <inking-canvas name="myInkingCanvas">
-              <inking-toolbar canvas="myInkingCanvas"></inking-toolbar>
+              <inking-toolbar canvas="myInkingCanvas">
+                <inking-toolbar-highlighter></inking-toolbar-highlighter>
+                <inking-toolbar-pen></inking-toolbar-pen>
+                <inking-toolbar-eraser></inking-toolbar-eraser>
+              </inking-toolbar>
             </inking-canvas>
 
             <button id="drawingButton" @click="${() => this.add()}">
