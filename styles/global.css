@@ -13,6 +13,11 @@ html, body {
   font-family: var(--font-family);
   padding: 0;
   margin: 0;
+
+  position: initial !important;
+  overflow: auto !important;
+
+  overscroll-behavior-y: initial !important;
 }
 
 html {
