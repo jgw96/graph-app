@@ -17,7 +17,7 @@ export class AppIndex extends LitElement {
       }
 
       #routerOutlet app-home, #routerOutlet app-about, #routerOutlet app-index, #routerOutlet app-new {
-        width: 93% !important;
+        width: 98% !important;
       }
       #routerOutlet > .leaving {
         animation: 160ms fadeOut ease-in-out;

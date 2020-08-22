@@ -31,7 +31,7 @@ export class AppHeader extends LitElement {
       header h1 {
         margin-top: 0;
         margin-bottom: 0;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         color: var(--app-color-primary);
       }

@@ -29,16 +29,17 @@ export class AppHome extends LitElement {
         text-align: center;
         background: white;
         border-radius: 6px;
-        padding: 6px;
         padding: 2em;
-        background: #a9a9a947;
-
+        background: rgba(29, 29, 29, 0.78);
         flex-direction: column;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 30em;
         backdrop-filter: blur(10px);
+      }
+
+      #introBlock app-login {
+        margin-top: 1em;
       }
 
       #introBlock img {
@@ -136,7 +137,9 @@ export class AppHome extends LitElement {
 
       #actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 22px;
       }
 
       #actions button, #homeToolbar button {
@@ -158,6 +161,13 @@ export class AppHome extends LitElement {
       }
 
       #nameBlock {
+        font-size: 12px;
+      }
+
+      .preview {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         font-size: 14px;
       }
 
@@ -201,7 +211,7 @@ export class AppHome extends LitElement {
 
       @media(prefers-color-scheme: dark) {
         ul li {
-          background: #474747ba;
+          background: rgba(29, 29, 29, 0.78);
           color: white;
         }
 
@@ -332,9 +342,13 @@ export class AppHome extends LitElement {
           return html`
                 <li>
                   <h3>${email.subject}</h3>
-                  <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
+
+                  <p class="preview">
+                    ${email.bodyPreview}
+                  </p>
 
                   <div id="actions">
+                    <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
                     <button @click="${() => this.read(email.id)}">Read</button>
                   </div>
                 </li>
@@ -355,7 +369,6 @@ export class AppHome extends LitElement {
         </div>
         
         ` : html`<div id="introBlock">
-        <img src="/assets/screenshots/offline_screen_mobile.png" alt="screenshot of app">
         Sign in to quickly access your latest email and save them for offline use! Powered by the Microsoft Graph.
 
         <app-login></app-login>
