@@ -176,7 +176,6 @@ export class AppAbout extends LitElement {
 
       #detailBlock {
         height: 88.8vh;
-        margin-top: 2em;
       }
 
       @media (min-width: 800px) {
@@ -342,12 +341,6 @@ export class AppAbout extends LitElement {
             </button>
 
             <div>
-
-              <button @click="${() => this.setupReminder()}" aria-label="alarm button">
-                Reminder
-
-                <ion-icon name="alarm-outline"></ion-icon>
-              </button>
 
               <button @click="${() => this.share()}" aria-label="share button">
                 Share
