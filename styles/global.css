@@ -20,15 +20,6 @@ html, body {
   overscroll-behavior-y: initial !important;
 }
 
-html {
-  background-image: url(/assets/backdrop.svg);
-  background-repeat: none;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: bottom left;
-  background-size: 40%;
-}
-
 @media (max-width: 600px) {
   html {
     background-size: 90%;

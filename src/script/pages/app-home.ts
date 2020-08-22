@@ -228,6 +228,12 @@ export class AppHome extends LitElement {
         }
       }
 
+      @media(prefers-color-scheme: light) {
+        #introBlock {
+          background: white;
+        }
+      }
+
       @keyframes slidein {
         from {
           transform: translateY(20px);
