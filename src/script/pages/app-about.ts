@@ -225,7 +225,7 @@ export class AppAbout extends LitElement {
 
       @media (prefers-color-scheme: light) {
         #detailAction h2 {
-          color: white !important;
+          color: black !important;
         }
       }
 
