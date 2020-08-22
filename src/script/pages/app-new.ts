@@ -36,6 +36,15 @@ export class AppNew extends LitElement {
               background: #ffffff69;
           }
 
+          ion-fab {
+            bottom: 64px;
+          }
+
+          ion-fab ion-fab-button {
+            --background: var(--app-color-secondary);
+            --color: white;
+          }
+
           #newEmailActions #newEmailSubActions {
             display: flex;
           }
@@ -96,11 +105,18 @@ export class AppNew extends LitElement {
             width: 82%;
           }
 
+          #attachmentsBlock {
+            position: fixed;
+            width: 100%;
+            bottom: 54px;
+            left: 0;
+            right: 0;
+            padding-bottom: 10px;
+          }
+
           #attachmentsList {
             margin: 0;
             padding: 0;
-            margin-top: 1em;
-            margin-bottom: 4em;
             display: flex;
             overflow-x: scroll;
           }
@@ -126,7 +142,7 @@ export class AppNew extends LitElement {
           #attachedImage img {
             height: 3em;
             object-fit: contain;
-            border-radius: 0 6px 6px 0;
+            border-radius: 6px;
           }
 
           #drawingButton {
@@ -285,55 +301,61 @@ export class AppNew extends LitElement {
         <div>
           <div id="subjectBar">
             <div id="addressBlock">
-              <input class=${classMap({ "contacts": 'contacts' in navigator && 'ContactsManager' in window })} .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip" placeholder="test@email.com">
+              <input class=${classMap({ "contacts" : 'contacts' in navigator && 'ContactsManager' in window })}
+                .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
+                placeholder="test@email.com">
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
             </div>
-
+        
             <input @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject" placeholder="Subject..">
           </div>
-
+        
           <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
-
-          <button id="drawingButton" @click="${() => this.attachDrawing()}">
-            Attach Drawing
-
-            <ion-icon name="pencil-outline"></ion-icon>
-          </button>
-
+        
+          <ion-fab vertical="bottom" horizontal="end">
+            <ion-fab-button>
+              <ion-icon name="attach-outline"></ion-icon>
+            </ion-fab-button>
+        
+            <ion-fab-list side="top">
+              <ion-fab-button @click="${() => this.attachFile()}">
+                <ion-icon name="document-outline"></ion-icon>
+              </ion-fab-button>
+              <ion-fab-button @click="${() => this.attachDrawing()}">
+                <ion-icon name="brush-outline"></ion-icon>
+              </ion-fab-button>
+            </ion-fab-list>
+          </ion-fab>
+        
           <div id="newEmailActions">
             <button @click="${() => this.goBack()}" id="backButton">
               Back
-
+        
               <ion-icon name="chevron-back-outline"></ion-icon>
-             </button>
-
-             <div id="newEmailSubActions">
-
-              <button @click="${() => this.attachFile()}" id="attachButton">
-                Attach File
-
-                <ion-icon name="document-outline"></ion-icon>
-              </button>
-
+            </button>
+        
+            <div id="newEmailSubActions">
+        
               <button @click="${() => this.send()}">
                 Send
-
+        
                 <ion-icon name="mail-outline"></ion-icon>
               </button>
             </div>
           </div>
-
-          ${this.attachments.length > 0 ? html`<h2>Attachments</h2> <ul id="attachmentsList">
-            ${
-              this.attachments.map((attachment: any) => {
-                return html`
-                <div id="attachedImage"><img src=${URL.createObjectURL(attachment)}></div>
-                `
-              })
-            }
-          </ul>` : null }
+        
+          ${this.attachments.length > 0 ? html`<div id="attachmentsBlock">
+            <ul id="attachmentsList">
+              ${this.attachments.map((attachment: any) => {
+    return html`
+              <div id="attachedImage"><img src=${URL.createObjectURL(attachment)}></div>
+              `
+    })
+          }
+            </ul>
+          </div>` : null}
         </div>
-
+        
         <dile-toast id="myToast" duration="3000"></dile-toast>
     `
   }
