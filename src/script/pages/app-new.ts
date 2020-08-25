@@ -68,7 +68,7 @@ export class AppNew extends LitElement {
             margin-right: 12px;
           }
           
-          #backButton {
+          #backButton, #attachButton {
             margin-right: 12px;
             background-color: var(--app-color-secondary) !important;
           }
@@ -168,6 +168,10 @@ export class AppNew extends LitElement {
             font-size: 2em;
           }
 
+          #newEmailActions #attachButton {
+            display: none;
+          }
+
           @media (min-width: 800px) {
             #attachedImage {
               border-radius: 6px;
@@ -176,8 +180,16 @@ export class AppNew extends LitElement {
               bottom: 4em;
             }
 
+            ion-fab {
+              display: none;
+            }
+
+            #newEmailActions #attachButton {
+              display: block;
+            }
+
             #attachedImage img {
-              border-radius: 0 6px 6px 0;
+              border-radius: 6px;
             }
           }
 
@@ -296,12 +308,45 @@ export class AppNew extends LitElement {
     this.attachments = [...this.attachments, data.data.data];
   }
 
+  async presentActionSheet() {
+    const actionSheet: any = document.createElement('ion-action-sheet');
+
+    actionSheet.header = 'Attach';
+    actionSheet.cssClass = 'my-custom-class';
+    actionSheet.buttons = [{
+      text: 'Attach Image',
+      icon: 'image-outline',
+      handler: async () => {
+        await actionSheet.dismiss();
+
+        await this.attachFile();
+      }
+    }, {
+      text: 'Attach Drawing',
+      icon: 'brush-outline',
+      handler: async () => {
+        await actionSheet.dismiss();
+
+        await this.attachDrawing();
+      }
+    }, {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel',
+      handler: () => {
+        console.log('Cancel clicked');
+      }
+    }];
+    document.body.appendChild(actionSheet);
+    return actionSheet.present();
+  }
+
   render() {
     return html`
         <div>
           <div id="subjectBar">
             <div id="addressBlock">
-              <input class=${classMap({ "contacts" : 'contacts' in navigator && 'ContactsManager' in window })}
+              <input class=${classMap({ "contacts": 'contacts' in navigator && 'ContactsManager' in window })}
                 .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
                 placeholder="test@email.com">
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
@@ -319,7 +364,7 @@ export class AppNew extends LitElement {
         
             <ion-fab-list side="top">
               <ion-fab-button @click="${() => this.attachFile()}">
-                <ion-icon name="document-outline"></ion-icon>
+                <ion-icon name="image-outline"></ion-icon>
               </ion-fab-button>
               <ion-fab-button @click="${() => this.attachDrawing()}">
                 <ion-icon name="brush-outline"></ion-icon>
@@ -336,6 +381,12 @@ export class AppNew extends LitElement {
         
             <div id="newEmailSubActions">
         
+              <button @click="${() => this.presentActionSheet()}" id="attachButton">
+                Attach
+        
+                <ion-icon name="attach-outline"></ion-icon>
+              </button>
+        
               <button @click="${() => this.send()}">
                 Send
         
@@ -347,11 +398,11 @@ export class AppNew extends LitElement {
           ${this.attachments.length > 0 ? html`<div id="attachmentsBlock">
             <ul id="attachmentsList">
               ${this.attachments.map((attachment: any) => {
-    return html`
+                return html`
               <div id="attachedImage"><img src=${URL.createObjectURL(attachment)}></div>
               `
-    })
-          }
+              })
+            }
             </ul>
           </div>` : null}
         </div>

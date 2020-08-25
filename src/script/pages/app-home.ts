@@ -60,6 +60,10 @@ export class AppHome extends LitElement {
         padding-bottom: 10px;
         border-radius: 6px;
 
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
         margin-bottom: 10px;
 
         backdrop-filter: blur(10px);
@@ -94,24 +98,25 @@ export class AppHome extends LitElement {
 
 
       @media(min-width: 1000px) {
-        ul {
-          padding-left: 12em;
-          padding-right: 12em;
-        }
-
         #introBlock {
           margin-left: 16em;
           margin-right: 16em;
+        }
+
+        ul {
+          display: grid;
+          grid-gap: 10px;
+          grid-template-columns: 50% 50%;
+          margin-right: 8px;
         }
       }
 
       @media (min-width: 1200px) {
         ul {
           display: grid;
-          padding-left: 14em;
-          padding-right: 14em;
           grid-gap: 10px;
-          grid-template-columns: 50% 50%;
+          grid-template-columns: 25% 25% 25% 25%;
+          margin-right: 28px;
         }
 
         ul li {
@@ -127,6 +132,7 @@ export class AppHome extends LitElement {
           margin-left: 24em;
           margin-right: 24em;
         }
+        
       }
 
       ul li h3 {
@@ -347,12 +353,15 @@ export class AppHome extends LitElement {
         this.mail?.map((email) => {
           return html`
                 <li>
-                  <h3>${email.subject}</h3>
 
-                  <p class="preview">
-                    ${email.bodyPreview}
-                  </p>
+                  <div>
+                    <h3>${email.subject}</h3>
 
+                    <p class="preview">
+                      ${email.bodyPreview}
+                    </p>
+                  </div>
+                
                   <div id="actions">
                     <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
                     <button @click="${() => this.read(email.id)}">Read</button>
