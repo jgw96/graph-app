@@ -12,8 +12,9 @@
   "iarc_rating": "abcd",
   "icons": [
     {
-      "src": "assets/icons/icon_512.png",
-      "sizes": "512x512"
+      "src": "assets/icons/maskable_icon.png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     },
     {
       "src": "assets/icons/icon_256.png",
