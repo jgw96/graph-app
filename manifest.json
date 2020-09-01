@@ -9,6 +9,7 @@
   "background_color": "#686bd2",
   "related_applications": [],
   "prefer_related_applications": false,
+  "iarc_rating": "abcd",
   "icons": [
     {
       "src": "assets/icons/icon_512.png",
@@ -39,6 +40,9 @@
     "Cross Platform",
     "fast",
     "simple"
+  ],
+  "categories": [
+    "productivity"
   ],
   "shortcuts": [
     {
