@@ -5,14 +5,10 @@ export class AppContacts extends LitElement {
 
     static get styles() {
         return css`
-      button {
-        height: 2.6em;
-        width: 2.6em;
-        border-radius: 50%;
+      fast-button {
         border: solid 1px var(--app-color-secondary);
         margin-bottom: 6px;
         background: var(--app-color-secondary);
-        color: white;
       }
     `;
     }
@@ -58,9 +54,9 @@ export class AppContacts extends LitElement {
 
     render() {
       return html`
-        ${'contacts' in navigator && 'ContactsManager' in window ? html`<button @click="${() => this.selectContacts()}">
+        ${'contacts' in navigator && 'ContactsManager' in window ? html`<fast-button @click="${() => this.selectContacts()}">
           <ion-icon name="person-outline"></ion-icon>
-        </button>` : null}
+        </fast-button>` : null}
       `;
     }
 }

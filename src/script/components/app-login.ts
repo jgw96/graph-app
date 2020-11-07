@@ -10,38 +10,14 @@ export class AppLogin extends LitElement {
     static get styles() {
         return css`
           #logoutButton {
-            display: flex;
-            width: initial;
-            justify-content: space-around;
-            align-items: center;
             background-color: transparent;
             border: solid 1px;
             border-color: var(--app-color-secondary);
             color: var(--app-color-secondary);
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 6px;
-            padding-left: 12px;
-            padding-right: 12px;
-            border-radius: 6px;
           }
 
           #loginButton {
-            display: flex;
-            width: initial;
-            justify-content: space-around;
-            align-items: center;
             background-color: var(--app-color-primary);
-            color: white;
-            border: none;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 6px;
-            padding-left: 12px;
-            padding-right: 12px;
-            border-radius: 6px;
           }
         `
     }
@@ -77,7 +53,7 @@ export class AppLogin extends LitElement {
 
     render() {
         return html`
-          ${this.userAccount ? html`<button @click="${() => this.logout()}" id="logoutButton">Logout</button>` : html`<button @click="${() => this.login()}" id="loginButton">Login</button>`}
+          ${this.userAccount ? html`<fast-button @click="${() => this.logout()}" id="logoutButton">Logout</fast-button>` : html`<fast-button @click="${() => this.login()}" id="loginButton">Login with Microsoft</fast-button>`}
         `
     }
 }

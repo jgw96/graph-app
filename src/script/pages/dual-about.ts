@@ -45,7 +45,7 @@ export class DualAbout extends LitElement {
 
       @media(prefers-color-scheme: dark) {
         #detailActions {
-          background: rgb(29 29 29 / 78%);
+          background: #181818;
         }
     }
 

@@ -36,7 +36,9 @@
 
 <body>
   <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
-  <app-index></app-index>
+  <fast-design-system-provider use-defaults>
+    <app-index></app-index>
+  </fast-design-system-provider>
 
   <!-- For more info on the pwa-update component click here https://github.com/pwa-builder/pwa-update -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate"></script>
@@ -44,6 +46,8 @@
 
   <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
+
+  <script type="module" src="https://unpkg.com/@microsoft/fast-components"></script>
 
   <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
   <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>

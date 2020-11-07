@@ -67,7 +67,6 @@ export class AppAbout extends LitElement {
         height: 100%;
 
         overflow-y: auto;
-        border-radius: 10px;
         background: white;
         flex: 2;
       }
@@ -180,10 +179,9 @@ export class AppAbout extends LitElement {
 
       @media (min-width: 800px) {
         #detailBlock {
-          display: flex;
-          justify-content: space-between;
           background: #ffffff8f;
-          backdrop-filter: blur(10px);
+          display: grid;
+          grid-template-columns: minmax(150px, 34%) 1fr;
         }
 
         #detailActions {
@@ -218,6 +216,10 @@ export class AppAbout extends LitElement {
           background: #ffffff69;
         }
 
+        #content {
+          height: 74vh;
+        }
+
         #detailActions div {
           display: flex;
         }
@@ -231,7 +233,7 @@ export class AppAbout extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         #detailBlock {
-          background: #29292987;
+          background: rgb(24 24 24);
           color: white;
         }
 
@@ -334,19 +336,19 @@ export class AppAbout extends LitElement {
 
         <section id="detailAction">
           <div id="detailActions">
-            <button @click="${() => this.back()}" class="back" aria-label="back button">
+            <fast-button @click="${() => this.back()}" class="back" aria-label="back button">
               Back
 
               <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
+            </fast-button>
 
             <div>
 
-              <button @click="${() => this.share()}" aria-label="share button">
+              <fast-button @click="${() => this.share()}" aria-label="share button">
                 Share
 
                 <ion-icon name="share-outline"></ion-icon>
-              </button>
+              </fast-button>
             </div>
           </div>
 
@@ -361,8 +363,8 @@ export class AppAbout extends LitElement {
             <label for="reminder-time">Set a Reminder:</label>
             <input type="datetime-local" id="reminder-time"
                   name="reminder-time" @change="${this.handleDate}" .value="${this.reminderTime}">
-                  <button @click="${() => this.setReminder()}">Set</button>
-                  <button id="cancelButton" @click="${() => this.cancel()}">Cancel</button>
+                  <fast-button @click="${() => this.setReminder()}">Set</fast-button>
+                  <fast-button id="cancelButton" @click="${() => this.cancel()}">Cancel</fast-button>
         </div>` : null}
 
       </div>

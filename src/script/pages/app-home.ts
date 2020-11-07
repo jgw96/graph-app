@@ -1,11 +1,10 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import '@dile/dile-toast/dile-toast';
 import { getMail } from '../services/mail';
-// import { Router } from '@vaadin/router';
+import { Router } from '@vaadin/router';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -14,14 +13,38 @@ export class AppHome extends LitElement {
   @property({ type: Array }) mailCopy: any[] | null = [];
 
   @property({ type: String }) activeCat: string = 'all';
+  @property({ type: Boolean }) loading: boolean = false;
 
   static get styles() {
     return css`
+
+      fast-progress {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 99;
+      }
+
+      #introSpan {
+        font-weight: normal;
+        font-size: 12px;
+        margin-top: 8px;
+        color: #6d6d6d;
+      }
+
+      fast-menu-item {
+        background: #222222;
+        margin-bottom: 8px;
+      }
+
       pwa-install {
         position: fixed;
         bottom: 12px;
         left: 16px;
         --install-button-color: var(--app-color-primary) !important;
+        display: none;
       }
 
       #introBlock {
@@ -97,27 +120,7 @@ export class AppHome extends LitElement {
       }
 
 
-      @media(min-width: 1000px) {
-        #introBlock {
-          margin-left: 16em;
-          margin-right: 16em;
-        }
-
-        ul {
-          display: grid;
-          grid-gap: 10px;
-          grid-template-columns: 50% 50%;
-          margin-right: 8px;
-        }
-      }
-
       @media (min-width: 1200px) {
-        ul {
-          display: grid;
-          grid-gap: 10px;
-          grid-template-columns: 25% 25% 25% 25%;
-          margin-right: 28px;
-        }
 
         ul li {
           display: flex;
@@ -149,16 +152,6 @@ export class AppHome extends LitElement {
       }
 
       #actions button, #homeToolbar button {
-        color: white;
-        border: none;
-        font-weight: bold;
-        font-size: 1em;
-        padding: 6px;
-        border-radius: 6px;
-        width: 5em;
-        cursor: pointer;
-        align-items: center;
-
         background-color: var(--app-color-primary);
       }
 
@@ -187,7 +180,7 @@ export class AppHome extends LitElement {
           backdrop-filter: blur(10px);
           left: 0;
           right: 0;
-          padding: 12px;
+          padding: 8px;
           display: flex;
           justify-content: flex-end;
           background: #ffffff69;
@@ -240,6 +233,65 @@ export class AppHome extends LitElement {
         }
       }
 
+      @media(min-width: 1000px) {
+        #introBlock {
+          margin-left: 16em;
+          margin-right: 16em;
+        }
+
+        #menuActions {
+          display: flex;
+          flex-direction: column;
+        }
+
+        ul {
+          overflow-x: hidden;
+          overflow-y: scroll;
+          height: 86.5vh;
+        }
+
+        ul::-webkit-scrollbar {
+          width: 8px;
+          background: #222222;
+          border-radius: 4px;
+        }
+
+        #homeToolbar {
+          display: none;
+        }
+
+        #mainSection {
+          display: grid;
+          grid-template-columns: minmax(150px, 22%) 1fr;
+        }
+
+        #filterActions {
+          display: flex;
+          flex-direction: column;
+          margin-right: 10px;
+
+          justify-content: space-between;
+          height: 88vh;
+        }
+
+        #desktopNew {
+          background: #686bd2;
+          margin-top: 8px;
+        }
+      }
+
+      @media(min-width: 1300px) {
+        #mainSection {
+          grid-template-columns: minmax(150px, 18%) 1fr;
+        }
+      }
+
+      @media(max-width: 1000px) {
+        #filterActions {
+          display: none;
+        }
+      }
+
       @keyframes slidein {
         from {
           transform: translateY(20px);
@@ -250,11 +302,6 @@ export class AppHome extends LitElement {
           opacity: 1;
         }
       }
-
-      ul {
-        padding: initial;
-        width: 47.2%;
-      }
     `;
   }
 
@@ -263,7 +310,7 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-
+    this.loading = true;
     let mail = sessionStorage.getItem('latestmail');
 
     if (mail) {
@@ -274,6 +321,7 @@ export class AppHome extends LitElement {
     setTimeout(async () => {
 
       await this.getSavedAndUpdate();
+      this.loading = false;
     }, 800);
   }
 
@@ -286,6 +334,8 @@ export class AppHome extends LitElement {
   }
 
   getFocused() {
+    this.loading = true;
+
     let focused: any[] = [];
 
     this.mailCopy?.forEach((mail) => {
@@ -297,9 +347,13 @@ export class AppHome extends LitElement {
     if (focused.length > 1) {
       this.mail = [...focused];
     }
+
+    this.loading = false;
   }
 
   getOther() {
+    this.loading = true;
+
     let other: any[] = [];
 
     this.mailCopy?.forEach((mail) => {
@@ -311,46 +365,24 @@ export class AppHome extends LitElement {
     if (other.length > 1) {
       this.mail = [...other];
     }
+
+    this.loading = false;
   }
 
   async read(id: string) {
-    // Router.go(`/email?id=${id}`);
-
-    console.log(id);
-
-    sessionStorage.setItem('mailId', id);
-
-    const comp: any = await import('./dual-about');
-    console.log(comp);
-
-    const modalElement: any = document.createElement('ion-modal');
-    modalElement.component = 'dual-about';
-    modalElement.cssClass = "dualScreen";
-    modalElement.showBackdrop = false;
-
-    // present the modal
-    document.body.appendChild(modalElement);
-    return modalElement.present();
-
+    Router.go(`/email?id=${id}`);
   }
 
   async newEmail() {
-    // Router.go("/newEmail");
-
-    await import('./dual-new')
-
-    const modalElement: any = document.createElement('ion-modal');
-    modalElement.component = 'dual-new';
-    modalElement.cssClass = "dualScreen";
-    modalElement.showBackdrop = false;
-
-    // present the modal
-    document.body.appendChild(modalElement);
-    return modalElement.present();
+    Router.go("/newEmail");
   }
 
   async refresh() {
+    this.loading = true;
+
     const newMail = await getMail();
+
+    this.loading = false;
 
     this.mail = [...newMail];
 
@@ -376,50 +408,73 @@ export class AppHome extends LitElement {
     return html`
       <div>
 
+      ${this.loading ? html`<fast-progress></fast-progress>` : null}
+
         ${this.mail && this.mail.length > 0 ? html`
-          <div id="filterActions">
-            <button class=${classMap({ "selected": this.activeCat === 'all' })} @click="${() => this.setCat('all')}">All</button>
-            <button class=${classMap({ "selected": this.activeCat === 'focused' })} @click="${() => this.setCat('focused')}">Focused</button>
-            <button class=${classMap({ "selected": this.activeCat === 'other' })} @click="${() => this.setCat('other')}">Other</button>
-          </div>
-        
-        <ul>
-          ${
-        this.mail?.map((email) => {
-          return html`
-                <li>
 
-                  <div>
-                    <h3>${email.subject}</h3>
+          <section id="mainSection">
+            <div id="filterActions">
 
-                    <p class="preview">
-                      ${email.bodyPreview}
-                    </p>
-                  </div>
-                
-                  <div id="actions">
-                    <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
-                    <button @click="${() => this.read(email.id)}">Read</button>
-                  </div>
-                </li>
-              `
-        })}
-        </ul> 
+              <div>
+                <h3>Filters</h3>
+                <fast-menu-item @click="${() => this.setCat('all')}">All</fast-menu-item>
+                <fast-menu-item @click="${() => this.setCat('focused')}">Focused</fast-menu-item>
+                <fast-menu-item @click="${() => this.setCat('other')}">Other</fast-menu-item>
+              </div>
+
+              <div id="menuActions">
+                <fast-button @click="${() => this.refresh()}">
+                  Refresh
+                  <ion-icon name="reload"></ion-icon>
+                </fast-button>
+          
+                <fast-button id="desktopNew" @click="${() => this.newEmail()}">
+                  New Email
+                  <ion-icon name="add"></ion-icon>
+                </fast-button>
+              </div>
+            </div>
+          
+            <ul>
+              ${
+            this.mail?.map((email) => {
+              return html`
+                    <li>
+
+                      <div>
+                        <h3>${email.subject}</h3>
+
+                        <p class="preview">
+                          ${email.bodyPreview}
+                        </p>
+                      </div>
+                    
+                      <div id="actions">
+                        <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
+                        <fast-button @click="${() => this.read(email.id)}">Read</fast-button>
+                      </div>
+                    </li>
+                  `
+            })}
+            </ul> 
+          </section>
 
         <div id="homeToolbar">
-          <button @click="${() => this.refresh()}">
+          <fast-button @click="${() => this.refresh()}">
             Refresh
             <ion-icon name="reload"></ion-icon>
-          </button>
+          </fast-button>
 
-          <button id="newEmailButton" @click="${() => this.newEmail()}">
+          <fast-button id="newEmailButton" @click="${() => this.newEmail()}">
             New Email
             <ion-icon name="add"></ion-icon>
-          </button>
+          </fast-button>
         </div>
         
         ` : html`<div id="introBlock">
-        Sign in to quickly access your latest email and save them for offline use! Powered by the Microsoft Graph.
+        Sign in to quickly access your latest email and save them for offline use!
+
+        <span id="introSpan">Powered by the Microsoft Graph.</span>
 
         <app-login></app-login>
       </div>`}

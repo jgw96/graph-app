@@ -14,37 +14,7 @@ html, body {
   padding: 0;
   margin: 0;
 
-  position: initial !important;
   overflow: auto !important;
-
-  overscroll-behavior-y: initial !important;
-}
-
-.dualScreen {
-  width: 50%;
-  position: absolute;
-  right: 0;
-  left: initial;
-  top: 0;
-  bottom: 0;
-  background: white;
-}
-
-.dualScreen .modal-wrapper {
-  height: 100%;
-}
-
-.modal-wrapper .ion-page {
-  padding-left: 1.4em;
-  padding-top: 1em;
-  padding-right: 6px;
-}
-
-.modal-wrapper dual-about.ion-page {
-  padding-right: initial;
-  padding-top: initial;
-  padding-bottom: initial;
-  padding-left: 1em;
 }
 
 @media (max-width: 600px) {
@@ -53,8 +23,14 @@ html, body {
   }
 }
 
+@media(min-width: 1000px) {
+  html, body {
+    overflow: hidden !important;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
-    background-color: #292929;
+    background-color: #181818;
   }
 }

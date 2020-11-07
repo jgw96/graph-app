@@ -99,9 +99,9 @@ export class AppDrawing extends LitElement {
             <div id="drawingToolbar">
               <h3>Add Drawing</h3>
 
-              <button @click="${() => this.close()}">
+              <fast-button @click="${() => this.close()}">
                 Close
-              </button>
+              </fast-button>
             </div>
 
             <inking-canvas name="myInkingCanvas">
@@ -112,11 +112,11 @@ export class AppDrawing extends LitElement {
               </inking-toolbar>
             </inking-canvas>
 
-            <button id="drawingButton" @click="${() => this.add()}">
+            <fast-button id="drawingButton" @click="${() => this.add()}">
               Add
 
               <ion-icon name="add-outline"></ion-icon>
-            </button>
+            </fast-button>
           </div>
         `;
       }

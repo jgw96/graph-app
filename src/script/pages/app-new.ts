@@ -19,9 +19,61 @@ export class AppNew extends LitElement {
   @property({ type: String }) address: string = '';
 
   @property({ type: Array }) attachments: any = [];
+  @property({ type: Boolean }) loading: boolean = false;
+
+  @property() preview: any = null;
+  @property() previewContent: any = null;
 
   static get styles() {
     return css`
+
+    fast-progress {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+    }
+
+      #previewBlock {
+        background: #181818e8;
+        backdrop-filter: blur(10px);
+        position: absolute;
+        z-index: 999;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+      }
+
+      #preview {
+        background: var(--background-color);
+        position: absolute;
+        top: 8em;
+        z-index: 9999;
+        bottom: 8em;
+        left: 8em;
+        right: 8em;
+        border-radius: 4px;
+
+        padding: 1em 2em;
+      }
+
+      #preview img {
+        max-height: 85%;
+        object-fit: contain;
+        width: 100%;
+      }
+
+      #previewHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1em;
+      }
+
         #newEmailActions {
             position: fixed;
               bottom: 0;
@@ -37,7 +89,7 @@ export class AppNew extends LitElement {
           }
 
           ion-fab {
-            bottom: 64px;
+            bottom: 5em;
           }
 
           ion-fab ion-fab-button {
@@ -68,8 +120,11 @@ export class AppNew extends LitElement {
             margin-right: 12px;
           }
           
-          #backButton, #attachButton {
+          #attachButton {
             margin-right: 12px;
+          }
+
+          #sendButton {
             background-color: var(--app-color-secondary) !important;
           }
 
@@ -108,7 +163,7 @@ export class AppNew extends LitElement {
           #attachmentsBlock {
             position: fixed;
             width: 100%;
-            bottom: 54px;
+            bottom: 60px;
             left: 0;
             right: 0;
             padding-bottom: 10px;
@@ -132,17 +187,22 @@ export class AppNew extends LitElement {
             bottom: 3.4em;
             background: #686bd2;
             color: white;
+            object-fit: contain;
             animation-name: slideinleft;
             animation-duration: 300ms;
             max-height: 3em;
             margin-left: 12px;
-            border-radius: 6px;
+            border-radius: 4px;
           }
 
-          #attachedImage img {
-            height: 3em;
-            object-fit: contain;
-            border-radius: 6px;
+          #attachedDoc {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2b2b2b;
+            padding: 8px;
+            margin-left: 16px;
+            border-radius: 4px;
           }
 
           #drawingButton {
@@ -217,6 +277,8 @@ export class AppNew extends LitElement {
   }
 
   async send() {
+    this.loading = true;
+
     let addresses = this.address.split(",");
     console.log(addresses);
 
@@ -236,6 +298,8 @@ export class AppNew extends LitElement {
       let toastElement: any = this.shadowRoot?.getElementById('myToast');
       await toastElement?.open('Mail Sent...', 'success');
 
+      this.loading = false;
+
       Router.go("/");
     }
     catch (err) {
@@ -243,6 +307,8 @@ export class AppNew extends LitElement {
 
       let toastElement: any = this.shadowRoot?.getElementById('myToast');
       await toastElement?.open('Error sending email', 'error');
+
+      this.loading = false;
     }
   }
 
@@ -287,8 +353,10 @@ export class AppNew extends LitElement {
     const module = await import('browser-nativefs');
 
     const blob = await module.fileOpen({
-      mimeTypes: ['image/*'],
+      mimeTypes: ['image/*', 'text/*'],
     });
+
+    console.log(blob);
 
     this.attachments = [...this.attachments, blob];
   }
@@ -314,8 +382,8 @@ export class AppNew extends LitElement {
     actionSheet.header = 'Attach';
     actionSheet.cssClass = 'my-custom-class';
     actionSheet.buttons = [{
-      text: 'Attach Image',
-      icon: 'image-outline',
+      text: 'Attach File',
+      icon: 'document-outline',
       handler: async () => {
         await actionSheet.dismiss();
 
@@ -341,9 +409,32 @@ export class AppNew extends LitElement {
     return actionSheet.present();
   }
 
+  async openFile(handle: any) {
+    const file = await handle.getFile();
+    console.log(file);
+
+    if (file.type.includes('text')) {
+      this.preview = file;
+      this.previewContent = await file.text();
+    }
+    else {
+      this.preview = file;
+      this.previewContent = URL.createObjectURL(file);
+    }
+
+    console.log(this.preview);
+  }
+
+  close() {
+    this.preview = null;
+    this.previewContent = null;
+  }
+
   render() {
     return html`
         <div>
+        ${this.loading ? html`<fast-progress></fast-progress>` : null}
+
           <div id="subjectBar">
             <div id="addressBlock">
               <input class=${classMap({ "contacts": 'contacts' in navigator && 'ContactsManager' in window })}
@@ -354,6 +445,19 @@ export class AppNew extends LitElement {
         
             <input @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject" placeholder="Subject..">
           </div>
+
+          ${this.preview ? html`<div id="previewBlock">
+            <div id="preview">
+              <div id="previewHeader">
+                <h3>Preview</h3>
+
+                <fast-button @click="${() => this.close()}">
+                  <ion-icon name="close-outline"></ion-icon>
+                </fast-button>
+              </div>
+              ${this.preview.type.includes("text") ? html`<span>${this.previewContent}</span>` : html`<img src="${this.previewContent}">`}
+            </div>
+          </div>` : null}
         
           <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
         
@@ -364,7 +468,7 @@ export class AppNew extends LitElement {
         
             <ion-fab-list side="top">
               <ion-fab-button @click="${() => this.attachFile()}">
-                <ion-icon name="image-outline"></ion-icon>
+                <ion-icon name="document-outline"></ion-icon>
               </ion-fab-button>
               <ion-fab-button @click="${() => this.attachDrawing()}">
                 <ion-icon name="brush-outline"></ion-icon>
@@ -373,34 +477,41 @@ export class AppNew extends LitElement {
           </ion-fab>
         
           <div id="newEmailActions">
-            <button @click="${() => this.goBack()}" id="backButton">
+            <fast-button @click="${() => this.goBack()}" id="backButton">
               Back
         
               <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
+            </fast-button>
         
             <div id="newEmailSubActions">
         
-              <button @click="${() => this.presentActionSheet()}" id="attachButton">
+              <fast-button @click="${() => this.presentActionSheet()}" id="attachButton">
                 Attach
         
                 <ion-icon name="attach-outline"></ion-icon>
-              </button>
+              </fast-button>
         
-              <button @click="${() => this.send()}">
+              <fast-button id="sendButton" @click="${() => this.send()}">
                 Send
         
                 <ion-icon name="mail-outline"></ion-icon>
-              </button>
+              </fast-button>
             </div>
           </div>
         
           ${this.attachments.length > 0 ? html`<div id="attachmentsBlock">
             <ul id="attachmentsList">
               ${this.attachments.map((attachment: any) => {
-                return html`
-              <div id="attachedImage"><img src=${URL.createObjectURL(attachment)}></div>
-              `
+                if (attachment.type.includes('image')) {
+                  return html`
+                    <img @click=${() => this.openFile(attachment.handle)} id="attachedImage" src=${URL.createObjectURL(attachment)}>
+                  `
+                }
+                else {
+                  return html`
+                    <span @click=${() => this.openFile(attachment.handle)} id="attachedDoc">${attachment.name}</span>
+                  `
+                }
               })
             }
             </ul>
