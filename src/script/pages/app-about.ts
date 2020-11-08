@@ -217,7 +217,7 @@ export class AppAbout extends LitElement {
         }
 
         #content {
-          height: 74vh;
+          height: 70vh;
         }
 
         #detailActions div {

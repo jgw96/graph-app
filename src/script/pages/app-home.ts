@@ -310,7 +310,6 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    this.loading = true;
     let mail = sessionStorage.getItem('latestmail');
 
     if (mail) {
@@ -321,12 +320,10 @@ export class AppHome extends LitElement {
     setTimeout(async () => {
 
       await this.getSavedAndUpdate();
-      this.loading = false;
     }, 800);
   }
 
   async getSavedAndUpdate() {
-
     this.mailCopy = await getMail();
     this.mail = this.mailCopy;
 

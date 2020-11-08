@@ -1,7 +1,5 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
-import { classMap } from 'lit-html/directives/class-map';
-
 import '@dile/dile-toast/dile-toast';
 
 import { sendMail } from '../services/mail';
@@ -40,12 +38,15 @@ export class AppNew extends LitElement {
         background: #181818e8;
         backdrop-filter: blur(10px);
         position: absolute;
-        z-index: 999;
+        z-index: 9999;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         overflow: hidden;
+
+        animation-name: fadeIn;
+        animation-duration: 280ms;
       }
 
       #preview {
@@ -59,6 +60,12 @@ export class AppNew extends LitElement {
         border-radius: 4px;
 
         padding: 1em 2em;
+      }
+
+      @media(max-width: 800px) {
+        #preview {
+          inset: 1em;
+        }
       }
 
       #preview img {
@@ -157,7 +164,13 @@ export class AppNew extends LitElement {
           }
 
           #addressBlock #recip.contacts {
-            width: 82%;
+            width: 90%;
+          }
+
+          @media(max-width: 800px) {
+            #addressBlock #recip.contacts {
+              width: 80%;
+            }
           }
 
           #attachmentsBlock {
@@ -261,6 +274,16 @@ export class AppNew extends LitElement {
               h2 {
                 color: white;
               }
+          }
+
+          @keyframes fadeIn {
+            from {
+              opacity: 0.2;
+            }
+        
+            to {
+              opacity: 1;
+            }
           }
 
           @keyframes slideinleft {
@@ -437,7 +460,7 @@ export class AppNew extends LitElement {
 
           <div id="subjectBar">
             <div id="addressBlock">
-              <input class=${classMap({ "contacts": 'contacts' in navigator && 'ContactsManager' in window })}
+              <input class="contacts"
                 .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
                 placeholder="test@email.com">
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
