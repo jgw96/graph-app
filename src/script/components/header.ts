@@ -1,3 +1,4 @@
+import { clear } from 'idb-keyval';
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 
 import '../components/app-login';
@@ -73,6 +74,16 @@ export class AppHeader extends LitElement {
         border-radius: 4px;
 
         padding: 1em 2em;
+      }
+
+      #settingsActions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #settingsActions fast-button {
+        margin-top: 8px;
       }
 
       #settingsButton {
@@ -198,6 +209,11 @@ export class AppHeader extends LitElement {
     }
   }
 
+  async clearStorage() {
+    await clear();
+    localStorage.clear();
+  }
+
   render() {
     return html`
       <header>
@@ -213,11 +229,17 @@ export class AppHeader extends LitElement {
               </fast-button>
             </div>
 
-            <fast-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
-              Update Mail in the Background
-              <span slot="checked-message">On</span>
-              <span slot="unchecked-message">Off</span>
-            </fast-switch>
+            <div id="settingsActions">
+              <fast-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
+                Update Mail in the Background
+                <span slot="checked-message">On</span>
+                <span slot="unchecked-message">Off</span>
+              </fast-switch>
+
+              <fast-button @click="${() => this.clearStorage()}">
+                Clear Storage
+              </fast-button>
+            </div>
           </div>
         </div>` : null}
 

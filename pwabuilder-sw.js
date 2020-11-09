@@ -73,4 +73,4 @@ self.addEventListener('periodicsync', (event) => {
   // Other logic for different tags as needed.
 });
 
-// workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
+workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
