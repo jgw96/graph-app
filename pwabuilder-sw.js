@@ -74,7 +74,7 @@ self.addEventListener('periodicsync', (event) => {
 });
 
 async function shareTargetHandler({ event }) {
-  event.respondWith(Response.redirect("/"));
+  event.respondWith(Response.redirect("/newEmail"));
 
   event.waitUntil(async function () {
     const data = await event.request.formData();
