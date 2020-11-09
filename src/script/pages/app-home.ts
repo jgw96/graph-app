@@ -6,6 +6,8 @@ import '@dile/dile-toast/dile-toast';
 import { getMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
+import { get } from 'idb-keyval';
+
 @customElement('app-home')
 export class AppHome extends LitElement {
 
@@ -310,22 +312,55 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    let mail = sessionStorage.getItem('latestmail');
+    const synced = await this.checkBackgroundSync();
+    console.log('synced', synced);
 
-    if (mail) {
-      this.mailCopy = JSON.parse(mail);
-      this.mail = this.mailCopy;
+    if (synced) {
+      let mail: any = await get('latestMail');
+
+      if (mail) {
+        this.mailCopy = mail;
+        this.mail = mail;
+      }
     }
-    
-    setTimeout(async () => {
+    else {
+      setTimeout(async () => {
+        await this.getSavedAndUpdate();
+      }, 400);
+    }
+  }
 
-      await this.getSavedAndUpdate();
-    }, 800);
+  async checkBackgroundSync() {
+    console.log('checking sync');
+    const registration = await navigator.serviceWorker.getRegistration();
+
+    if (registration) {
+      if ('periodicSync' in registration) {
+        const tags = await (registration as any).periodicSync.getTags();
+        // Only update content if sync isn't set up.
+        if (!tags.includes('mail-sync')) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      } else {
+        // If periodic background sync isn't supported, always update.
+  
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
   }
 
   async getSavedAndUpdate() {
+    console.log('getting mail');
     this.mailCopy = await getMail();
     this.mail = this.mailCopy;
+
+    console.log('this.mail', this.mail);
 
     sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
   }
@@ -433,9 +468,8 @@ export class AppHome extends LitElement {
             </div>
           
             <ul>
-              ${
-            this.mail?.map((email) => {
-              return html`
+              ${this.mail?.map((email) => {
+      return html`
                     <li>
 
                       <div>
@@ -452,7 +486,7 @@ export class AppHome extends LitElement {
                       </div>
                     </li>
                   `
-            })}
+    })}
             </ul> 
           </section>
 

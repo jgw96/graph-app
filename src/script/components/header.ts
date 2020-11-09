@@ -10,6 +10,8 @@ export class AppHeader extends LitElement {
   @property({ type: Object }) user: any = null;
 
   @internalProperty() authed: boolean = false;
+  @internalProperty() openSettings: boolean = false;
+  @internalProperty() checked: boolean | null = false;
 
   static get styles() {
     return css`
@@ -34,6 +36,51 @@ export class AppHeader extends LitElement {
         font-size: 18px;
         font-weight: bold;
         color: var(--app-color-primary);
+      }
+
+      #settingsContainer {
+        background: #181818e8;
+        backdrop-filter: blur(10px);
+        position: absolute;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+
+        height: 100vh;
+
+        animation-name: fadeIn;
+        animation-duration: 280ms;
+      }
+
+      #settingsHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1em;
+      }
+
+      #settingsBlock {
+        background: var(--background-color);
+        position: absolute;
+        top: 8em;
+        z-index: 9999;
+        bottom: 8em;
+        left: 8em;
+        right: 8em;
+        border-radius: 4px;
+
+        padding: 1em 2em;
+      }
+
+      #settingsButton {
+        margin-right: 1em;
+      }
+
+      #settingsButton ion-icon {
+        font-size: 2em;
       }
 
       pwa-auth::part(signInButton), #authName {
@@ -77,6 +124,12 @@ export class AppHeader extends LitElement {
           --color: white;
         }
       }
+
+      @media(max-width: 800px) {
+        #settingsBlock {
+          inset: 0;
+        }
+      }
     `;
   }
 
@@ -84,12 +137,96 @@ export class AppHeader extends LitElement {
     super();
   }
 
+  async firstUpdated() {
+    console.log(this.checked);
+
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration && 'periodicSync' in registration) {
+      const tags = await (registration as any).periodicSync.getTags();
+      // Only update content if sync isn't set up.
+      if (!tags.includes('mail-sync')) {
+        this.checked = false;
+      }
+      else {
+        this.checked = true;
+      }
+    } else {
+      // If periodic background sync isn't supported, always update.
+
+      this.checked = false;
+    }
+  }
+
+  openSettingsModal() {
+    this.openSettings = true;
+  }
+
+  close() {
+    this.openSettings = false;
+  }
+
+  async updateMail(value: boolean) {
+    if (value === true) {
+      const status = await (navigator.permissions as any).query({
+        name: 'periodic-background-sync',
+      });
+      if (status.state === 'granted') {
+        // Periodic background sync can be used.
+
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration && 'periodicSync' in registration) {
+          try {
+            await (registration as any).periodicSync.register('mail-sync', {
+              // An interval of one day.
+              minInterval: 24 * 60 * 60 * 1000,
+            });
+          } catch (error) {
+            // Periodic background sync cannot be used.
+            console.error(error);
+          }
+        }
+      } else {
+        // Periodic background sync cannot be used.
+        console.log("background sync not supported");
+      }
+    }
+    else {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration && 'periodicSync' in registration) {
+        await (registration as any).periodicSync.unregister('mail-sync');
+      }
+    }
+  }
+
   render() {
     return html`
       <header>
         <h1>Offline Mail</h1>
 
-        <app-login></app-login>
+        ${this.openSettings ? html`<div id="settingsContainer">
+          <div id="settingsBlock">
+            <div id="settingsHeader">
+              <h3>Settings</h3>
+
+              <fast-button @click="${() => this.close()}">
+                <ion-icon name="close-outline"></ion-icon>
+              </fast-button>
+            </div>
+
+            <fast-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
+              Update Mail in the Background
+              <span slot="checked-message">On</span>
+              <span slot="unchecked-message">Off</span>
+            </fast-switch>
+          </div>
+        </div>` : null}
+
+        <div id="headerActions">
+          <fast-button @click="${() => this.openSettingsModal()}" id="settingsButton" appearance="lightweight">
+            <ion-icon name="settings-outline"></ion-icon>
+          </fast-button>
+          <app-login></app-login>
+        </div>
       </header>
     `;
   }
