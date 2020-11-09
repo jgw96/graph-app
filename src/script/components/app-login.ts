@@ -27,13 +27,15 @@ export class AppLogin extends LitElement {
     }
 
     async firstUpdated() {
-        setTimeout(async () => {
-            this.userAccount = await getAccount();
-            console.log(this.userAccount);
-        }, 1200);
-
         if (window.location.href.includes("newEmail") && this.userAccount === null) {
             await this.login();
+            this.userAccount = await getAccount();
+        }
+        else {
+            setTimeout(async () => {
+                this.userAccount = await getAccount();
+                console.log(this.userAccount);
+            }, 1200);
         }
     }
 
@@ -57,7 +59,8 @@ export class AppLogin extends LitElement {
 
     render() {
         return html`
-          ${this.userAccount ? html`<fast-button @click="${() => this.logout()}" id="logoutButton">Logout</fast-button>` : html`<fast-button @click="${() => this.login()}" id="loginButton">Login with Microsoft</fast-button>`}
+        ${this.userAccount ? html`<fast-button @click="${() => this.logout()}" id="logoutButton">Logout</fast-button>` : html`
+        <fast-button @click="${() => this.login()}" id="loginButton">Login with Microsoft</fast-button>`}
         `
     }
 }
