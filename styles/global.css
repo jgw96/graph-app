@@ -6,7 +6,7 @@
 :root {
   --app-color-primary: #686bd2;
   --app-color-secondary: #ff0076;
-  --font-family: sans-serif;
+  --font-family: system-ui;
 }
 
 html, body {
@@ -15,6 +15,14 @@ html, body {
   margin: 0;
 
   overflow: auto !important;
+}
+
+fast-design-system-provider {
+  --accent-foreground-rest: var(--app-color-primary);
+  --accent-foreground-hover: #474ad2;
+  --accent-fill-rest: var(--app-color-primary);
+  --accent-fill-hover: #474ad2;
+  --body-font: var(--font-family);
 }
 
 @media (max-width: 600px) {

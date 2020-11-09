@@ -12,8 +12,8 @@ export class AppLogin extends LitElement {
           #logoutButton {
             background-color: transparent;
             border: solid 1px;
-            border-color: var(--app-color-secondary);
-            color: var(--app-color-secondary);
+            border-color: var(--app-color-primary);
+            color: var(--app-color-primary);
           }
 
           #loginButton {

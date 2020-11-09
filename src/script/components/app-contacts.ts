@@ -23,12 +23,6 @@ export class AppContacts extends LitElement {
         color: #6d6d6d;
       }
 
-      fast-button {
-        border: solid 1px var(--app-color-secondary);
-        margin-bottom: 6px;
-        background: var(--app-color-secondary);
-      }
-
       #contactsHeader {
         display: flex;
         align-items: center;
@@ -40,7 +34,7 @@ export class AppContacts extends LitElement {
         background: #181818e8;
         backdrop-filter: blur(10px);
         position: absolute;
-        z-index: 999;
+        z-index: 9999;
         top: 0;
         left: 0;
         right: 0;
@@ -89,6 +83,19 @@ export class AppContacts extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+      }
+
+      #contactsList ul fast-button {
+        height: 2em;
+        border: solid 1px var(--app-color-primary);
+        margin-bottom: 6px;
+        background: var(--app-color-primary);
+      }
+
+      #contactsButton {
+        border: solid 1px var(--app-color-primary);
+        margin-bottom: 6px;
+        background: var(--app-color-primary);
       }
 
       @keyframes fadeIn {
@@ -160,7 +167,7 @@ export class AppContacts extends LitElement {
 
   render() {
     return html`
-        <fast-button @click="${() => this.selectContacts()}">
+        <fast-button id="contactsButton" @click="${() => this.selectContacts()}">
           <ion-icon name="person-outline"></ion-icon>
         </fast-button>
 
