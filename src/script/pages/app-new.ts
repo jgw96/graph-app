@@ -141,15 +141,18 @@ export class AppNew extends LitElement {
             margin-bottom: 10px;
           }
 
-          textarea {
+          fast-text-area {
             height: 60vh;
             width: 100%;
           }
 
-          #subjectBar input {
-            border: solid 2px var(--app-color-primary);
-            border-radius: 6px;
-            padding: 8px;
+          fast-text-area::part(control) {
+            height: 60vh;
+            width: 100%;
+            overflow: hidden;
+          }
+
+          #subjectBar fast-text-field {
             margin-bottom: 6px;
           }
 
@@ -460,13 +463,13 @@ export class AppNew extends LitElement {
 
           <div id="subjectBar">
             <div id="addressBlock">
-              <input class="contacts"
+              <fast-text-field class="contacts"
                 .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
-                placeholder="test@email.com">
+                placeholder="test@email.com"></fast-text-field>
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
             </div>
         
-            <input @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject" placeholder="Subject..">
+            <fast-text-field @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject" placeholder="Subject.."></fast-text-field>
           </div>
 
           ${this.preview ? html`<div id="previewBlock">
@@ -482,7 +485,7 @@ export class AppNew extends LitElement {
             </div>
           </div>` : null}
         
-          <textarea @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></textarea>
+          <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></fast-text-area>
         
           <ion-fab vertical="bottom" horizontal="end">
             <ion-fab-button>

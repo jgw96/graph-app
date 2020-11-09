@@ -6,7 +6,7 @@ import '@dile/dile-toast/dile-toast';
 import { getMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
-import { get } from 'idb-keyval';
+import { get, set } from 'idb-keyval';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -312,21 +312,20 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
+    let mail: any = await get('latestMail');
+
+    if (mail) {
+      this.mailCopy = mail;
+      this.mail = mail;
+    }
+
     const synced = await this.checkBackgroundSync();
     console.log('synced', synced);
 
-    if (synced) {
-      let mail: any = await get('latestMail');
-
-      if (mail) {
-        this.mailCopy = mail;
-        this.mail = mail;
-      }
-    }
-    else {
+    if (!synced) {
       setTimeout(async () => {
         await this.getSavedAndUpdate();
-      }, 400);
+      }, 800);
     }
   }
 
@@ -346,7 +345,7 @@ export class AppHome extends LitElement {
         }
       } else {
         // If periodic background sync isn't supported, always update.
-  
+
         return false;
       }
     }
@@ -363,6 +362,7 @@ export class AppHome extends LitElement {
     console.log('this.mail', this.mail);
 
     sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
+    await set('latestMail', this.mail)
   }
 
   getFocused() {
@@ -439,79 +439,79 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <div>
-
-      ${this.loading ? html`<fast-progress></fast-progress>` : null}
-
+      
+        ${this.loading ? html`<fast-progress></fast-progress>` : null}
+      
         ${this.mail && this.mail.length > 0 ? html`
-
-          <section id="mainSection">
-            <div id="filterActions">
-
-              <div>
-                <h3>Filters</h3>
-                <fast-menu-item @click="${() => this.setCat('all')}">All</fast-menu-item>
-                <fast-menu-item @click="${() => this.setCat('focused')}">Focused</fast-menu-item>
-                <fast-menu-item @click="${() => this.setCat('other')}">Other</fast-menu-item>
-              </div>
-
-              <div id="menuActions">
-                <fast-button @click="${() => this.refresh()}">
-                  Refresh
-                  <ion-icon name="reload"></ion-icon>
-                </fast-button>
-          
-                <fast-button id="desktopNew" @click="${() => this.newEmail()}">
-                  New Email
-                  <ion-icon name="add"></ion-icon>
-                </fast-button>
-              </div>
+      
+        <section id="mainSection">
+          <div id="filterActions">
+      
+            <div>
+              <h3>Filters</h3>
+              <fast-menu-item @click="${() => this.setCat('all')}">All</fast-menu-item>
+              <fast-menu-item @click="${() => this.setCat('focused')}">Focused</fast-menu-item>
+              <fast-menu-item @click="${() => this.setCat('other')}">Other</fast-menu-item>
             </div>
-          
-            <ul>
-              ${this.mail?.map((email) => {
+      
+            <div id="menuActions">
+              <fast-button @click="${() => this.refresh()}">
+                Refresh
+                <ion-icon name="reload"></ion-icon>
+              </fast-button>
+      
+              <fast-button id="desktopNew" @click="${() => this.newEmail()}">
+                New Email
+                <ion-icon name="add"></ion-icon>
+              </fast-button>
+            </div>
+          </div>
+      
+          <ul>
+            ${this.mail?.map((email) => {
       return html`
-                    <li>
-
-                      <div>
-                        <h3>${email.subject}</h3>
-
-                        <p class="preview">
-                          ${email.bodyPreview}
-                        </p>
-                      </div>
-                    
-                      <div id="actions">
-                        <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
-                        <fast-button @click="${() => this.read(email.id)}">Read</fast-button>
-                      </div>
-                    </li>
-                  `
+            <li>
+      
+              <div>
+                <h3>${email.subject}</h3>
+      
+                <p class="preview">
+                  ${email.bodyPreview}
+                </p>
+              </div>
+      
+              <div id="actions">
+                <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
+                <fast-button @click="${() => this.read(email.id)}">Read</fast-button>
+              </div>
+            </li>
+            `
     })}
-            </ul> 
-          </section>
-
+          </ul>
+        </section>
+      
         <div id="homeToolbar">
           <fast-button @click="${() => this.refresh()}">
             Refresh
             <ion-icon name="reload"></ion-icon>
           </fast-button>
-
+      
           <fast-button id="newEmailButton" @click="${() => this.newEmail()}">
             New Email
             <ion-icon name="add"></ion-icon>
           </fast-button>
         </div>
-        
+      
         ` : html`<div id="introBlock">
-        Sign in to quickly access your latest email and save them for offline use!
-
-        <span id="introSpan">Powered by the Microsoft Graph.</span>
-
-        <app-login></app-login>
-      </div>`}
-
+          Sign in to quickly access your latest email and save them for offline use!
+      
+          <span id="introSpan">Powered by the Microsoft Graph.</span>
+      
+          <app-login></app-login>
+        </div>`}
+      
         <pwa-install>Install Offline Mail</pwa-install>
-
+      
         <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>
 
