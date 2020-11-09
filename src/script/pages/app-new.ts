@@ -302,6 +302,56 @@ export class AppNew extends LitElement {
         `
   }
 
+  async firstUpdated() {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      console.log('file event', event);
+      console.log('file event data', event.data);
+      const imageBlob = event.data.file;
+
+      if (imageBlob) {
+        this.attachments = [...this.attachments, imageBlob];
+      }
+    });
+  }
+
+  async fileHandler() {
+    if ('launchQueue' in window) {
+      (window as any).launchQueue.setConsumer(async (launchParams: any) => {
+        if (!launchParams.files.length) {
+          return;
+        }
+
+
+        const fileHandle = launchParams.files[0];
+        console.log('fileHandle', fileHandle);
+
+        const existingPerm = await fileHandle.queryPermission({
+          writable: false
+        });
+
+        if (existingPerm === "granted") {
+          const blob = await fileHandle.getFile();
+
+          this.attachments = [...this.attachments, blob];
+        }
+        else {
+          const request = await fileHandle.requestPermission({
+            writable: false
+          })
+
+          if (request === "granted") {
+            const blob = await fileHandle.getFile();
+            console.log(blob);
+
+            this.attachments = [...this.attachments, blob];
+          }
+        }
+
+        // this.handleRecent(fileHandle);
+      });
+    }
+  }
+
   async send() {
     this.loading = true;
 
@@ -459,33 +509,36 @@ export class AppNew extends LitElement {
   render() {
     return html`
         <div>
-        ${this.loading ? html`<fast-progress></fast-progress>` : null}
-
+          ${this.loading ? html`<fast-progress></fast-progress>` : null}
+        
           <div id="subjectBar">
             <div id="addressBlock">
-              <fast-text-field class="contacts"
-                .value="${this.address}" @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
+              <fast-text-field class="contacts" .value="${this.address}"
+                @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
                 placeholder="test@email.com"></fast-text-field>
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
             </div>
         
-            <fast-text-field @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject" placeholder="Subject.."></fast-text-field>
+            <fast-text-field @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject"
+              placeholder="Subject.."></fast-text-field>
           </div>
-
+        
           ${this.preview ? html`<div id="previewBlock">
             <div id="preview">
               <div id="previewHeader">
                 <h3>Preview</h3>
-
+        
                 <fast-button @click="${() => this.close()}">
                   <ion-icon name="close-outline"></ion-icon>
                 </fast-button>
               </div>
-              ${this.preview.type.includes("text") ? html`<span>${this.previewContent}</span>` : html`<img src="${this.previewContent}">`}
+              ${this.preview.type.includes("text") ? html`<span>${this.previewContent}</span>` : html`<img
+                src="${this.previewContent}">`}
             </div>
           </div>` : null}
         
-          <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email..."></fast-text-area>
+          <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email...">
+          </fast-text-area>
         
           <ion-fab vertical="bottom" horizontal="end">
             <ion-fab-button>
@@ -528,18 +581,18 @@ export class AppNew extends LitElement {
           ${this.attachments.length > 0 ? html`<div id="attachmentsBlock">
             <ul id="attachmentsList">
               ${this.attachments.map((attachment: any) => {
-                if (attachment.type.includes('image')) {
-                  return html`
-                    <img @click=${() => this.openFile(attachment.handle)} id="attachedImage" src=${URL.createObjectURL(attachment)}>
-                  `
-                }
-                else {
-                  return html`
-                    <span @click=${() => this.openFile(attachment.handle)} id="attachedDoc">${attachment.name}</span>
-                  `
-                }
-              })
-            }
+    if (attachment.type.includes('image')) {
+    return html`
+              <img @click=${()=> this.openFile(attachment.handle)} id="attachedImage" src=${URL.createObjectURL(attachment)}>
+              `
+    }
+    else {
+    return html`
+              <span @click=${()=> this.openFile(attachment.handle)} id="attachedDoc">${attachment.name}</span>
+              `
+    }
+    })
+          }
             </ul>
           </div>` : null}
         </div>

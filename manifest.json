@@ -53,5 +53,39 @@
       "url": "/newEmail",
       "icons": [{ "src": "assets/icons/mail-outline.png", "sizes": "48x48" }]
     }
-  ]
+  ],
+  "file_handlers": [
+    {
+      "action": "/newEmail",
+      "accept": {
+        "image/*": [
+          ".png",
+          ".jpg"
+        ],
+        "text/*": [
+          ".txt"
+        ]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/attach/file/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/jpeg",
+            ".png",
+            ".jpg",
+            ".txt"
+          ]
+        }
+      ]
+    }
+  }
 }
