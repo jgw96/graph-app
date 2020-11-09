@@ -132,7 +132,7 @@ export class AppNew extends LitElement {
           }
 
           #sendButton {
-            background-color: var(--app-color-secondary) !important;
+            background: rgb(104, 107, 210);
           }
 
           #subjectBar {

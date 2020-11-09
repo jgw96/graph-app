@@ -8,6 +8,21 @@ export class AppContacts extends LitElement {
 
   static get styles() {
     return css`
+
+      .contactInfo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .contactInfo .displayName {
+        font-weight: bold;
+      }
+
+      .contactInfo .displayEmail {
+        color: #6d6d6d;
+      }
+
       fast-button {
         border: solid 1px var(--app-color-secondary);
         margin-bottom: 6px;
@@ -55,7 +70,13 @@ export class AppContacts extends LitElement {
         list-style: none;
 
         overflow: auto;
-        max-height: 25em;
+        max-height: 52vh;
+      }
+
+      #contactsList ul::-webkit-scrollbar {
+        width: 8px;
+        background: #222222;
+        border-radius: 4px;
       }
 
       #contactsList fast-menu-item {
@@ -155,7 +176,10 @@ export class AppContacts extends LitElement {
               ${this.graphContacts.map((contact) => {
       return html`
                     <fast-menu-item>
-                      ${contact.displayName}
+                      <div class="contactInfo">
+                        <span class="displayName">${contact.displayName}</span>
+                        <span class="displayEmail">Address: ${contact.emailAddresses[0].address}</span>
+                      </div>
 
                       <fast-button @click="${() => this.handleResults([contact])}">Select</fast-button>
                     </fast-menu-item>
