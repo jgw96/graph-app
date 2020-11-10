@@ -15,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@azure/functions": "^1.2.2",
-    "@azure/msal-browser": "^2.0.0",
+    "@azure/msal-browser": "^2.6.1",
     "@dile/dile-toast": "^1.0.0",
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "@pwabuilder/pwa-inking": "^1.0.3",

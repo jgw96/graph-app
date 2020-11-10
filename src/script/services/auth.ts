@@ -65,26 +65,32 @@ export async function getToken() {
         if (username) {
             const currentAccount = msalInstance.getAccountByUsername(username);
             console.log('current', currentAccount);
-            const silentRequest = {
+            const silentRequest: any = {
                 scopes: ['user.read', 'people.read', 'mail.read', 'mail.send'],
                 account: currentAccount,
                 forceRefresh: false
             };
 
-            const request = {
-                scopes: ['user.read', 'people.read', 'mail.read', 'mail.send'],
-                loginHint: currentAccount.username, // For v1 endpoints, use upn from idToken claims
-            };
+            let request: any = null;
 
-            msalInstance.acquireTokenSilent(silentRequest).then((tokenResponse: any) => {
-                // Do something with the tokenResponse
-                console.log(tokenResponse);
-                resolve(tokenResponse.accessToken);
-            }).catch(async (error: any) => {
-                console.error(error);
-                const tokenResponse: any = await msalInstance.acquireTokenRedirect(request)
-                resolve(tokenResponse.accessToken);
-            });
+            if (currentAccount) {
+                request = {
+                    scopes: ['user.read', 'people.read', 'mail.read', 'mail.send'],
+                    loginHint: currentAccount.username, // For v1 endpoints, use upn from idToken claims
+                };
+            }
+
+            if (silentRequest) {
+                msalInstance.acquireTokenSilent(silentRequest).then((tokenResponse: any) => {
+                    // Do something with the tokenResponse
+                    console.log(tokenResponse);
+                    resolve(tokenResponse.accessToken);
+                }).catch(async (error: any) => {
+                    console.error(error);
+                    const tokenResponse: any = await msalInstance.acquireTokenRedirect(request)
+                    resolve(tokenResponse.accessToken);
+                });
+            }
         }
 
     });
