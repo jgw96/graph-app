@@ -7,6 +7,7 @@ import { Router } from '@vaadin/router';
 
 import '../components/app-contacts';
 import '../components/app-drawing';
+import { del, get, set } from 'idb-keyval';
 
 
 @customElement('app-new')
@@ -303,10 +304,20 @@ export class AppNew extends LitElement {
   }
 
   async firstUpdated() {
-    navigator.serviceWorker.addEventListener('message', (event) => {
+    const tempAttach = await get('attachment');
+
+    if (tempAttach) {
+      this.attachments = [...this.attachments, tempAttach];
+    }
+
+    await this.fileHandler();
+
+    navigator.serviceWorker.addEventListener('message', async (event) => {
       console.log('file event', event);
       console.log('file event data', event.data);
       const imageBlob = event.data.file;
+
+      await set('attachment', imageBlob);
 
       if (imageBlob) {
         this.attachments = [...this.attachments, imageBlob];
@@ -331,6 +342,7 @@ export class AppNew extends LitElement {
 
         if (existingPerm === "granted") {
           const blob = await fileHandle.getFile();
+          await set('attachment', blob);
 
           this.attachments = [...this.attachments, blob];
         }
@@ -341,6 +353,7 @@ export class AppNew extends LitElement {
 
           if (request === "granted") {
             const blob = await fileHandle.getFile();
+            await set('attachment', blob);
             console.log(blob);
 
             this.attachments = [...this.attachments, blob];
@@ -506,6 +519,12 @@ export class AppNew extends LitElement {
     this.previewContent = null;
   }
 
+  async disconnectedCallback() {
+    super.disconnectedCallback();
+
+    await del("attachment");
+  }
+
   render() {
     return html`
         <div>
@@ -513,7 +532,7 @@ export class AppNew extends LitElement {
         
           <div id="subjectBar">
             <div id="addressBlock">
-              <fast-text-field class="contacts" .value="${this.address}"
+              To: <fast-text-field class="contacts" .value="${this.address}"
                 @change="${(event: CustomEvent) => this.updateAddress(event)}" type="text" id="recip"
                 placeholder="test@email.com"></fast-text-field>
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
