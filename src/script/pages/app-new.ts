@@ -376,7 +376,7 @@ export class AppNew extends LitElement {
 
       this.loading = false;
 
-      Router.go("/");
+      // Router.go("/");
     }
     catch (err) {
       console.error(err);
@@ -540,7 +540,7 @@ export class AppNew extends LitElement {
           <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email...">
           </fast-text-area>
         
-          <ion-fab vertical="bottom" horizontal="end">
+          ${this.attachments.length === 0 ? html`<ion-fab vertical="bottom" horizontal="end">
             <ion-fab-button>
               <ion-icon name="attach-outline"></ion-icon>
             </ion-fab-button>
@@ -553,7 +553,7 @@ export class AppNew extends LitElement {
                 <ion-icon name="brush-outline"></ion-icon>
               </ion-fab-button>
             </ion-fab-list>
-          </ion-fab>
+          </ion-fab>` : null}
         
           <div id="newEmailActions">
             <fast-button @click="${() => this.goBack()}" id="backButton">
@@ -564,11 +564,11 @@ export class AppNew extends LitElement {
         
             <div id="newEmailSubActions">
         
-              <fast-button @click="${() => this.presentActionSheet()}" id="attachButton">
+            ${this.attachments.length === 0 ? html`<fast-button @click="${() => this.presentActionSheet()}" id="attachButton">
                 Attach
         
                 <ion-icon name="attach-outline"></ion-icon>
-              </fast-button>
+              </fast-button>` : null}
         
               <fast-button id="sendButton" @click="${() => this.send()}">
                 Send

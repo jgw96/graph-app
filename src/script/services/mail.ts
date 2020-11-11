@@ -1,4 +1,3 @@
-
 import { getToken } from '../services/auth';
 
 
@@ -71,34 +70,41 @@ export async function getAnEmail(id: string) {
 
 }
 
+const processAttachments = async (attachments: any[]) => {
+
+  return new Promise((resolve) => {
+    let attachToSend: any[] = [];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(attachments[0]);
+    reader.onloadend = async () => {
+      let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
+
+      let attachFile = {
+        "@odata.type": "#microsoft.graph.fileAttachment",
+        "name": attachments[0].name,
+        "contentType": attachments[0].type,
+        "contentBytes": base64String
+      };
+
+      attachToSend.push(attachFile);
+
+      resolve(attachToSend);
+
+    }
+  });
+}
+
 export async function sendMail(subject: string, body: string, recipients: any[], attachments: File[]) {
   let sendMail: any = null;
 
   if (attachments) {
     console.log('attachments', attachments);
 
-    let attachToSend: any[] = [];
+    const stuffToSend = await processAttachments(attachments);
 
-    attachments.forEach((attachment) => {
-
-      const reader = new FileReader();
-
-      reader.readAsDataURL(attachment);
-      reader.onloadend = async () => {
-        let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
-
-        let attachFile = {
-          "@odata.type": "#microsoft.graph.fileAttachment",
-          "name": attachment.name,
-          "contentBytes": base64String
-        };
-
-        attachToSend.push(attachFile);
-
-        console.log(attachFile);
-
-      }
-    })
+    console.log('stuffToSend', stuffToSend);
 
     sendMail = {
       "message": {
@@ -107,9 +113,8 @@ export async function sendMail(subject: string, body: string, recipients: any[],
           "contentType": "Text",
           "content": body
         },
-        "toRecipients":
-          recipients,
-        "attachments": attachToSend
+        "toRecipients": recipients,
+        "attachments": stuffToSend,
       },
       "saveToSentItems": "true"
     };
@@ -133,7 +138,6 @@ export async function sendMail(subject: string, body: string, recipients: any[],
 
       try {
         await fetch(graphEndpoint, options);
-
 
       }
       catch (err) {
