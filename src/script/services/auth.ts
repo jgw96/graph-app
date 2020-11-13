@@ -1,10 +1,12 @@
 import * as msal from "@azure/msal-browser";
 import { set } from "idb-keyval";
 
+const scopes = ['user.read', 'people.read', "Mail.ReadWrite", 'mail.send']
+
 const msalConfig = {
     auth: {
         clientId: '2d508361-d68e-4da6-8ef1-e36bd3404d57',
-        scopes: ['user.read', 'people.read', 'mail.read', 'mail.send']
+        scopes
     }
 };
 
@@ -41,7 +43,7 @@ export function getAccount() {
 export async function login() {
     try {
         await msalInstance.loginRedirect({
-            scopes: ['user.read', 'people.read', 'mail.read', 'mail.send']
+            scopes
         });
     } catch (err) {
         // handle error
@@ -66,7 +68,7 @@ export async function getToken() {
             const currentAccount = msalInstance.getAccountByUsername(username);
             console.log('current', currentAccount);
             const silentRequest: any = {
-                scopes: ['user.read', 'people.read', 'mail.read', 'mail.send'],
+                scopes,
                 account: currentAccount,
                 forceRefresh: false
             };
@@ -75,7 +77,7 @@ export async function getToken() {
 
             if (currentAccount) {
                 request = {
-                    scopes: ['user.read', 'people.read', 'mail.read', 'mail.send'],
+                    scopes,
                     loginHint: currentAccount.username, // For v1 endpoints, use upn from idToken claims
                 };
             }

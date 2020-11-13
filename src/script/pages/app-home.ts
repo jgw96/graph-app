@@ -3,7 +3,7 @@ import { LitElement, css, html, customElement, property } from 'lit-element';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import '@dile/dile-toast/dile-toast';
-import { getMail } from '../services/mail';
+import { flagEmail, getMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
 import { get, set } from 'idb-keyval';
@@ -19,6 +19,10 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return css`
+
+      .readButton {
+        background: var(--app-color-primary);
+      }
 
       fast-progress {
         position: absolute;
@@ -144,6 +148,11 @@ export class AppHome extends LitElement {
         margin-bottom: 5px;
         font-size: 16px;
         margin-top: 10px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 16em;
       }
 
       #actions {
@@ -170,6 +179,12 @@ export class AppHome extends LitElement {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 14px;
+      }
+
+      .emailHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
       ul li #name {
@@ -436,6 +451,22 @@ export class AppHome extends LitElement {
     }
   }
 
+  async bookmark(email: any) {
+    console.log(email);
+
+    try {
+      await flagEmail(email);
+
+      let toastElement: any = this.shadowRoot?.getElementById('myToast');
+      toastElement?.open('Email Flagged', 'success');
+
+      setTimeout(async () => {await this.refresh()}, 200);
+    }
+    catch (err) {
+      console.error(err);
+    }
+  }
+
   render() {
     return html`
       <div>
@@ -473,7 +504,10 @@ export class AppHome extends LitElement {
             <li>
       
               <div>
-                <h3>${email.subject}</h3>
+                <div class="emailHeader"> 
+                  <h3>${email.subject}</h3>
+                  ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}" appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon></fast-button>` : null}
+                </div>
       
                 <p class="preview">
                   ${email.bodyPreview}
@@ -482,7 +516,11 @@ export class AppHome extends LitElement {
       
               <div id="actions">
                 <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
-                <fast-button @click="${() => this.read(email.id)}">Read</fast-button>
+
+                <div>
+                  ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}"><ion-icon name="flag-outline"></ion-icon></fast-button>` : null }
+                  <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
+                </div>
               </div>
             </li>
             `

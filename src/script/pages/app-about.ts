@@ -20,6 +20,10 @@ export class AppAbout extends LitElement {
         background-color: var(--app-color-secondary);
       }
 
+      .detailActionButton {
+        margin-right: 8px;
+      }
+
       #detailAction {
         flex: 1;
       }
@@ -34,6 +38,19 @@ export class AppAbout extends LitElement {
         justify-content: space-between;
         animation-name: slidein;
         animation-duration: 380ms;
+      }
+
+      #detailMoreActions {
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 1em;
+        position: fixed;
+        bottom: 14px;
+        left: 14px;
+        width: 30vw;
+        background: #222222;
+        padding: 10px;
+        border-radius: 8px;
       }
 
       #detailActions div {
@@ -95,21 +112,14 @@ export class AppAbout extends LitElement {
         animation-duration: 300ms;
       }
 
-      #reminder button {
+      #reminder fast-button {
         margin-top: 2em;
-        padding: 8px;
-        background: white;
-        border: none;
-        color: var(--app-color-primary);
-        font-weight: bold;
-        border-radius: 6px;
-        font-size: 18px;
-        cursor: pointer;
+        background: var(--app-color-primary);
       }
 
-      #reminder button#cancelButton {
+      #reminder fast-button#cancelButton {
         margin-top: 12px;
-        color: red;
+        background: red;
       }
 
       #reminder input {
@@ -203,6 +213,13 @@ export class AppAbout extends LitElement {
         }
       }
 
+      @media(min-width: 1300px) {
+        #reminder {
+          left: 28em;
+          right: 28em;
+        }
+      }
+
       @media (max-width: 800px) {
         #detailActions {
           position: fixed;
@@ -222,6 +239,14 @@ export class AppAbout extends LitElement {
 
         #detailActions div {
           display: flex;
+        }
+
+        #detailMoreActions {
+          left: initial;
+          right: 4px;
+          bottom: 0px;
+          background: transparent;
+          width: 14em;
         }
       }
 
@@ -333,40 +358,47 @@ export class AppAbout extends LitElement {
   render() {
     return html`
       <div id="detailBlock">
-
+      
         <section id="detailAction">
           <div id="detailActions">
             <fast-button @click="${() => this.back()}" class="back" aria-label="back button">
               Back
-
+      
               <ion-icon name="chevron-back-outline"></ion-icon>
             </fast-button>
-
-            <div>
-
-              <fast-button @click="${() => this.share()}" aria-label="share button">
-                Share
-
-                <ion-icon name="share-outline"></ion-icon>
-              </fast-button>
-            </div>
           </div>
-
+      
           <h2>${this.email?.subject}</h2>
+      
+          <div id="detailMoreActions">
+      
+            ${"showTrigger" in Notification.prototype ? html`<fast-button class="detailActionButton"
+              @click="${() => this.setupReminder()}">
+              Set Reminder
+      
+              <ion-icon name="notifications-circle-outline"></ion-icon>
+            </fast-button>` : null}
+      
+            <fast-button @click="${() => this.share()}" aria-label="share button">
+              Share
+      
+              <ion-icon name="share-outline"></ion-icon>
+            </fast-button>
+          </div>
         </section>
-
+      
         ${this.email ? html`<div id="content">
           <iframe .srcdoc="${this.email?.body.content}"></iframe>
-      </div>` : html`<div id="loading"></div>`}
-
+        </div>` : html`<div id="loading"></div>`}
+      
         ${this.showReminder ? html`<div id="reminder">
-            <label for="reminder-time">Set a Reminder:</label>
-            <input type="datetime-local" id="reminder-time"
-                  name="reminder-time" @change="${this.handleDate}" .value="${this.reminderTime}">
-                  <fast-button @click="${() => this.setReminder()}">Set</fast-button>
-                  <fast-button id="cancelButton" @click="${() => this.cancel()}">Cancel</fast-button>
+          <label for="reminder-time">Set a Reminder:</label>
+          <input type="datetime-local" id="reminder-time" name="reminder-time" @change="${this.handleDate}"
+            .value="${this.reminderTime}">
+          <fast-button @click="${() => this.setReminder()}">Set</fast-button>
+          <fast-button id="cancelButton" @click="${() => this.cancel()}">Cancel</fast-button>
         </div>` : null}
-
+      
       </div>
     `;
   }

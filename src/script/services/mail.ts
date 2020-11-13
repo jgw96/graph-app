@@ -70,28 +70,63 @@ export async function getAnEmail(id: string) {
 
 }
 
+export async function flagEmail (email: any) {
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+  
+  const options = {
+    method: "PATCH",
+    headers: headers,
+    body: JSON.stringify({
+      flag: {
+        flagStatus: "flagged"
+      }
+    })
+  };
+  const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${email.id}`;
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  console.log(data);
+
+  return data;
+}
+
 const processAttachments = async (attachments: any[]) => {
 
   return new Promise((resolve) => {
     let attachToSend: any[] = [];
 
-    const reader = new FileReader();
+    const attachment = attachments[0];
 
-    reader.readAsDataURL(attachments[0]);
-    reader.onloadend = async () => {
-      let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
+    if (attachment) {
+      const reader = new FileReader();
 
-      let attachFile = {
-        "@odata.type": "#microsoft.graph.fileAttachment",
-        "name": attachments[0].name,
-        "contentType": attachments[0].type,
-        "contentBytes": base64String
-      };
+      reader.readAsDataURL(attachments[0]);
+      reader.onloadend = async () => {
+        let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
 
-      attachToSend.push(attachFile);
+        let attachFile = {
+          "@odata.type": "#microsoft.graph.fileAttachment",
+          "name": attachments[0].name,
+          "contentType": attachments[0].type,
+          "contentBytes": base64String
+        };
 
-      resolve(attachToSend);
+        attachToSend.push(attachFile);
 
+        resolve(attachToSend);
+
+      }
+    }
+    else {
+      resolve(null)
     }
   });
 }
@@ -106,18 +141,33 @@ export async function sendMail(subject: string, body: string, recipients: any[],
 
     console.log('stuffToSend', stuffToSend);
 
-    sendMail = {
-      "message": {
-        "subject": subject,
-        "body": {
-          "contentType": "Text",
-          "content": body
+    if (stuffToSend) {
+      sendMail = {
+        "message": {
+          "subject": subject,
+          "body": {
+            "contentType": "Text",
+            "content": body
+          },
+          "toRecipients": recipients,
+          "attachments": stuffToSend
         },
-        "toRecipients": recipients,
-        "attachments": stuffToSend,
-      },
-      "saveToSentItems": "true"
-    };
+        "saveToSentItems": "true"
+      };
+    }
+    else {
+      sendMail = {
+        "message": {
+          "subject": subject,
+          "body": {
+            "contentType": "Text",
+            "content": body
+          },
+          "toRecipients": recipients
+        },
+        "saveToSentItems": "true"
+      };
+    }
 
     if (sendMail) {
       const token = await getToken();
