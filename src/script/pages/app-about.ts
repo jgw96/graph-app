@@ -51,6 +51,9 @@ export class AppAbout extends LitElement {
         background: #222222;
         padding: 10px;
         border-radius: 8px;
+
+        animation-name: slidein;
+        animation-duration: 280ms;
       }
 
       #detailActions div {
@@ -83,7 +86,6 @@ export class AppAbout extends LitElement {
         width: 100%;
         height: 100%;
 
-        overflow-y: auto;
         background: white;
         flex: 2;
       }
@@ -247,6 +249,9 @@ export class AppAbout extends LitElement {
           bottom: 0px;
           background: transparent;
           width: 14em;
+
+          animation-name: slidein;
+          animation-duration: 280ms;
         }
       }
 
@@ -368,7 +373,15 @@ export class AppAbout extends LitElement {
             </fast-button>
           </div>
       
-          <h2>${this.email?.subject}</h2>
+          ${this.email ? html`<h2>${this.email?.subject}</h2>` : html`<fast-skeleton
+            style="
+                margin-top: 2em;
+                width: 300px;
+                height: 54px;
+            "
+            shape="rect"
+            shimmer
+        ></fast-skeleton>`}
       
           <div id="detailMoreActions">
       
@@ -389,7 +402,16 @@ export class AppAbout extends LitElement {
       
         ${this.email ? html`<div id="content">
           <iframe .srcdoc="${this.email?.body.content}"></iframe>
-        </div>` : html`<div id="loading"></div>`}
+        </div>` : html`<div>
+        <fast-skeleton
+            style="
+                width: 100%;
+                height: 100%;
+            "
+            shape="rect"
+            shimmer
+        ></fast-skeleton>
+        </div>`}
       
         ${this.showReminder ? html`<div id="reminder">
           <label for="reminder-time">Set a Reminder:</label>
