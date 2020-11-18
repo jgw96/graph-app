@@ -70,7 +70,7 @@ export async function getToken() {
             const silentRequest: any = {
                 scopes,
                 account: currentAccount,
-                forceRefresh: true
+                forceRefresh: false
             };
 
             let request: any = null;

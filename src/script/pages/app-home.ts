@@ -20,6 +20,96 @@ export class AppHome extends LitElement {
   static get styles() {
     return css`
 
+      #advBlock {
+        overflow: scroll hidden;
+        height: 100%;
+        white-space: nowrap;
+        scroll-snap-type: x mandatory;
+        margin-top: 1em;
+      }
+
+      #advBlock::-webkit-scrollbar {
+        display: none;
+      }
+
+      #advBlock .advOuter {
+        flex-direction: column;
+        align-items: center;
+        display: inline-flex;
+        scroll-snap-align: start;
+        width: 96.5%;
+        padding: 1.4em;
+      }
+
+      #advBlock .advInner {
+        background: #1c1c1c;
+        padding: 1em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 4px;
+        width: 50em;
+      }
+
+      #advBlock .advInner#firstBlock {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #advBlock .advInner#firstBlock img {
+        width: 20em;
+        margin-right: 4vw;
+      }
+
+      #advBlock .advInner#firstBlock ul {
+        height: initial;
+        overflow: initial;
+      }
+
+      #advBlock div img {
+        object-fit: contain;
+        height: 22em;
+      }
+
+      @media(max-width: 800px) {
+        #advBlock {
+          white-space: initial;
+        }
+
+        #advBlock div img {
+          height: initial;
+          width: 100%;
+        }
+
+        #advBlock .advInner {
+          text-align: center;
+          width: initial;
+        }
+        
+        #advBlock .advOuter {
+          display: initial;
+          width: initial;
+        }
+
+        #advBlock .advInner#firstBlock {
+          flex-direction: column;
+        }
+
+        #advBlock .advInner#firstBlock ul {
+          margin-bottom: 0;
+        }
+
+        #advBlock .advInner#firstBlock ul li {
+          margin-bottom: 0;
+        }
+      }
+
+      #advBlock div p {
+        font-weight: bold;
+      }
+
       .readButton {
         background: var(--app-color-primary);
       }
@@ -460,7 +550,7 @@ export class AppHome extends LitElement {
       let toastElement: any = this.shadowRoot?.getElementById('myToast');
       toastElement?.open('Email Flagged', 'success');
 
-      setTimeout(async () => {await this.refresh()}, 200);
+      setTimeout(async () => { await this.refresh() }, 200);
     }
     catch (err) {
       console.error(err);
@@ -518,7 +608,7 @@ export class AppHome extends LitElement {
                 <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
 
                 <div>
-                  ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}"><ion-icon name="flag-outline"></ion-icon></fast-button>` : null }
+                  ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}"><ion-icon name="flag-outline"></ion-icon></fast-button>` : null}
                   <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
                 </div>
               </div>
@@ -547,6 +637,28 @@ export class AppHome extends LitElement {
       
           <app-login></app-login>
         </div>`}
+
+        ${this.mail && this.mail.length <= 0 ? html`
+            <div id="advBlock">
+            <div class="advOuter">
+              <div class="advInner" id="firstBlock">
+                <img src="/assets/icons/mailbox.svg" alt="app icon">
+
+                <ul>
+                  <li>Easily access your mail, even when offline!</li>
+                  <li>Set reminders for your mail that also work offline!</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="advOuter">
+              <div class="advInner">
+                <img src="/assets/screenshots/offline_screen_mobile.png">
+                <p>Even send mail while offline and let us automatically send it once you are back online!</p>
+              </div>
+            </div>
+          </div>
+          ` : null}
       
         <pwa-install>Install Offline Mail</pwa-install>
       
