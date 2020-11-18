@@ -114,7 +114,7 @@ const processAttachments = async (attachments: any[]) => {
 
         let attachFile = {
           "@odata.type": "#microsoft.graph.fileAttachment",
-          "name": attachments[0].name,
+          "name": attachments[0].name || "attachment",
           "contentType": attachments[0].type,
           "contentBytes": base64String
         };
