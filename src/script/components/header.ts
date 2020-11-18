@@ -141,6 +141,12 @@ export class AppHeader extends LitElement {
           inset: 0;
         }
       }
+
+      @media(max-width: 340px) {
+        #settingsButton {
+          display: none
+        }
+      }
     `;
   }
 
