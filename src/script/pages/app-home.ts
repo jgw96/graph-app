@@ -79,8 +79,8 @@ export class AppHome extends LitElement {
         }
 
         #advBlock div img {
-          height: initial;
-          width: 100%;
+          height: 8em;
+          margin-right: 0;
         }
 
         #advBlock .advInner {
@@ -103,6 +103,7 @@ export class AppHome extends LitElement {
 
         #advBlock .advInner#firstBlock ul li {
           margin-bottom: 0;
+          font-weight: bold;
         }
       }
 

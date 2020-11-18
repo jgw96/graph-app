@@ -5,9 +5,14 @@ import '@dile/dile-toast/dile-toast';
 import { sendMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
+import { get, set } from 'idb-keyval';
+
+//@ts-ignore
+import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
+
 import '../components/app-contacts';
 import '../components/app-drawing';
-import { del, get, set } from 'idb-keyval';
+import '../components/app-camera';
 
 
 @customElement('app-new')
@@ -23,8 +28,76 @@ export class AppNew extends LitElement {
   @property() preview: any = null;
   @property() previewContent: any = null;
 
+  @property() aiData: any | null = null;
+
+  worker: any | null = null;
+
   static get styles() {
     return css`
+
+    #aiMessage {
+      font-size: 10px;
+    }
+
+    @media(max-width: 800px) {
+      #aiMessage {
+        font-size: 10px;
+        position: absolute;
+        bottom: 2em;
+      }
+    }
+
+
+    #toxicityReport {
+      list-style: none;
+      overflow-y: scroll;
+      height: 50vh;
+    }
+
+    #toxicityReport::-webkit-scrollbar {
+      width: 8px;
+      background: #222222;
+      border-radius: 4px;
+    }
+
+    #happyReport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 2em;
+      flex-direction: column;
+    }
+
+    #happyReport img {
+      height: 8em;
+    }
+
+    @media (max-width: 800px) {
+      #happyReport {
+        text-align: center;
+      }
+
+      #happyReport img {
+        height: 4em;
+      }
+
+      #toxicityReport {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+    }
+
+    #toxicityReport h4 {
+      margin-bottom: 0;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    #toxicityReport h4.bad {
+      color: red;
+    }
 
     fast-progress {
       position: absolute;
@@ -35,7 +108,7 @@ export class AppNew extends LitElement {
       z-index: 99;
     }
 
-      #previewBlock {
+      #previewBlock, #aiBlock {
         background: #181818e8;
         backdrop-filter: blur(10px);
         position: absolute;
@@ -50,7 +123,7 @@ export class AppNew extends LitElement {
         animation-duration: 280ms;
       }
 
-      #preview {
+      #preview, #aiData {
         background: var(--background-color);
         position: absolute;
         top: 8em;
@@ -64,7 +137,7 @@ export class AppNew extends LitElement {
       }
 
       @media(max-width: 800px) {
-        #preview {
+        #preview, #aiData {
           inset: 1em;
         }
       }
@@ -75,7 +148,7 @@ export class AppNew extends LitElement {
         width: 100%;
       }
 
-      #previewHeader {
+      #previewHeader, #aiBlockHeader {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -101,7 +174,7 @@ export class AppNew extends LitElement {
           }
 
           ion-fab ion-fab-button {
-            --background: var(--app-color-secondary);
+            --background: var(--app-color-primary);
             --color: white;
           }
 
@@ -124,11 +197,7 @@ export class AppNew extends LitElement {
             cursor: pointer;
           }
 
-          #attachButton {
-            margin-right: 12px;
-          }
-          
-          #attachButton {
+          #attachButton, #aiCheck {
             margin-right: 12px;
           }
 
@@ -323,6 +392,11 @@ export class AppNew extends LitElement {
         this.attachments = [...this.attachments, imageBlob];
       }
     });
+
+    const underlying = new Worker("/workers/ai.js");
+
+    this.worker = Comlink.wrap(underlying);
+    await this.worker?.load();
   }
 
   async fileHandler() {
@@ -465,6 +539,21 @@ export class AppNew extends LitElement {
     this.attachments = [...this.attachments, data.data.data];
   }
 
+  async attachPhoto() {
+    const modalElement: any = document.createElement('ion-modal');
+    modalElement.component = 'app-camera';
+    modalElement.showBackdrop = false;
+
+    // present the modal
+    document.body.appendChild(modalElement);
+    modalElement.present();
+
+    const data = await modalElement.onDidDismiss();
+    console.log(data);
+
+    this.attachments = [...this.attachments, data.data.data];
+  }
+
   async presentActionSheet() {
     const actionSheet: any = document.createElement('ion-action-sheet');
 
@@ -478,7 +567,16 @@ export class AppNew extends LitElement {
 
         await this.attachFile();
       }
-    }, {
+    }, 
+    {
+      text: 'Take Photo',
+      icon: 'camera-outline',
+      handler: async () => {
+        await actionSheet.dismiss();
+        await this.attachPhoto()
+      }
+    },
+    {
       text: 'Attach Drawing',
       icon: 'brush-outline',
       handler: async () => {
@@ -517,12 +615,27 @@ export class AppNew extends LitElement {
   close() {
     this.preview = null;
     this.previewContent = null;
+
+    if (this.aiData) {
+      this.aiData = null;
+    }
+  }
+
+  async doAiCheck() {
+    this.loading = true;
+    this.aiData = await this.worker?.testInput(this.body);
+    console.log(this.aiData);
+
+    this.loading = false;
+
+    if (this.aiData === null) {
+      let toastElement: any = this.shadowRoot?.getElementById('myToast');
+      await toastElement?.open('Your email must have text first', 'error');
+    }
   }
 
   async disconnectedCallback() {
     super.disconnectedCallback();
-
-    await del("attachment");
   }
 
   render() {
@@ -555,6 +668,37 @@ export class AppNew extends LitElement {
                 src="${this.previewContent}">`}
             </div>
           </div>` : null}
+
+          ${
+            this.aiData ? html`<div id="aiBlock">
+              <div id="aiData">
+                <div id="aiBlockHeader">
+                  <h3>Toxicity Report</h3>
+
+                  <fast-button @click="${() => this.close()}">
+                    <ion-icon name="close-outline"></ion-icon>
+                  </fast-button>
+                </div>
+
+                  ${this.aiData.length > 0 ? html`<ul id="toxicityReport">
+                    ${this.aiData.map((dataPoint: any) => {
+                        return html`
+                        <li>
+                          <h4 class="bad">${dataPoint.label}</h4>
+                          <p>Please remember that your words do affect others.</p>
+                        </li>
+                      `
+                    })}
+                  </ul>` : html`<div id="happyReport">
+                    <img src="/assets/robot.svg">
+                    <h4>Your email sounds good to us!</h4>
+                    
+                  </div>`}
+
+                  <span id="aiMessage">All AI is done locally on your device</span>
+              </div>
+            </div>` : null
+          }
         
           <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email...">
           </fast-text-area>
@@ -567,6 +711,9 @@ export class AppNew extends LitElement {
             <ion-fab-list side="top">
               <ion-fab-button @click="${() => this.attachFile()}">
                 <ion-icon name="document-outline"></ion-icon>
+              </ion-fab-button>
+              <ion-fab-button @click="${() => this.attachPhoto()}">
+                <ion-icon name="camera-outline"></ion-icon>
               </ion-fab-button>
               <ion-fab-button @click="${() => this.attachDrawing()}">
                 <ion-icon name="brush-outline"></ion-icon>
@@ -582,8 +729,14 @@ export class AppNew extends LitElement {
             </fast-button>
         
             <div id="newEmailSubActions">
+
+              <fast-button id="aiCheck" @click="${() => this.doAiCheck()}">
+                AI Toxicity Check
+                
+                <ion-icon name="happy-outline"></ion-icon>
+              </fast-button>
         
-            ${this.attachments.length === 0 ? html`<fast-button @click="${() => this.presentActionSheet()}" id="attachButton">
+              ${this.attachments.length === 0 ? html`<fast-button @click="${() => this.presentActionSheet()}" id="attachButton">
                 Attach
         
                 <ion-icon name="attach-outline"></ion-icon>
@@ -600,18 +753,18 @@ export class AppNew extends LitElement {
           ${this.attachments.length > 0 ? html`<div id="attachmentsBlock">
             <ul id="attachmentsList">
               ${this.attachments.map((attachment: any) => {
-    if (attachment.type.includes('image')) {
-    return html`
-              <img @click=${()=> this.openFile(attachment.handle)} id="attachedImage" src=${URL.createObjectURL(attachment)}>
+                if (attachment.type.includes('image')) {
+                  return html`
+              <img @click=${() => this.openFile(attachment.handle)} id="attachedImage" src=${URL.createObjectURL(attachment)}>
               `
-    }
-    else {
-    return html`
-              <span @click=${()=> this.openFile(attachment.handle)} id="attachedDoc">${attachment.name}</span>
+                }
+                else {
+                  return html`
+              <span @click=${() => this.openFile(attachment.handle)} id="attachedDoc">${attachment.name}</span>
               `
-    }
-    })
-          }
+                }
+              })
+            }
             </ul>
           </div>` : null}
         </div>
