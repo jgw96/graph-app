@@ -42,9 +42,22 @@ export function getAccount() {
 
 export async function login() {
     try {
-        await msalInstance.loginRedirect({
-            scopes
-        });
+        const username = await getAccount()?.username;
+
+        if (username) {
+            const silentRequest: any = {
+                scopes,
+                loginHint: username,
+                forceRefresh: false
+            };
+
+            await msalInstance.ssoSilent(silentRequest);
+        }
+        else {
+            await msalInstance.loginRedirect({
+                scopes
+            });
+        }
     } catch (err) {
         // handle error
         return err;

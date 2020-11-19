@@ -27,18 +27,10 @@ export class AppLogin extends LitElement {
     }
 
     async firstUpdated() {
-        if (window.location.href.includes("newEmail") && this.userAccount === null) {
-            setTimeout(async () => {
-                this.userAccount = await getAccount();
-                console.log(this.userAccount);
-            }, 1200);
-        }
-        else {
-            setTimeout(async () => {
-                this.userAccount = await getAccount();
-                console.log(this.userAccount);
-            }, 1200);
-        }
+        setTimeout(async () => {
+            this.userAccount = await getAccount();
+            console.log(this.userAccount);
+        }, 1200);
     }
 
     async login() {
