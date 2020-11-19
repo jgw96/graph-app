@@ -83,6 +83,8 @@ async function shareTargetHandler({ event }) {
     // Get the data from the named element 'file'
     const file = data.get('file');
 
+    await idbKeyval.set('attachment', file);
+
     console.log('file', file);
     client.postMessage({ file, action: 'load-image' });
   }());
