@@ -17,6 +17,8 @@ export class AppHome extends LitElement {
   @property({ type: String }) activeCat: string = 'all';
   @property({ type: Boolean }) loading: boolean = false;
 
+  @property({ type: Boolean }) initLoad: boolean = false;
+
   static get styles() {
     return css`
 
@@ -193,6 +195,12 @@ export class AppHome extends LitElement {
       ul li:nth-child(-n+14) {
         animation-name: slidein;
         animation-duration: 300ms;
+      }
+
+      #filterActions {
+        animation-name: slidein;
+        animation-duration: 300ms;
+        animation-fill-mode: forwards;
       }
 
       #filterActions button {
@@ -424,14 +432,17 @@ export class AppHome extends LitElement {
       this.mailCopy = mail;
       this.mail = mail;
     }
+    else {
+      const synced = await this.checkBackgroundSync();
+      console.log('synced', synced);
 
-    const synced = await this.checkBackgroundSync();
-    console.log('synced', synced);
+      if (!synced) {
+        this.initLoad = true;
 
-    if (!synced) {
-      setTimeout(async () => {
-        await this.getSavedAndUpdate();
-      }, 800);
+        setTimeout(async () => {
+          await this.getSavedAndUpdate();
+        }, 800);
+      }
     }
   }
 
@@ -591,13 +602,15 @@ export class AppHome extends LitElement {
       
           <ul>
             ${this.mail?.map((email) => {
-      return html`
+            return html`
             <li>
       
               <div>
-                <div class="emailHeader"> 
+                <div class="emailHeader">
                   <h3>${email.subject}</h3>
-                  ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}" appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon></fast-button>` : null}
+                  ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}"
+                    appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon>
+                  </fast-button>` : null}
                 </div>
       
                 <p class="preview">
@@ -607,15 +620,17 @@ export class AppHome extends LitElement {
       
               <div id="actions">
                 <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
-
+      
                 <div>
-                  ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}"><ion-icon name="flag-outline"></ion-icon></fast-button>` : null}
+                  ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}">
+                    <ion-icon name="flag-outline"></ion-icon>
+                  </fast-button>` : null}
                   <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
                 </div>
               </div>
             </li>
             `
-    })}
+            })}
           </ul>
         </section>
       
@@ -631,39 +646,38 @@ export class AppHome extends LitElement {
           </fast-button>
         </div>
       
-        ` : html`<div id="introBlock">
+        ` : this.initLoad ? html`<div id="introBlock">
           Sign in to quickly access your latest email and save them for offline use!
       
           <span id="introSpan">Powered by the Microsoft Graph.</span>
       
           <app-login></app-login>
-        </div>`}
-
-        ${this.mail && this.mail.length <= 0 ? html`
-            <div id="advBlock">
-            <div class="advOuter">
-              <div class="advInner" id="firstBlock">
-                <img src="/assets/icons/mailbox.svg" alt="app icon">
-
-                <ul>
-                  <li>Easily access your mail, even when offline!</li>
-                  <li>Set reminders for your mail that also work offline!</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="advOuter">
-              <div class="advInner">
-                <img src="/assets/screenshots/offline_screen_mobile.png">
-                <p>Even send mail while offline and let us automatically send it once you are back online!</p>
-              </div>
+        </div>`: null}
+      
+        ${this.mail && this.mail.length <= 0 ? html` <div id="advBlock">
+          <div class="advOuter">
+            <div class="advInner" id="firstBlock">
+              <img src="/assets/icons/mailbox.svg" alt="app icon">
+      
+              <ul>
+                <li>Easily access your mail, even when offline!</li>
+                <li>Set reminders for your mail that also work offline!</li>
+              </ul>
             </div>
           </div>
-          ` : null}
       
-        <pwa-install>Install Offline Mail</pwa-install>
+          <div class="advOuter">
+            <div class="advInner">
+              <img src="/assets/screenshots/offline_screen_mobile.png">
+              <p>Even send mail while offline and let us automatically send it once you are back online!</p>
+            </div>
+          </div>
+      </div>
+      ` : null}
       
-        <dile-toast id="myToast" duration="3000"></dile-toast>
+      <pwa-install>Install Offline Mail</pwa-install>
+      
+      <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>
 
 

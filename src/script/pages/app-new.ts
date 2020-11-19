@@ -47,6 +47,11 @@ export class AppNew extends LitElement {
       }
     }
 
+    #previewActionsBlock {
+      display: flex;
+      justify-content: flex-end;
+    }
+
 
     #toxicityReport {
       list-style: none;
@@ -143,7 +148,7 @@ export class AppNew extends LitElement {
       }
 
       #preview img {
-        max-height: 85%;
+        max-height: 76%;
         object-fit: contain;
         width: 100%;
       }
@@ -279,6 +284,12 @@ export class AppNew extends LitElement {
             max-height: 3em;
             margin-left: 12px;
             border-radius: 4px;
+            cursor: pointer;
+          }
+
+          #attachedImage:hover {
+            animation:  shake 0.3s  ; 
+            animation-fill-mode: forwards;
           }
 
           #attachedDoc {
@@ -289,6 +300,11 @@ export class AppNew extends LitElement {
             padding: 8px;
             margin-left: 16px;
             border-radius: 4px;
+          }
+
+          #attachedDoc:hover {
+            animation:  shake 0.3s  ; 
+            animation-fill-mode: forwards;
           }
 
           #drawingButton {
@@ -369,6 +385,22 @@ export class AppNew extends LitElement {
               opacity: 1;
             }
           }
+
+          @keyframes shake{ 
+            0%{ 
+              transform: translateX(0) 
+            } 
+            25%{ 
+              transform: translateX(10px); 
+            } 
+              
+            50%{ 
+              transform: translateX(-10px); 
+            } 
+            100%{ 
+              transform: translateX(0px); 
+            } 
+          } 
         `
   }
 
@@ -634,6 +666,19 @@ export class AppNew extends LitElement {
     }
   }
 
+  deleteAttach(handle: any) {
+    console.log(handle);
+
+    const newAttach = this.attachments.filter((attachment: any) => {
+      if (attachment.name !== handle.name) {
+        return attachment;
+      }
+    });
+    this.attachments = newAttach;
+
+    this.close();
+  }
+
   async disconnectedCallback() {
     super.disconnectedCallback();
   }
@@ -666,6 +711,14 @@ export class AppNew extends LitElement {
               </div>
               ${this.preview.type.includes("text") ? html`<span>${this.previewContent}</span>` : html`<img
                 src="${this.previewContent}">`}
+
+                <div id="previewActionsBlock">
+                  <fast-button @click="${() => this.deleteAttach(this.preview)}">
+                    Delete
+
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </fast-button>
+                </div>
             </div>
           </div>` : null}
 
