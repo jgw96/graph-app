@@ -698,7 +698,7 @@ export class AppHome extends LitElement {
       </div>
       ` : null}
       
-      <pwa-install>Install Offline Mail</pwa-install>
+      <pwa-install>Install Mail GO</pwa-install>
       
       <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>

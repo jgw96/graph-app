@@ -1,8 +1,8 @@
 {
-  "name": "Offline Mail",
+  "name": "Mail GO",
   "display": "standalone",
   "start_url": "/",
-  "short_name": "Offline Mail",
+  "short_name": "Mail GO",
   "theme_color": "#686bd2",
   "description": "Access your latest outlook messages offline!",
   "orientation": "any",

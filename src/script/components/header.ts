@@ -223,7 +223,7 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header>
-        <h1>Offline Mail</h1>
+        <h1>Mail GO</h1>
 
         ${this.openSettings ? html`<div id="settingsContainer">
           <div id="settingsBlock">
