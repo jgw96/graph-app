@@ -7,7 +7,11 @@ const msalConfig = {
     auth: {
         clientId: '2d508361-d68e-4da6-8ef1-e36bd3404d57',
         scopes
-    }
+    },
+    cache: {
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: false
+    },
 };
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
