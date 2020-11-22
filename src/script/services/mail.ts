@@ -2,18 +2,6 @@ import { getToken } from '../services/auth';
 
 
 export async function getMail() {
-  /*const options = {
-    authProvider: (window as any).msalInstance, // An instance created from previous step
-  };
-  const client = Client.initWithMiddleware(options);
-
-  if (client) {
-    let mail = await client.api('/me/messages').get();
-    console.log(mail.value);
-
-    return mail.value;
-  }*/
-
   console.log('getMail')
 
   const token = await getToken();
@@ -38,18 +26,6 @@ export async function getMail() {
 }
 
 export async function getAnEmail(id: string) {
-  /*const options = {
-    authProvider: (window as any).msalInstance, // An instance created from previous step
-  };
-  const client = Client.initWithMiddleware(options);
-
-  if (client) {
-    let mail = await client.api(`/me/messages/${id}`).get();
-    console.log(mail.value);
-
-    return mail;
-  }*/
-
   const token = await getToken();
 
   const headers = new Headers();

@@ -6,7 +6,8 @@ import '@dile/dile-toast/dile-toast';
 import { flagEmail, getMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
-import { get, set } from 'idb-keyval';
+//@ts-ignore
+import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -18,6 +19,8 @@ export class AppHome extends LitElement {
   @property({ type: Boolean }) loading: boolean = false;
 
   @property({ type: Boolean }) initLoad: boolean = false;
+
+  worker: any | null = null;
 
   static get styles() {
     return css`
@@ -78,6 +81,10 @@ export class AppHome extends LitElement {
       @media(max-width: 800px) {
         #advBlock {
           white-space: initial;
+        }
+
+        #searchInput {
+          width: 100%;
         }
 
         #advBlock div img {
@@ -355,6 +362,14 @@ export class AppHome extends LitElement {
           margin-right: 16em;
         }
 
+        #mainListBlock {
+          display: grid;
+        }
+
+        #searchInput {
+          max-width: 20em;
+        }
+
         #menuActions {
           display: flex;
           flex-direction: column;
@@ -363,7 +378,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 86.5vh;
+          height: 78vh;
         }
 
         ul::-webkit-scrollbar {
@@ -378,7 +393,7 @@ export class AppHome extends LitElement {
 
         #mainSection {
           display: grid;
-          grid-template-columns: minmax(150px, 22%) 1fr;
+          grid-template-columns: minmax(240px, 22%) 1fr;
         }
 
         #filterActions {
@@ -398,7 +413,7 @@ export class AppHome extends LitElement {
 
       @media(min-width: 1300px) {
         #mainSection {
-          grid-template-columns: minmax(150px, 18%) 1fr;
+          grid-template-columns: minmax(240px, 18%) 1fr;
         }
       }
 
@@ -426,24 +441,27 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    let mail: any = await get('latestMail');
+    const synced = await this.checkBackgroundSync();
+    console.log('synced', synced);
 
-    if (mail) {
-      this.mailCopy = mail;
-      this.mail = mail;
+    if (!synced) {
+      this.initLoad = true;
+
+      setTimeout(async () => {
+        await this.getSavedAndUpdate();
+      }, 800);
     }
-    else {
-      const synced = await this.checkBackgroundSync();
-      console.log('synced', synced);
 
-      if (!synced) {
-        this.initLoad = true;
+    (window as any).requestIdleCallback(async () => {
+      const underlying = new Worker("/workers/search.js");
+      this.worker = Comlink.wrap(underlying);
+    })
+  }
 
-        setTimeout(async () => {
-          await this.getSavedAndUpdate();
-        }, 800);
-      }
-    }
+  async searchMail(query: string) {
+    const searchResults = await this.worker.search(query);
+    console.log(searchResults);
+    this.mail = [...searchResults];
   }
 
   async checkBackgroundSync() {
@@ -478,8 +496,8 @@ export class AppHome extends LitElement {
 
     console.log('this.mail', this.mail);
 
-    sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
-    await set('latestMail', this.mail)
+    /*sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
+    await set('latestMail', this.mail)*/
   }
 
   getFocused() {
@@ -600,38 +618,43 @@ export class AppHome extends LitElement {
             </div>
           </div>
       
-          <ul>
-            ${this.mail?.map((email) => {
-            return html`
-            <li>
-      
-              <div>
-                <div class="emailHeader">
-                  <h3>${email.subject}</h3>
-                  ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}"
-                    appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon>
-                  </fast-button>` : null}
-                </div>
-      
-                <p class="preview">
-                  ${email.bodyPreview}
-                </p>
-              </div>
-      
-              <div id="actions">
-                <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
+          <div id="mainListBlock">
+            <fast-text-field id="searchInput" placeholder="..." @change="${(event: any) => this.searchMail(event.target.value)}" type="search">Search Mail</fast-text-field>
+            <ul>
+              ${this.mail?.map((email) => {
+              return html`
+              <li>
       
                 <div>
-                  ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}">
-                    <ion-icon name="flag-outline"></ion-icon>
-                  </fast-button>` : null}
-                  <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
+                  <div class="emailHeader">
+                    <h3>${email.subject}</h3>
+                    ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}"
+                      appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon>
+                    </fast-button>` : null}
+                  </div>
+      
+                  <p class="preview">
+                    ${email.bodyPreview}
+                  </p>
                 </div>
-              </div>
-            </li>
-            `
-            })}
-          </ul>
+      
+                <div id="actions">
+                  <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
+      
+                  <div>
+                    ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}">
+                      <ion-icon name="flag-outline"></ion-icon>
+                    </fast-button>` : null}
+                    <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
+                  </div>
+                </div>
+              </li>
+              `
+              })}
+            </ul>
+          </div>
+      
+      
         </section>
       
         <div id="homeToolbar">

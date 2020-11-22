@@ -11,7 +11,7 @@ self.addEventListener("message", (event) => {
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes('https://graph.microsoft.com/beta/me/messages'),
   new workbox.strategies.CacheFirst({
-    cacheName: 'stories',
+    cacheName: 'offline-mail',
     plugins: [
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50,
@@ -40,14 +40,20 @@ const syncContent = async () => {
         method: "GET",
         headers: headers
       };
-      const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/`;
+      const graphEndpoint = `https://graph.microsoft.com/beta/me/messages`;
 
       const response = await fetch(graphEndpoint, options);
-      const data = await response.json();
 
-      console.log(data.value);
+      const cache = await caches.open('offline-mail');
 
-      await idbKeyval.set('latestMail', data.value);
+      if (cache) {
+        const cacheResp = await cache.matchAll(graphEndpoint);
+        cacheResp.forEach(async (element, index, array) => {
+          await cache.delete(element);
+        });
+
+        cache.put(graphEndpoint, response);
+      }
     }
   }
 }

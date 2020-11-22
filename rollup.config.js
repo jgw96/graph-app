@@ -38,7 +38,8 @@ export default {
         '**/*/*.svg',
         '*.js',
         '*.html',
-        'assets/**'
+        'assets/**',
+        'workers/**'
       ]
     })
   ]
