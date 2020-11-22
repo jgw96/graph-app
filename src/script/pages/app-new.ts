@@ -5,8 +5,6 @@ import '@dile/dile-toast/dile-toast';
 import { sendMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
-import { get, set } from 'idb-keyval';
-
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
 
