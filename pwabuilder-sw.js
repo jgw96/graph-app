@@ -1,33 +1,6 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 importScripts('https://cdn.jsdelivr.net/npm/idb-keyval@3/dist/idb-keyval-iife.min.js');
 
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
-
-workbox.routing.registerRoute(
-  ({ url }) => url.href.includes('https://graph.microsoft.com/beta/me/messages'),
-  new workbox.strategies.CacheFirst({
-    cacheName: 'offline-mail',
-    plugins: [
-      new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 19 * 60, // 5 minutes
-      }),
-      new workbox.cacheableResponse.CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-    ],
-  })
-);
-
-const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('sentEmail', {
-  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
-});
-
 const syncContent = async () => {
   if (navigator.connection.effectiveType === "4g") {
     const token = await idbKeyval.get('graphToken');
@@ -58,6 +31,32 @@ const syncContent = async () => {
   }
 }
 
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+workbox.routing.registerRoute(
+  ({ url }) => url.href.includes('https://graph.microsoft.com/beta/me/messages'),
+  new workbox.strategies.CacheFirst({
+    cacheName: 'offline-mail',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 19 * 60, // 5 minutes
+      }),
+      new workbox.cacheableResponse.CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+    ],
+  })
+);
+
+const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('sentEmail', {
+  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
+});
+
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes('me/sendEmail'),
   new workbox.strategies.NetworkOnly({
@@ -72,11 +71,8 @@ self.addEventListener('notificationclick', (event) => {
 
 self.addEventListener('periodicsync', (event) => {
   if (event.tag === 'mail-sync') {
-    // See the "Think before you sync" section for
-    // checks you could perform before syncing.
     event.waitUntil(syncContent());
   }
-  // Other logic for different tags as needed.
 });
 
 async function shareTargetHandler({ event }) {

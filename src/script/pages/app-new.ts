@@ -456,8 +456,6 @@ export class AppNew extends LitElement {
             this.attachments = [...this.attachments, blob];
           }
         }
-
-        // this.handleRecent(fileHandle);
       });
     }
   }
