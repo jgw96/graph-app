@@ -441,16 +441,13 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    const synced = await this.checkBackgroundSync();
-    console.log('synced', synced);
+    this.initLoad = true;
 
-    if (!synced) {
-      this.initLoad = true;
+    setTimeout(async () => {
+      await this.getSavedAndUpdate();
+    }, 800);
 
-      setTimeout(async () => {
-        await this.getSavedAndUpdate();
-      }, 800);
-    }
+
 
     (window as any).requestIdleCallback(async () => {
       const underlying = new Worker("/workers/search.js");
@@ -462,31 +459,6 @@ export class AppHome extends LitElement {
     const searchResults = await this.worker.search(query);
     console.log(searchResults);
     this.mail = [...searchResults];
-  }
-
-  async checkBackgroundSync() {
-    console.log('checking sync');
-    const registration = await navigator.serviceWorker.getRegistration();
-
-    if (registration) {
-      if ('periodicSync' in registration) {
-        const tags = await (registration as any).periodicSync.getTags();
-        // Only update content if sync isn't set up.
-        if (!tags.includes('mail-sync')) {
-          return false;
-        }
-        else {
-          return true;
-        }
-      } else {
-        // If periodic background sync isn't supported, always update.
-
-        return false;
-      }
-    }
-    else {
-      return false;
-    }
   }
 
   async getSavedAndUpdate() {
@@ -619,10 +591,11 @@ export class AppHome extends LitElement {
           </div>
       
           <div id="mainListBlock">
-            <fast-text-field id="searchInput" placeholder="..." @change="${(event: any) => this.searchMail(event.target.value)}" type="search">Search Mail</fast-text-field>
+            <fast-text-field id="searchInput" placeholder="..."
+              @change="${(event: any) => this.searchMail(event.target.value)}" type="search">Search Mail</fast-text-field>
             <ul>
               ${this.mail?.map((email) => {
-              return html`
+      return html`
               <li>
       
                 <div>
@@ -650,7 +623,7 @@ export class AppHome extends LitElement {
                 </div>
               </li>
               `
-              })}
+    })}
             </ul>
           </div>
       
