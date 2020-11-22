@@ -378,7 +378,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 78vh;
+          height: 80.2vh;
         }
 
         ul::-webkit-scrollbar {
