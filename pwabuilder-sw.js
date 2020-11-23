@@ -78,21 +78,16 @@ self.addEventListener('periodicsync', (event) => {
 async function shareTargetHandler({ event }) {
   event.respondWith(Response.redirect("/newEmail"));
 
-  event.waitUntil(async function () {
-    const data = await event.request.formData();
-    console.log('data', data);
-    const client = await self.clients.get(event.resultingClientId || event.clientId);
-    // Get the data from the named element 'file'
-    const file = data.get('file');
+  const data = await event.request.formData();
+  console.log('data', data);
+  const client = await self.clients.get(event.resultingClientId || event.clientId);
+  // Get the data from the named element 'file'
+  const file = data.get('file');
 
-    // await idbKeyval.set('attachment', file);
+  // await idbKeyval.set('attachment', file);
 
-    console.log('file', file);
-    client.postMessage({ file, action: 'load-image' });
-  }());
-
-  // Do something with the rest of formData as you need
-  // Maybe save it to IndexedDB
+  console.log('file', file);
+  client.postMessage({ file, action: 'load-image' });
 };
 
 workbox.routing.registerRoute(
