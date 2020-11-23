@@ -76,17 +76,16 @@ self.addEventListener('periodicsync', (event) => {
 });
 
 async function shareTargetHandler({ event }) {
+  event.respondWith(Response.redirect("/newEmail"));
+
   const data = await event.request.formData();
   console.log('data', data);
-  const client = await self.clients.get(event.resultingClientId || event.clientId);
-  // Get the data from the named element 'file'
+
   const file = data.get('file');
 
   console.log('file', file);
 
   await idbKeyval.set('shareTargetAttachment', file);
-
-  event.respondWith(Response.redirect("/newEmail"));
 };
 
 workbox.routing.registerRoute(
