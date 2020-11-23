@@ -68,6 +68,12 @@
       }
     }
   ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+mailgo",
+      "url": "/newEmail?url=%s"
+    }
+  ],
   "share_target": {
     "action": "/attach/file/",
     "method": "POST",
