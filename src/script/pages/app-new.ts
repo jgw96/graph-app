@@ -11,7 +11,7 @@ import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
 import '../components/app-contacts';
 import '../components/app-drawing';
 import '../components/app-camera';
-import { del, get } from 'idb-keyval';
+import { del } from 'idb-keyval';
 
 
 @customElement('app-new')
