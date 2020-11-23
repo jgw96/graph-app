@@ -1,4 +1,4 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.1/workbox-sw.js');
 importScripts('https://cdn.jsdelivr.net/npm/idb-keyval@3/dist/idb-keyval-iife.min.js');
 
 const syncContent = async () => {
@@ -78,14 +78,17 @@ self.addEventListener('periodicsync', (event) => {
 async function shareTargetHandler({ event }) {
   event.respondWith(Response.redirect("/newEmail"));
 
-  const data = await event.request.formData();
-  console.log('data', data);
+  event.waitUntil(async function () {
 
-  const file = data.get('file');
+    const data = await event.request.formData();
+    console.log('data', data);
+    const client = await self.clients.get(event.resultingClientId || event.clientId);
+    // Get the data from the named element 'file'
+    const file = data.get('file');
 
-  console.log('file', file);
-
-  await idbKeyval.set('shareTargetAttachment', file);
+    console.log('file', file);
+    client.postMessage({ file, action: 'load-image' });
+  }());
 };
 
 workbox.routing.registerRoute(

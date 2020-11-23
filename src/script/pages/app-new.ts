@@ -416,13 +416,15 @@ export class AppNew extends LitElement {
   }
 
   async shareTarget() {
-    const attachedFile = await get('shareTargetAttachment');
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      console.log('file event', event);
+      console.log('file event data', event.data);
+      const imageBlob = event.data.file;
 
-    if (attachedFile) {
-      console.log('attachedFile', attachedFile);
-
-      this.attachments = [...this.attachments, attachedFile];
-    }
+      if (imageBlob) {
+        this.attachments = [imageBlob, ...this.attachments];
+      }
+    });
   }
 
   async fileHandler() {
