@@ -11,6 +11,7 @@ import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
 import '../components/app-contacts';
 import '../components/app-drawing';
 import '../components/app-camera';
+import { del, get } from 'idb-keyval';
 
 
 @customElement('app-new')
@@ -404,22 +405,24 @@ export class AppNew extends LitElement {
 
   async firstUpdated() {
 
+    await this.shareTarget()
+
     await this.fileHandler();
-
-    navigator.serviceWorker.addEventListener('message', async (event) => {
-      console.log('file event', event);
-      console.log('file event data', event.data);
-      const imageBlob = event.data.file;
-
-      if (imageBlob) {
-        this.attachments = [...this.attachments, imageBlob];
-      }
-    });
 
     const underlying = new Worker("/workers/ai.js");
 
     this.worker = Comlink.wrap(underlying);
     await this.worker?.load();
+  }
+
+  async shareTarget() {
+    const attachedFile = await get('shareTargetAttachment');
+
+    if (attachedFile) {
+      console.log('attachedFile', attachedFile);
+
+      this.attachments = [...this.attachments, attachedFile];
+    }
   }
 
   async fileHandler() {
@@ -481,6 +484,8 @@ export class AppNew extends LitElement {
       await toastElement?.open('Mail Sent...', 'success');
 
       this.loading = false;
+
+      await del('shareTargetAttachment');
 
       // Router.go("/");
     }
@@ -668,6 +673,8 @@ export class AppNew extends LitElement {
 
   async disconnectedCallback() {
     super.disconnectedCallback();
+
+    this.attachments = [];
   }
 
   render() {
