@@ -333,6 +333,10 @@ export class AppNew extends LitElement {
             display: none;
           }
 
+          #previewActionsBlock fast-button {
+            background: red;
+          }
+
           @media (min-width: 800px) {
             #attachedImage {
               border-radius: 6px;
@@ -593,7 +597,7 @@ export class AppNew extends LitElement {
 
         await this.attachFile();
       }
-    }, 
+    },
     {
       text: 'Take Photo',
       icon: 'camera-outline',
@@ -623,16 +627,45 @@ export class AppNew extends LitElement {
   }
 
   async openFile(handle: any) {
-    const file = await handle.getFile();
-    console.log(file);
 
-    if (file.type.includes('text')) {
-      this.preview = file;
-      this.previewContent = await file.text();
+    const existingPerm = await handle.queryPermission({
+      writable: false
+    });
+
+    if (existingPerm === "granted") {
+      const file = await handle.getFile();
+      console.log(file);
+
+      if (file.type.includes('text')) {
+        this.preview = file;
+        this.previewContent = await file.text();
+      }
+      else {
+        this.preview = file;
+        this.previewContent = URL.createObjectURL(file);
+      }
     }
     else {
-      this.preview = file;
-      this.previewContent = URL.createObjectURL(file);
+      const request = await handle.requestPermission({
+        writable: true
+      })
+
+      if (request === "granted") {
+        const blob = await handle.getFile();
+        console.log(blob);
+
+        const file = await handle.getFile();
+        console.log(file);
+
+        if (file.type.includes('text')) {
+          this.preview = file;
+          this.previewContent = await file.text();
+        }
+        else {
+          this.preview = file;
+          this.previewContent = URL.createObjectURL(file);
+        }
+      }
     }
 
     console.log(this.preview);
@@ -718,8 +751,7 @@ export class AppNew extends LitElement {
             </div>
           </div>` : null}
 
-          ${
-            this.aiData ? html`<div id="aiBlock">
+          ${this.aiData ? html`<div id="aiBlock">
               <div id="aiData">
                 <div id="aiBlockHeader">
                   <h3>Toxicity Report</h3>
@@ -731,13 +763,13 @@ export class AppNew extends LitElement {
 
                   ${this.aiData.length > 0 ? html`<ul id="toxicityReport">
                     ${this.aiData.map((dataPoint: any) => {
-                        return html`
+      return html`
                         <li>
                           <h4 class="bad">${dataPoint.label}</h4>
                           <p>Please remember that your words do affect others.</p>
                         </li>
                       `
-                    })}
+    })}
                   </ul>` : html`<div id="happyReport">
                     <img src="/assets/robot.svg">
                     <h4>Your email sounds good to us!</h4>
@@ -747,7 +779,7 @@ export class AppNew extends LitElement {
                   <span id="aiMessage">All AI is done locally on your device</span>
               </div>
             </div>` : null
-          }
+      }
         
           <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email...">
           </fast-text-area>
@@ -802,18 +834,18 @@ export class AppNew extends LitElement {
           ${this.attachments.length > 0 ? html`<div id="attachmentsBlock">
             <ul id="attachmentsList">
               ${this.attachments.map((attachment: any) => {
-                if (attachment.type.includes('image')) {
-                  return html`
+        if (attachment.type.includes('image')) {
+          return html`
               <img @click=${() => this.openFile(attachment.handle)} id="attachedImage" src=${URL.createObjectURL(attachment)}>
               `
-                }
-                else {
-                  return html`
+        }
+        else {
+          return html`
               <span @click=${() => this.openFile(attachment.handle)} id="attachedDoc">${attachment.name}</span>
               `
-                }
-              })
-            }
+        }
+      })
+        }
             </ul>
           </div>` : null}
         </div>

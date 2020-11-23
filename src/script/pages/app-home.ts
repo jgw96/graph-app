@@ -441,14 +441,20 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    this.initLoad = true;
+    const loadCheck = sessionStorage.getItem('latestMail');
 
-    setTimeout(async () => {
+    if (loadCheck) {
+      this.initLoad = false;
       await this.getSavedAndUpdate();
-    }, 800);
+    }
+    else {
+      this.initLoad = true;
 
-
-
+      setTimeout(async () => {
+        await this.getSavedAndUpdate();
+      }, 800);
+    }
+    
     (window as any).requestIdleCallback(async () => {
       const underlying = new Worker("/workers/search.js");
       this.worker = Comlink.wrap(underlying);
@@ -468,8 +474,7 @@ export class AppHome extends LitElement {
 
     console.log('this.mail', this.mail);
 
-    /*sessionStorage.setItem('latestmail', JSON.stringify(this.mail));
-    await set('latestMail', this.mail)*/
+    sessionStorage.setItem('latestMail', JSON.stringify(this.mail));
   }
 
   getFocused() {
@@ -650,7 +655,7 @@ export class AppHome extends LitElement {
           <app-login></app-login>
         </div>`: null}
       
-        ${this.mail && this.mail.length <= 0 ? html` <div id="advBlock">
+        ${this.initLoad && this.mail && this.mail.length <= 0 ? html` <div id="advBlock">
           <div class="advOuter">
             <div class="advInner" id="firstBlock">
               <img src="/assets/icons/mailbox.svg" alt="app icon">

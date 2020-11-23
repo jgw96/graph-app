@@ -53,6 +53,8 @@ export class AppLogin extends LitElement {
     async logout() {
         try {
             await logout();
+
+            sessionStorage.clear();
         }
         catch (err) {
             console.error(err);
