@@ -122,7 +122,7 @@ export async function sendMail(subject: string, body: string, recipients: any[],
         "message": {
           "subject": subject,
           "body": {
-            "contentType": "Text",
+            "contentType": "HTML",
             "content": body
           },
           "toRecipients": recipients,
@@ -167,7 +167,7 @@ export async function sendMail(subject: string, body: string, recipients: any[],
 
       }
       catch (err) {
-        console.error("error sending message", err);
+        throw new Error(`error sending message: ${err.message}`);
       }
 
 

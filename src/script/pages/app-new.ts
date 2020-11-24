@@ -26,15 +26,40 @@ export class AppNew extends LitElement {
 
   @property() preview: any = null;
   @property() previewContent: any = null;
+  @property() textPreview: boolean = false;
+  @property() textPreviewContent: string | null = null;
 
   @property() aiData: any | null = null;
 
   worker: any | null = null;
+  textWorker: any | null = null;
+
+  previewTextList: string[] = [];
 
   static get styles() {
     return css`
 
-    #aiMessage {
+    #textAreaSection {
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    #textPreview {
+      width: 80vw;
+      border: solid 1px var(--app-color-secondary);
+      margin-left: 2em;
+      padding: 0px 1em 1em;
+      height: 57.5vh;
+      margin-top: 4px;
+    }
+
+    #textAreaActions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #aiMessage, #markdownSpan {
       font-size: 10px;
     }
 
@@ -43,6 +68,14 @@ export class AppNew extends LitElement {
         font-size: 10px;
         position: absolute;
         bottom: 2em;
+      }
+
+      #previewTextButton {
+        display: none;
+      }
+
+      #textAreaActions {
+        margin-top: 1em;
       }
     }
 
@@ -413,10 +446,19 @@ export class AppNew extends LitElement {
 
     await this.fileHandler();
 
-    const underlying = new Worker("/workers/ai.js");
+    (window as any).requestIdleCallback(async () => {
+      const underlying = new Worker("/workers/ai.js");
 
-    this.worker = Comlink.wrap(underlying);
-    await this.worker?.load();
+      this.worker = Comlink.wrap(underlying);
+      await this.worker?.load();
+
+      const underlying2 = new Worker("/workers/text.js");
+
+      this.textWorker = Comlink.wrap(underlying2);
+    },
+      {
+        timeout: 1000
+      })
   }
 
   async shareTarget() {
@@ -429,6 +471,7 @@ export class AppNew extends LitElement {
         this.attachments = [imageBlob, ...this.attachments];
       }
     });
+
   }
 
   async fileHandler() {
@@ -483,16 +526,26 @@ export class AppNew extends LitElement {
       })
     });
 
+    const htmlBody = await this.textWorker.runMarkdown(this.body);
+    console.log(htmlBody);
+
     try {
-      await sendMail(this.subject, this.body, recip, this.attachments);
+      if (this.subject && recip && htmlBody) {
+        await sendMail(this.subject, htmlBody, recip, this.attachments);
 
-      let toastElement: any = this.shadowRoot?.getElementById('myToast');
-      await toastElement?.open('Mail Sent...', 'success');
+        let toastElement: any = this.shadowRoot?.getElementById('myToast');
+        await toastElement?.open('Mail Sent...', 'success');
 
-      this.loading = false;
+        this.loading = false;
 
-      await del('shareTargetAttachment');
+        await del('shareTargetAttachment');
+      }
+      else {
+        let toastElement: any = this.shadowRoot?.getElementById('myToast');
+        await toastElement?.open('Please enter a subject, and a recipient', 'error');
 
+        this.loading = false;
+      }
       // Router.go("/");
     }
     catch (err) {
@@ -513,8 +566,43 @@ export class AppNew extends LitElement {
     this.subject = event.target.value;
   }
 
-  updateBody(event: any) {
+  async updateBody(event: any) {
     this.body = event.target.value;
+  }
+
+  async updatePreview(event: any) {
+    if (this.textPreview) {
+      const content = event.target.value;
+
+      if (content) {
+        this.previewTextList = [...this.previewTextList, content];
+      }
+
+      this.doPreviewWork();
+    }
+  }
+
+  async doPreviewWork() {
+    if (this.textPreview && this.previewTextList) {
+      while (this.previewTextList.length > 0) {
+        if ((navigator as any).scheduling && (navigator as any).scheduling.isInputPending()) {
+          console.log('pending');
+          setTimeout(this.doPreviewWork);
+          return;
+        }
+
+        console.log('doing work', this.previewTextList.length);
+
+        const content = this.previewTextList.shift();
+        console.log('content', content);
+
+        if (content) {
+          this.loading = true;
+          this.textPreviewContent = await this.textWorker.runMarkdown(content);
+          this.loading = false;
+        }
+      }
+    }
   }
 
   updateAddress(event: any) {
@@ -706,6 +794,10 @@ export class AppNew extends LitElement {
     this.close();
   }
 
+  openTextPreview() {
+    this.textPreview = !this.textPreview;
+  }
+
   async disconnectedCallback() {
     super.disconnectedCallback();
 
@@ -740,49 +832,64 @@ export class AppNew extends LitElement {
               </div>
               ${this.preview.type.includes("text") ? html`<span>${this.previewContent}</span>` : html`<img
                 src="${this.previewContent}">`}
-
-                <div id="previewActionsBlock">
-                  <fast-button @click="${() => this.deleteAttach(this.preview)}">
-                    Delete
-
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </fast-button>
-                </div>
+        
+              <div id="previewActionsBlock">
+                <fast-button @click="${() => this.deleteAttach(this.preview)}">
+                  Delete
+        
+                  <ion-icon name="trash-outline"></ion-icon>
+                </fast-button>
+              </div>
             </div>
           </div>` : null}
-
-          ${this.aiData ? html`<div id="aiBlock">
-              <div id="aiData">
-                <div id="aiBlockHeader">
-                  <h3>Toxicity Report</h3>
-
-                  <fast-button @click="${() => this.close()}">
-                    <ion-icon name="close-outline"></ion-icon>
-                  </fast-button>
-                </div>
-
-                  ${this.aiData.length > 0 ? html`<ul id="toxicityReport">
-                    ${this.aiData.map((dataPoint: any) => {
-      return html`
-                        <li>
-                          <h4 class="bad">${dataPoint.label}</h4>
-                          <p>Please remember that your words do affect others.</p>
-                        </li>
-                      `
-    })}
-                  </ul>` : html`<div id="happyReport">
-                    <img src="/assets/robot.svg">
-                    <h4>Your email sounds good to us!</h4>
-                    
-                  </div>`}
-
-                  <span id="aiMessage">All AI is done locally on your device</span>
-              </div>
-            </div>` : null
-      }
         
-          <fast-text-area @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email...">
-          </fast-text-area>
+          ${this.aiData ? html`<div id="aiBlock">
+            <div id="aiData">
+              <div id="aiBlockHeader">
+                <h3>Toxicity Report</h3>
+        
+                <fast-button @click="${() => this.close()}">
+                  <ion-icon name="close-outline"></ion-icon>
+                </fast-button>
+              </div>
+        
+              ${this.aiData.length > 0 ? html`<ul id="toxicityReport">
+                ${this.aiData.map((dataPoint: any) => {
+      return html`
+                <li>
+                  <h4 class="bad">${dataPoint.label}</h4>
+                  <p>Please remember that your words do affect others.</p>
+                </li>
+                `
+    })}
+              </ul>` : html`<div id="happyReport">
+                <img src="/assets/robot.svg">
+                <h4>Your email sounds good to us!</h4>
+        
+              </div>`}
+        
+              <span id="aiMessage">All AI is done locally on your device</span>
+            </div>
+          </div>` : null
+          }
+        
+          <section id="textAreaSection">
+            <fast-text-area @input="${(event: any) => this.updatePreview(event)}"
+              @change="${(event: any) => this.updateBody(event)}" placeholder="Content of email...">
+            </fast-text-area>
+        
+            ${this.textPreview ? html`<div id="textPreview"
+              .innerHTML="${this.textPreviewContent ? this.textPreviewContent : null}">
+        
+            </div>` : null}
+          </section>
+        
+          <div id="textAreaActions">
+            <span id="markdownSpan">Supports Markdown</span>
+        
+            <fast-button id="previewTextButton" appearance="lightweight" @click="${() => this.openTextPreview()}">HTML Preview
+            </fast-button>
+          </div>
         
           ${this.attachments.length === 0 ? html`<ion-fab vertical="bottom" horizontal="end">
             <ion-fab-button>
@@ -810,10 +917,10 @@ export class AppNew extends LitElement {
             </fast-button>
         
             <div id="newEmailSubActions">
-
+        
               <fast-button id="aiCheck" @click="${() => this.doAiCheck()}">
                 AI Toxicity Check
-                
+        
                 <ion-icon name="happy-outline"></ion-icon>
               </fast-button>
         
