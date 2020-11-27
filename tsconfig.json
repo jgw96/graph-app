@@ -42,7 +42,8 @@
           "no-unknown-property": "error",
           "no-unknown-property-converter": "error",
           "no-unknown-slot": "off",
-          "no-unknown-tag-name": "error"
+          "no-unknown-tag-name": "off",
+          "no-unknown-tag": "off"
         }
       }
     ]

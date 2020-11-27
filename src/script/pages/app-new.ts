@@ -2,7 +2,7 @@ import { LitElement, css, html, customElement, property } from 'lit-element';
 
 import '@dile/dile-toast/dile-toast';
 
-import { sendMail } from '../services/mail';
+import { getAnEmail, sendMail, reply } from '../services/mail';
 import { Router } from '@vaadin/router';
 
 //@ts-ignore
@@ -26,10 +26,13 @@ export class AppNew extends LitElement {
 
   @property() preview: any = null;
   @property() previewContent: any = null;
-  @property() textPreview: boolean = false;
+  @property({ type: Boolean }) textPreview: boolean = false;
   @property() textPreviewContent: string | null = null;
 
   @property() aiData: any | null = null;
+
+  @property({ type: Boolean }) replying: boolean = false;
+  @property() emailReplyTo: any | null = null;
 
   worker: any | null = null;
   textWorker: any | null = null;
@@ -38,6 +41,31 @@ export class AppNew extends LitElement {
 
   static get styles() {
     return css`
+
+    #replyingHeader {
+      margin-top: 0;
+      font-size: 1.4em;
+    }
+
+    .scrolling {
+      height: 90vh;
+      overflow-y: scroll;
+    }
+
+    #replyEmailSection {
+      height: 100%;
+      width: 100%;
+
+      border: solid 2px var(--app-color-primary);
+      border-radius: 6px;
+      background: white;
+    }
+
+    #appNewBody::-webkit-scrollbar {
+      width: 8px;
+      background: #222222;
+      border-radius: 4px;
+    }
 
     #textAreaSection {
       display: flex;
@@ -441,6 +469,21 @@ export class AppNew extends LitElement {
   }
 
   async firstUpdated() {
+    const search = new URLSearchParams(location.search);
+    const id = search.get('id');
+
+    if (id) {
+      this.emailReplyTo = await getAnEmail(id);
+      console.log('email to reply too', this.emailReplyTo);
+      this.address = this.emailReplyTo.sender.emailAddress.address;
+
+      this.replying = true;
+
+      const ell: any = this.shadowRoot?.querySelector("#appNewBody");
+      if (ell) {
+        ell.classList.toggle("scrolling");
+      }
+    }
 
     await this.shareTarget()
 
@@ -510,6 +553,54 @@ export class AppNew extends LitElement {
     }
   }
 
+  async reply() {
+    this.loading = true;
+
+    let addresses = this.address.split(",");
+    console.log(addresses);
+
+    let recip: any[] = [];
+
+    addresses.forEach((address) => {
+      recip.push({
+        emailAddress: {
+          address: address.trim()
+        }
+      })
+    });
+
+    const htmlBody = await this.textWorker.runMarkdown(this.body);
+    console.log(htmlBody);
+
+    try {
+      if (recip && htmlBody) {
+        await reply(this.emailReplyTo.id, htmlBody, recip);
+
+        let toastElement: any = this.shadowRoot?.getElementById('myToast');
+        await toastElement?.open('Reply Sent...', 'success');
+
+        this.loading = false;
+
+        await del('shareTargetAttachment');
+      }
+      else {
+        let toastElement: any = this.shadowRoot?.getElementById('myToast');
+        await toastElement?.open('Please enter a subject, and a recipient', 'error');
+
+        this.loading = false;
+      }
+      Router.go("/");
+    }
+    catch (err) {
+      console.error(err);
+
+      let toastElement: any = this.shadowRoot?.getElementById('myToast');
+      await toastElement?.open('Error sending email', 'error');
+
+      this.loading = false;
+    }
+  }
+
   async send() {
     this.loading = true;
 
@@ -562,8 +653,14 @@ export class AppNew extends LitElement {
     Router.go("/");
   }
 
-  updateSubject(event: any) {
-    this.subject = event.target.value;
+  updateSubject(event: any, updatedSubject?: string) {
+    if (updatedSubject) {
+      this.subject = updatedSubject;
+      return;
+    }
+    else {
+      this.subject = event.target.value;
+    }
   }
 
   async updateBody(event: any) {
@@ -806,8 +903,10 @@ export class AppNew extends LitElement {
 
   render() {
     return html`
-        <div>
+        <div id="appNewBody">
           ${this.loading ? html`<fast-progress></fast-progress>` : null}
+
+          ${this.emailReplyTo ? html`<h2 id="replyingHeader">Replying</h2>` : null}
         
           <div id="subjectBar">
             <div id="addressBlock">
@@ -817,8 +916,8 @@ export class AppNew extends LitElement {
               <app-contacts @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"></app-contacts>
             </div>
         
-            <fast-text-field @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject"
-              placeholder="Subject.."></fast-text-field>
+            ${this.emailReplyTo ? null : html`<fast-text-field @change="${(event: any) => this.updateSubject(event)}" type="text" id="subject"
+              placeholder="Subject.."></fast-text-field>`}
           </div>
         
           ${this.preview ? html`<div id="previewBlock">
@@ -890,6 +989,9 @@ export class AppNew extends LitElement {
             <fast-button id="previewTextButton" appearance="lightweight" @click="${() => this.openTextPreview()}">HTML Preview
             </fast-button>
           </div>
+
+          ${this.emailReplyTo ? html`<iframe id="replyEmailSection" .srcdoc="${this.emailReplyTo.body.content}">
+          </iframe>` : null}
         
           ${this.attachments.length === 0 ? html`<ion-fab vertical="bottom" horizontal="end">
             <ion-fab-button>
@@ -930,11 +1032,15 @@ export class AppNew extends LitElement {
                 <ion-icon name="attach-outline"></ion-icon>
               </fast-button>` : null}
         
-              <fast-button id="sendButton" @click="${() => this.send()}">
+              ${this.emailReplyTo ? html`<fast-button id="sendButton" @click="${() => this.reply()}">
+                Reply
+        
+                <ion-icon name="mail-outline"></ion-icon>
+              </fast-button>` : html`<fast-button id="sendButton" @click="${() => this.send()}">
                 Send
         
                 <ion-icon name="mail-outline"></ion-icon>
-              </fast-button>
+              </fast-button>`}
             </div>
           </div>
         

@@ -46,7 +46,7 @@ export async function getAnEmail(id: string) {
 
 }
 
-export async function flagEmail (email: any) {
+export async function flagEmail(email: any) {
   const token = await getToken();
 
   const headers = new Headers();
@@ -54,7 +54,7 @@ export async function flagEmail (email: any) {
   headers.append("Authorization", bearer);
   headers.append('Accept', 'application/json');
   headers.append('Content-Type', 'application/json');
-  
+
   const options = {
     method: "PATCH",
     headers: headers,
@@ -105,6 +105,48 @@ const processAttachments = async (attachments: any[]) => {
       resolve(null)
     }
   });
+}
+
+export async function reply(id: number, body: string, recipients: any[]) {
+  let ourReply: any = null;
+
+  ourReply = {
+    "message": {
+      "body": {
+        "contentType": "HTML",
+        "content": body
+      },
+      "toRecipients": recipients
+    }
+  }
+
+  if (ourReply) {
+    const token = await getToken();
+
+    const headers = new Headers();
+    const bearer = "Bearer " + token;
+    headers.append("Authorization", bearer);
+    const options = {
+      method: "POST",
+      headers: {
+        'Authorization': bearer,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(ourReply)
+    };
+    const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}/reply`;
+
+    try {
+      await fetch(graphEndpoint, options);
+
+    }
+    catch (err) {
+      throw new Error(`error sending message: ${err.message}`);
+    }
+  }
+
+
 }
 
 export async function sendMail(subject: string, body: string, recipients: any[], attachments: File[]) {

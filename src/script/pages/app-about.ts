@@ -86,13 +86,17 @@ export class AppAbout extends LitElement {
         width: 100%;
         height: 100%;
 
-        background: white;
+        background: transparent;
         flex: 2;
       }
 
       #content iframe {
         height: 100%;
         width: 100%;
+
+        border: solid 2px var(--app-color-primary);
+        border-radius: 6px;
+        background: white;
       }
 
       #reminder {
@@ -189,6 +193,11 @@ export class AppAbout extends LitElement {
         height: 88.8vh;
       }
 
+      #replyButton {
+        margin-left: 8px;
+        background: var(--app-color-primary);
+      }
+
       @media (min-width: 800px) {
         #detailBlock {
           background: #ffffff8f;
@@ -246,9 +255,9 @@ export class AppAbout extends LitElement {
         #detailMoreActions {
           left: initial;
           right: 4px;
-          bottom: 0px;
+          bottom: -1px;
           background: transparent;
-          width: 14em;
+          width: 18em;
 
           animation-name: slidein;
           animation-duration: 280ms;
@@ -360,6 +369,12 @@ export class AppAbout extends LitElement {
     this.showReminder = false;
   }
 
+  reply() {
+    const id = this.email.id;
+
+    Router.go(`/newEmail?id=${id}`);
+  }
+
   render() {
     return html`
       <div id="detailBlock">
@@ -387,7 +402,7 @@ export class AppAbout extends LitElement {
       
             ${"showTrigger" in Notification.prototype ? html`<fast-button class="detailActionButton"
               @click="${() => this.setupReminder()}">
-              Set Reminder
+              Reminder
       
               <ion-icon name="notifications-circle-outline"></ion-icon>
             </fast-button>` : null}
@@ -396,6 +411,12 @@ export class AppAbout extends LitElement {
               Share
       
               <ion-icon name="share-outline"></ion-icon>
+            </fast-button>
+
+            <fast-button id="replyButton" @click="${() => this.reply()}">
+              Reply
+
+              <ion-icon name="mail-outline"></ion-icon>
             </fast-button>
           </div>
         </section>
