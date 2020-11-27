@@ -64,7 +64,7 @@ export class AppHeader extends LitElement {
       }
 
       #settingsBlock {
-        background: var(--background-color);
+        background: #303030;
         position: absolute;
         top: 8em;
         z-index: 9999;

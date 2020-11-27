@@ -264,6 +264,17 @@ export class AppAbout extends LitElement {
         }
       }
 
+      @media(screen-spanning: single-fold-vertical) {
+        #detailBlock {
+          grid-gap: 36px;
+          grid-template-columns: minmax(240px, 48.8%) 1fr;
+        }
+
+        #detailMoreActions {
+          width: 44.4vw;
+        }
+      }
+
       @media (prefers-color-scheme: light) {
         #detailAction h2 {
           color: black !important;

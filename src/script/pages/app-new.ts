@@ -189,7 +189,7 @@ export class AppNew extends LitElement {
       }
 
       #preview, #aiData {
-        background: var(--background-color);
+        background: #303030;
         position: absolute;
         top: 8em;
         z-index: 9999;

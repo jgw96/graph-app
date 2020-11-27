@@ -417,6 +417,13 @@ export class AppHome extends LitElement {
         }
       }
 
+      @media(screen-spanning: single-fold-vertical) {
+        #mainSection {
+          grid-template-columns: minmax(240px, 48.8%) 1fr;
+          grid-gap: 36px;
+        }
+      }
+
       @media(max-width: 1000px) {
         #filterActions {
           display: none;
