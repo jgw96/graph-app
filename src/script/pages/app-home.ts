@@ -26,9 +26,14 @@ export class AppHome extends LitElement {
     return css`
 
     #pagerButtons {
-      position: fixed;
-      right: 10px;
-      bottom: 10px;
+      display: flex;
+      justify-content: center;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    #pagerButtons fast-button::part(control) {
+      color: var(--app-color-primary);
     }
 
       #advBlock {
@@ -656,15 +661,15 @@ export class AppHome extends LitElement {
               </li>
               `
     })}
+
+                <div id="pagerButtons">
+                  <fast-button appearance="stealth" @click="${() => this.loadMore()}">
+                    More
+
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                  </fast-button>
+                </div>
             </ul>
-          </div>
-
-          <div id="pagerButtons">
-            <fast-button @click="${() => this.loadMore()}">
-              More
-
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </fast-button>
           </div>
       
       
