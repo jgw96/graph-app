@@ -1,5 +1,6 @@
 import { getToken } from '../services/auth';
 
+let nextMail: any = null;
 
 export async function getMail() {
   console.log('getMail')
@@ -14,12 +15,16 @@ export async function getMail() {
     method: "GET",
     headers: headers
   };
-  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+
+  const graphEndpoint = nextMail || "https://graph.microsoft.com/beta/me/messages";
 
   const response = await fetch(graphEndpoint, options);
   const data = await response.json();
 
   console.log('mail', data);
+
+  // nextMail = data.  + '.@' + odata.nextLink;
+  nextMail = data['@odata.nextLink'];
 
   return data.value;
 

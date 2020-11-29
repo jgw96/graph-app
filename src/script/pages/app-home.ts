@@ -25,6 +25,12 @@ export class AppHome extends LitElement {
   static get styles() {
     return css`
 
+    #pagerButtons {
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+    }
+
       #advBlock {
         overflow: scroll hidden;
         height: 100%;
@@ -81,6 +87,10 @@ export class AppHome extends LitElement {
       @media(max-width: 800px) {
         #advBlock {
           white-space: initial;
+        }
+
+        #pagerButtons {
+          bottom: 4em;
         }
 
         #searchInput {
@@ -194,9 +204,6 @@ export class AppHome extends LitElement {
         justify-content: space-between;
 
         margin-bottom: 10px;
-
-        backdrop-filter: blur(10px);
-        background: #d3d3d3bf;
       }
 
       ul li:nth-child(-n+14) {
@@ -484,6 +491,19 @@ export class AppHome extends LitElement {
     sessionStorage.setItem('latestMail', JSON.stringify(this.mail));
   }
 
+  async loadMore() {
+    this.loading = true;
+
+    const newMail = await getMail();
+    const oldMail = this.mail;
+
+    if (oldMail && newMail) {
+      this.mail = [...oldMail, ...newMail];
+    }
+
+    this.loading = false;
+  }
+
   getFocused() {
     this.loading = true;
 
@@ -637,6 +657,14 @@ export class AppHome extends LitElement {
               `
     })}
             </ul>
+          </div>
+
+          <div id="pagerButtons">
+            <fast-button @click="${() => this.loadMore()}">
+              More
+
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </fast-button>
           </div>
       
       
