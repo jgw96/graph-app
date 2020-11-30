@@ -433,7 +433,7 @@ export class AppAbout extends LitElement {
             shimmer
         ></fast-skeleton>`}
 
-        ${this.attachments ? html`<app-attachments .attachments=${this.attachments}></app-attachments>` : null}
+        ${this.attachments && this.attachments.length > 0 ? html`<app-attachments .attachments=${this.attachments}></app-attachments>` : null}
       
           <div id="detailMoreActions">
 
