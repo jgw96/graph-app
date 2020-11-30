@@ -94,10 +94,6 @@ export class AppHome extends LitElement {
           white-space: initial;
         }
 
-        #pagerButtons {
-          bottom: 4em;
-        }
-
         #searchInput {
           width: 100%;
         }
