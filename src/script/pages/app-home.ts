@@ -488,7 +488,7 @@ export class AppHome extends LitElement {
 
   async getSavedAndUpdate() {
     console.log('getting mail');
-    this.mailCopy = await getMail();
+    this.mailCopy = await getMail(true);
     this.mail = this.mailCopy;
 
     console.log('this.mail', this.mail);

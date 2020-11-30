@@ -2,31 +2,57 @@ import { getToken } from '../services/auth';
 
 let nextMail: any = null;
 
-export async function getMail() {
+export async function getMail(initLoad?: boolean) {
   console.log('getMail')
 
-  const token = await getToken();
-  console.log('token', token);
+  if (initLoad) {
+    const token = await getToken();
+    console.log('token', token);
 
-  const headers = new Headers();
-  const bearer = "Bearer " + token;
-  headers.append("Authorization", bearer);
-  const options = {
-    method: "GET",
-    headers: headers
-  };
+    const headers = new Headers();
+    const bearer = "Bearer " + token;
+    headers.append("Authorization", bearer);
+    const options = {
+      method: "GET",
+      headers: headers
+    };
 
-  const graphEndpoint = nextMail || "https://graph.microsoft.com/beta/me/messages";
+    const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
 
-  const response = await fetch(graphEndpoint, options);
-  const data = await response.json();
+    const response = await fetch(graphEndpoint, options);
+    const data = await response.json();
 
-  console.log('mail', data);
+    console.log('mail', data);
 
-  // nextMail = data.  + '.@' + odata.nextLink;
-  nextMail = data['@odata.nextLink'];
+    // nextMail = data.  + '.@' + odata.nextLink;
+    nextMail = data['@odata.nextLink'];
 
-  return data.value;
+    return data.value;
+  }
+  else {
+    const token = await getToken();
+    console.log('token', token);
+
+    const headers = new Headers();
+    const bearer = "Bearer " + token;
+    headers.append("Authorization", bearer);
+    const options = {
+      method: "GET",
+      headers: headers
+    };
+
+    const graphEndpoint = nextMail || "https://graph.microsoft.com/beta/me/messages";
+
+    const response = await fetch(graphEndpoint, options);
+    const data = await response.json();
+
+    console.log('mail', data);
+
+    // nextMail = data.  + '.@' + odata.nextLink;
+    nextMail = data['@odata.nextLink'];
+
+    return data.value;
+  }
 
 }
 
@@ -67,6 +93,32 @@ export async function flagEmail(email: any) {
       flag: {
         flagStatus: "flagged"
       }
+    })
+  };
+  const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${email.id}`;
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  console.log(data);
+
+  return data;
+}
+
+export async function markAsRead(email: any) {
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  headers.append('Accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const options = {
+    method: "PATCH",
+    headers: headers,
+    body: JSON.stringify({
+      isRead: true
     })
   };
   const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${email.id}`;

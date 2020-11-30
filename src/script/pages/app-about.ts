@@ -1,5 +1,5 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-import { getAnEmail } from '../services/mail';
+import { getAnEmail, flagEmail, markAsRead } from '../services/mail';
 
 
 import { Router } from '@vaadin/router';
@@ -372,6 +372,12 @@ export class AppAbout extends LitElement {
     }
   }
 
+  async disconnectedCallback() {
+    super.disconnectedCallback();
+
+    await markAsRead(this.email);
+  }
+
   setupReminder() {
     this.showReminder = true;
   }
@@ -384,6 +390,17 @@ export class AppAbout extends LitElement {
     const id = this.email.id;
 
     Router.go(`/newEmail?id=${id}`);
+  }
+
+  async bookmark(email: any) {
+    console.log(email);
+
+    try {
+      await flagEmail(email);
+    }
+    catch (err) {
+      console.error(err);
+    }
   }
 
   render() {
@@ -410,6 +427,12 @@ export class AppAbout extends LitElement {
         ></fast-skeleton>`}
       
           <div id="detailMoreActions">
+
+          ${this.email?.flag.flagStatus !== "flagged" ? html`<fast-button class="detailActionButton" @click="${() => this.bookmark(this.email)}">
+             Flag
+
+                      <ion-icon name="flag-outline"></ion-icon>
+                    </fast-button>` : null}
       
             ${"showTrigger" in Notification.prototype ? html`<fast-button class="detailActionButton"
               @click="${() => this.setupReminder()}">
