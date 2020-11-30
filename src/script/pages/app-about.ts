@@ -1,5 +1,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-import { getAnEmail, flagEmail, markAsRead } from '../services/mail';
+import { getAnEmail, flagEmail, markAsRead, listAttach } from '../services/mail';
+
+import '../components/app-attachments';
 
 
 import { Router } from '@vaadin/router';
@@ -13,6 +15,8 @@ export class AppAbout extends LitElement {
   @property() email: any = null;
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
+
+  @property() attachments: any[] | null = null;
 
   static get styles() {
     return css`
@@ -308,6 +312,9 @@ export class AppAbout extends LitElement {
       const email = await getAnEmail(id);
       console.log(email);
       this.email = email;
+
+      this.attachments = await listAttach(id);
+      console.log(this.attachments);
     }
   }
 
@@ -425,6 +432,8 @@ export class AppAbout extends LitElement {
             shape="rect"
             shimmer
         ></fast-skeleton>`}
+
+        ${this.attachments ? html`<app-attachments .attachments=${this.attachments}></app-attachments>` : null}
       
           <div id="detailMoreActions">
 
@@ -456,7 +465,7 @@ export class AppAbout extends LitElement {
         </section>
       
         ${this.email ? html`<div id="content">
-          <iframe .srcdoc="${this.email?.body.content}"></iframe>
+          <iframe sandbox .srcdoc="${this.email?.body.content}"></iframe>
         </div>` : html`<div>
         <fast-skeleton
             style="

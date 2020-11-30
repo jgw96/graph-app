@@ -552,7 +552,7 @@ export class AppHome extends LitElement {
   async refresh() {
     this.loading = true;
 
-    const newMail = await getMail();
+    const newMail = await getMail(true);
 
     this.loading = false;
 
