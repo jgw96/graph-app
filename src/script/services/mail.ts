@@ -131,6 +131,26 @@ export async function markAsRead(email: any) {
   return data;
 }
 
+export async function listAttach(id: string) {
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "GET",
+    headers: headers
+  };
+  const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}/attachments`;
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  console.log(data);
+
+  return data.value;
+}
+
 const processAttachments = async (attachments: any[]) => {
 
   return new Promise((resolve) => {
