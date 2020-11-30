@@ -14,9 +14,6 @@ export class AppAttachments extends LitElement {
             background: rgb(34, 34, 34);
             padding: 10px;
             border-radius: 8px;
-
-            max-height: 300px;
-            overflow-y: scroll;
           }
 
           h3 {
@@ -27,6 +24,15 @@ export class AppAttachments extends LitElement {
             list-style: none;
             margin: 0;
             padding: 0;
+
+            max-height: 500px;
+            overflow-y: auto;
+          }
+
+          ul::-webkit-scrollbar {
+            width: 8px;
+            background: #222222;
+            border-radius: 4px;
           }
 
           li {
