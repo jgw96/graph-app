@@ -1,20 +1,20 @@
-import { getToken } from '../services/auth';
+import { getToken } from "../services/auth";
 
 let nextMail: any = null;
 
 export async function getMail(initLoad?: boolean) {
-  console.log('getMail')
+  console.log("getMail");
 
   if (initLoad) {
     const token = await getToken();
-    console.log('token', token);
+    console.log("token", token);
 
     const headers = new Headers();
     const bearer = "Bearer " + token;
     headers.append("Authorization", bearer);
     const options = {
       method: "GET",
-      headers: headers
+      headers: headers,
     };
 
     const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
@@ -22,38 +22,48 @@ export async function getMail(initLoad?: boolean) {
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
 
-    console.log('mail', data);
+    console.log("mail", data);
+
+    const cache = await caches.open("offline-mail");
+
+    if (cache) {
+      const cacheResp = await cache.matchAll(graphEndpoint);
+      cacheResp.forEach(async (element: any) => {
+        await cache.delete(element);
+      });
+
+      cache.put(graphEndpoint, response);
+    }
 
     // nextMail = data.  + '.@' + odata.nextLink;
-    nextMail = data['@odata.nextLink'];
+    nextMail = data["@odata.nextLink"];
 
     return data.value;
-  }
-  else {
+  } else {
     const token = await getToken();
-    console.log('token', token);
+    console.log("token", token);
 
     const headers = new Headers();
     const bearer = "Bearer " + token;
     headers.append("Authorization", bearer);
     const options = {
       method: "GET",
-      headers: headers
+      headers: headers,
     };
 
-    const graphEndpoint = nextMail || "https://graph.microsoft.com/beta/me/messages";
+    const graphEndpoint =
+      nextMail || "https://graph.microsoft.com/beta/me/messages";
 
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
 
-    console.log('mail', data);
+    console.log("mail", data);
 
     // nextMail = data.  + '.@' + odata.nextLink;
-    nextMail = data['@odata.nextLink'];
+    nextMail = data["@odata.nextLink"];
 
     return data.value;
   }
-
 }
 
 export async function getAnEmail(id: string) {
@@ -64,7 +74,7 @@ export async function getAnEmail(id: string) {
   headers.append("Authorization", bearer);
   const options = {
     method: "GET",
-    headers: headers
+    headers: headers,
   };
   const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}`;
 
@@ -74,7 +84,6 @@ export async function getAnEmail(id: string) {
   console.log(data);
 
   return data;
-
 }
 
 export async function flagEmail(email: any) {
@@ -83,17 +92,17 @@ export async function flagEmail(email: any) {
   const headers = new Headers();
   const bearer = "Bearer " + token;
   headers.append("Authorization", bearer);
-  headers.append('Accept', 'application/json');
-  headers.append('Content-Type', 'application/json');
+  headers.append("Accept", "application/json");
+  headers.append("Content-Type", "application/json");
 
   const options = {
     method: "PATCH",
     headers: headers,
     body: JSON.stringify({
       flag: {
-        flagStatus: "flagged"
-      }
-    })
+        flagStatus: "flagged",
+      },
+    }),
   };
   const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${email.id}`;
 
@@ -111,15 +120,15 @@ export async function markAsRead(email: any) {
   const headers = new Headers();
   const bearer = "Bearer " + token;
   headers.append("Authorization", bearer);
-  headers.append('Accept', 'application/json');
-  headers.append('Content-Type', 'application/json');
+  headers.append("Accept", "application/json");
+  headers.append("Content-Type", "application/json");
 
   const options = {
     method: "PATCH",
     headers: headers,
     body: JSON.stringify({
-      isRead: true
-    })
+      isRead: true,
+    }),
   };
   const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${email.id}`;
 
@@ -139,7 +148,7 @@ export async function listAttach(id: string) {
   headers.append("Authorization", bearer);
   const options = {
     method: "GET",
-    headers: headers
+    headers: headers,
   };
   const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}/attachments`;
 
@@ -152,7 +161,6 @@ export async function listAttach(id: string) {
 }
 
 const processAttachments = async (attachments: any[]) => {
-
   return new Promise((resolve) => {
     let attachToSend: any[] = [];
 
@@ -163,39 +171,40 @@ const processAttachments = async (attachments: any[]) => {
 
       reader.readAsDataURL(attachments[0]);
       reader.onloadend = async () => {
-        let base64String = (reader.result as string)?.replace(/^data:.+;base64,/, '');
+        let base64String = (reader.result as string)?.replace(
+          /^data:.+;base64,/,
+          ""
+        );
 
         let attachFile = {
           "@odata.type": "#microsoft.graph.fileAttachment",
-          "name": attachments[0].name || "attachment",
-          "contentType": attachments[0].type,
-          "contentBytes": base64String
+          name: attachments[0].name || "attachment",
+          contentType: attachments[0].type,
+          contentBytes: base64String,
         };
 
         attachToSend.push(attachFile);
 
         resolve(attachToSend);
-
-      }
-    }
-    else {
-      resolve(null)
+      };
+    } else {
+      resolve(null);
     }
   });
-}
+};
 
 export async function reply(id: number, body: string, recipients: any[]) {
   let ourReply: any = null;
 
   ourReply = {
-    "message": {
-      "body": {
-        "contentType": "HTML",
-        "content": body
+    message: {
+      body: {
+        contentType: "HTML",
+        content: body,
       },
-      "toRecipients": recipients
-    }
-  }
+      toRecipients: recipients,
+    },
+  };
 
   if (ourReply) {
     const token = await getToken();
@@ -206,61 +215,61 @@ export async function reply(id: number, body: string, recipients: any[]) {
     const options = {
       method: "POST",
       headers: {
-        'Authorization': bearer,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Authorization: bearer,
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(ourReply)
+      body: JSON.stringify(ourReply),
     };
     const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}/reply`;
 
     try {
       await fetch(graphEndpoint, options);
-
-    }
-    catch (err) {
+    } catch (err) {
       throw new Error(`error sending message: ${err.message}`);
     }
   }
-
-
 }
 
-export async function sendMail(subject: string, body: string, recipients: any[], attachments: File[]) {
+export async function sendMail(
+  subject: string,
+  body: string,
+  recipients: any[],
+  attachments: File[]
+) {
   let sendMail: any = null;
 
   if (attachments) {
-    console.log('attachments', attachments);
+    console.log("attachments", attachments);
 
     const stuffToSend = await processAttachments(attachments);
 
-    console.log('stuffToSend', stuffToSend);
+    console.log("stuffToSend", stuffToSend);
 
     if (stuffToSend) {
       sendMail = {
-        "message": {
-          "subject": subject,
-          "body": {
-            "contentType": "HTML",
-            "content": body
+        message: {
+          subject: subject,
+          body: {
+            contentType: "HTML",
+            content: body,
           },
-          "toRecipients": recipients,
-          "attachments": stuffToSend
+          toRecipients: recipients,
+          attachments: stuffToSend,
         },
-        "saveToSentItems": "true"
+        saveToSentItems: "true",
       };
-    }
-    else {
+    } else {
       sendMail = {
-        "message": {
-          "subject": subject,
-          "body": {
-            "contentType": "Text",
-            "content": body
+        message: {
+          subject: subject,
+          body: {
+            contentType: "Text",
+            content: body,
           },
-          "toRecipients": recipients
+          toRecipients: recipients,
         },
-        "saveToSentItems": "true"
+        saveToSentItems: "true",
       };
     }
 
@@ -273,37 +282,31 @@ export async function sendMail(subject: string, body: string, recipients: any[],
       const options = {
         method: "POST",
         headers: {
-          'Authorization': bearer,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Authorization: bearer,
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(sendMail)
+        body: JSON.stringify(sendMail),
       };
       const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
 
       try {
         await fetch(graphEndpoint, options);
-
-      }
-      catch (err) {
+      } catch (err) {
         throw new Error(`error sending message: ${err.message}`);
       }
-
-
     }
-  }
-  else {
+  } else {
     sendMail = {
-      "message": {
-        "subject": subject,
-        "body": {
-          "contentType": "Text",
-          "content": body
+      message: {
+        subject: subject,
+        body: {
+          contentType: "Text",
+          content: body,
         },
-        "toRecipients":
-          recipients
+        toRecipients: recipients,
       },
-      "saveToSentItems": "true"
+      saveToSentItems: "true",
     };
 
     if (sendMail) {
@@ -315,18 +318,17 @@ export async function sendMail(subject: string, body: string, recipients: any[],
       const options = {
         method: "POST",
         headers: {
-          'Authorization': bearer,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Authorization: bearer,
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(sendMail)
+        body: JSON.stringify(sendMail),
       };
       const graphEndpoint = "https://graph.microsoft.com/beta/me/sendMail";
 
       try {
         await fetch(graphEndpoint, options);
-      }
-      catch (err) {
+      } catch (err) {
         console.error("error sending message", err);
       }
     }

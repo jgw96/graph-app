@@ -164,7 +164,7 @@ export class AppHome extends LitElement {
 
       @media(prefers-color-scheme: light) {
         fast-menu-item {
-          background: #e5e5e5;
+          background: white;
           color: black;
         }
 
@@ -174,6 +174,11 @@ export class AppHome extends LitElement {
 
         fast-text-field::part(control) {
           color: black;
+          background: white;
+        }
+
+        fast-text-field::part(root) {
+          background: white;
         }
       }
 
@@ -214,7 +219,7 @@ export class AppHome extends LitElement {
       }
 
       ul li {
-        background: #e2e2e2;
+        background: white;
         padding-left: 10px;
         padding-right: 10px;
         padding-top: 1px;
@@ -226,6 +231,8 @@ export class AppHome extends LitElement {
         justify-content: space-between;
 
         margin-bottom: 10px;
+
+        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
       }
 
       ul li:nth-child(-n+14) {
@@ -258,6 +265,10 @@ export class AppHome extends LitElement {
       #filterActions button.selected {
         border-bottom: solid 2px var(--app-color-primary);
         color: var(--app-color-primary);
+      }
+
+      #filterActions h3 {
+        text-transform: uppercase;
       }
 
 
@@ -362,7 +373,7 @@ export class AppHome extends LitElement {
 
       @media(prefers-color-scheme: dark) {
         ul li {
-          background: rgba(29, 29, 29, 0.78);
+          background: #212121;
           color: white;
         }
 
@@ -446,13 +457,6 @@ export class AppHome extends LitElement {
         }
       }
 
-      @media(screen-spanning: single-fold-vertical) {
-        #mainSection {
-          grid-template-columns: minmax(240px, 48.8%) 1fr;
-          grid-gap: 36px;
-        }
-      }
-
       @media(max-width: 1000px) {
         #filterActions {
           display: none;
@@ -469,6 +473,22 @@ export class AppHome extends LitElement {
           opacity: 1;
         }
       }
+
+      @media(screen-spanning: single-fold-vertical) {
+        #mainSection {
+          grid-template-columns: minmax(47vw, 22%) 1fr;
+          grid-gap: 47px;
+        }
+
+        #introBlock {
+          margin-right: 0em;
+          margin-left: calc(env(fold-left) + 2em);
+        }
+
+        #advBlock {
+          display: none;
+        }
+      }
     `;
   }
 
@@ -478,6 +498,7 @@ export class AppHome extends LitElement {
 
   async firstUpdated() {
     const loadCheck = sessionStorage.getItem('latestMail');
+    console.log('loadCheck', loadCheck);
 
     if (loadCheck) {
       this.initLoad = false;
@@ -488,7 +509,7 @@ export class AppHome extends LitElement {
 
       setTimeout(async () => {
         await this.getSavedAndUpdate();
-      }, 800);
+      }, 1200);
     }
     
     (window as any).requestIdleCallback(async () => {
@@ -506,6 +527,7 @@ export class AppHome extends LitElement {
   async getSavedAndUpdate() {
     console.log('getting mail');
     this.mailCopy = await getMail(true);
+    console.log('mailCopy', this.mailCopy);
     this.mail = this.mailCopy;
 
     console.log('this.mail', this.mail);

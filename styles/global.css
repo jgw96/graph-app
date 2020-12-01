@@ -39,11 +39,11 @@ fast-design-system-provider {
 
 @media (prefers-color-scheme: light) {
   html, body {
-    --ion-background-color: #ffffff;
+    --ion-background-color: #edebe9;
   }
 
   fast-design-system-provider {
-    --background-color: #ffffff;
+    --background-color: #edebe9;
     color: black;
     --neutral-foreground-rest: #e5e5e5;
     --neutral-fill-input-rest: #e5e5e5;
@@ -58,7 +58,7 @@ fast-design-system-provider {
 
 @media (prefers-color-scheme: dark) {
   html {
-    background-color: #181818;
+    background-color: #201f1e;
   }
 
   :root {
@@ -125,7 +125,7 @@ fast-design-system-provider {
   --ion-color-light-shade: #1e2023;
   --ion-color-light-tint: #383a3e;
 
-  --ion-background-color: #121212;
+  --ion-background-color: #201f1e;
   --ion-background-color-rgb: 18,18,18;
 
   --ion-text-color: #ffffff;

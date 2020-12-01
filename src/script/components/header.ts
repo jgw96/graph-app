@@ -26,7 +26,7 @@ export class AppHeader extends LitElement {
 
         position: sticky;
         top: 0;
-        background: #ffffff57;
+        background: white;
         backdrop-filter: blur(10px);
         z-index: 1;
       }
@@ -230,6 +230,17 @@ export class AppHeader extends LitElement {
     }
   }
 
+  userAuthed(authed: boolean) {
+    console.log('user authed', authed);
+
+    let event = new CustomEvent("user-authed", {
+      detail: {
+        authed: true,
+      },
+    });
+    this.dispatchEvent(event);
+  }
+
   async clearStorage() {
     await clear();
     localStorage.clear();
@@ -268,7 +279,8 @@ export class AppHeader extends LitElement {
           <fast-button @click="${() => this.openSettingsModal()}" id="settingsButton" appearance="lightweight">
             <ion-icon name="settings-outline"></ion-icon>
           </fast-button>
-          <app-login></app-login>
+
+          <app-login @authed="${(event: any) => this.userAuthed(event.target.value)}"></app-login>
         </div>
       </header>
     `;
