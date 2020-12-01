@@ -156,6 +156,21 @@ export class AppHome extends LitElement {
         margin-bottom: 8px;
       }
 
+      @media(prefers-color-scheme: light) {
+        fast-menu-item {
+          background: #e5e5e5;
+          color: black;
+        }
+
+        fast-text-field::part(label) {
+          color: black;
+        }
+
+        fast-text-field::part(control) {
+          color: black;
+        }
+      }
+
       pwa-install {
         position: fixed;
         bottom: 12px;

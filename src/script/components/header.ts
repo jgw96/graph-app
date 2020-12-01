@@ -56,13 +56,6 @@ export class AppHeader extends LitElement {
         animation-duration: 280ms;
       }
 
-      #settingsHeader {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1em;
-      }
-
       #settingsBlock {
         background: #303030;
         position: absolute;
@@ -74,6 +67,28 @@ export class AppHeader extends LitElement {
         border-radius: 4px;
 
         padding: 1em 2em;
+      }
+
+      @media(prefers-color-scheme: light) {
+        #settingsContainer {
+          background: rgba(255, 255, 255, 0.3);
+          backdrop-filter: blur(10px);
+        }
+
+        #settingsBlock {
+          background: #f5f5f5;
+        }
+
+        #settingsBlock fast-switch::part(label) {
+          color: black;
+        }
+      }
+
+      #settingsHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1em;
       }
 
       #settingsActions {

@@ -60,6 +60,12 @@ export class AppAbout extends LitElement {
         animation-duration: 280ms;
       }
 
+      @media(prefers-color-scheme: light) {
+        #detailMoreActions {
+          background: rgb(226, 226, 226);
+        }
+      }
+
       #detailActions div {
         display: flex;
       }

@@ -72,6 +72,12 @@ export class AppNew extends LitElement {
       justify-content: space-evenly;
     }
 
+    @media(prefers-color-scheme: light) {
+      fast-text-area::part(control), fast-text-field::part(control) {
+        color: black;
+      }
+    }
+
     #textPreview {
       width: 80vw;
       border: solid 1px var(--app-color-secondary);
