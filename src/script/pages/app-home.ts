@@ -67,6 +67,12 @@ export class AppHome extends LitElement {
         width: 50em;
       }
 
+      @media(prefers-color-scheme: light) {
+        #advBlock .advInner {
+          background: #e2e2e2;
+        }
+      }
+
       #advBlock .advInner#firstBlock {
         display: flex;
         flex-direction: row;
