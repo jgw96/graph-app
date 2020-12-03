@@ -216,6 +216,10 @@ export class AppHome extends LitElement {
         list-style: none;
         padding: 0;
         margin-bottom: 4em;
+
+        grid-gap: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       }
 
       ul li {
@@ -231,8 +235,13 @@ export class AppHome extends LitElement {
         justify-content: space-between;
 
         margin-bottom: 10px;
+        transition: box-shadow 200ms;
 
         box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+      }
+
+      ul li:hover {
+        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
       }
 
       ul li:nth-child(-n+14) {
@@ -308,6 +317,10 @@ export class AppHome extends LitElement {
         margin-top: 22px;
       }
 
+      #actionsButtons {
+        min-width: 6em;
+      }
+
       #actions button, #homeToolbar button {
         background-color: var(--app-color-primary);
       }
@@ -318,6 +331,10 @@ export class AppHome extends LitElement {
 
       #nameBlock {
         font-size: 12px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .preview {
@@ -511,7 +528,7 @@ export class AppHome extends LitElement {
         await this.getSavedAndUpdate();
       }, 1200);
     }
-    
+
     (window as any).requestIdleCallback(async () => {
       const underlying = new Worker("/workers/search.js");
       this.worker = Comlink.wrap(underlying);
@@ -690,7 +707,7 @@ export class AppHome extends LitElement {
                 <div id="actions">
                   <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
       
-                  <div>
+                  <div id="actionsButtons">
                     ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}">
                       <ion-icon name="flag-outline"></ion-icon>
                     </fast-button>` : null}

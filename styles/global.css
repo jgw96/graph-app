@@ -58,7 +58,7 @@ fast-design-system-provider {
 
 @media (prefers-color-scheme: dark) {
   html {
-    background-color: #201f1e;
+    background-color: #181818;
   }
 
   :root {
@@ -125,7 +125,7 @@ fast-design-system-provider {
   --ion-color-light-shade: #1e2023;
   --ion-color-light-tint: #383a3e;
 
-  --ion-background-color: #201f1e;
+  --ion-background-color: #181818;
   --ion-background-color-rgb: 18,18,18;
 
   --ion-text-color: #ffffff;
