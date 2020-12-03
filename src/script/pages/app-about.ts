@@ -1,5 +1,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-import { getAnEmail } from '../services/mail';
+import { getAnEmail, flagEmail, markAsRead, listAttach } from '../services/mail';
+
+import '../components/app-attachments';
 
 
 import { Router } from '@vaadin/router';
@@ -13,6 +15,8 @@ export class AppAbout extends LitElement {
   @property() email: any = null;
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
+
+  @property() attachments: any[] | null = null;
 
   static get styles() {
     return css`
@@ -54,6 +58,12 @@ export class AppAbout extends LitElement {
 
         animation-name: slidein;
         animation-duration: 280ms;
+      }
+
+      @media(prefers-color-scheme: light) {
+        #detailMoreActions {
+          background: rgb(226, 226, 226);
+        }
       }
 
       #detailActions div {
@@ -306,6 +316,9 @@ export class AppAbout extends LitElement {
       const email = await getAnEmail(id);
       console.log(email);
       this.email = email;
+
+      this.attachments = await listAttach(id);
+      console.log(this.attachments);
     }
   }
 
@@ -370,6 +383,12 @@ export class AppAbout extends LitElement {
     }
   }
 
+  async disconnectedCallback() {
+    super.disconnectedCallback();
+
+    await markAsRead(this.email);
+  }
+
   setupReminder() {
     this.showReminder = true;
   }
@@ -382,6 +401,17 @@ export class AppAbout extends LitElement {
     const id = this.email.id;
 
     Router.go(`/newEmail?id=${id}`);
+  }
+
+  async bookmark(email: any) {
+    console.log(email);
+
+    try {
+      await flagEmail(email);
+    }
+    catch (err) {
+      console.error(err);
+    }
   }
 
   render() {
@@ -406,8 +436,16 @@ export class AppAbout extends LitElement {
             shape="rect"
             shimmer
         ></fast-skeleton>`}
+
+        ${this.attachments && this.attachments.length > 0 ? html`<app-attachments .attachments=${this.attachments}></app-attachments>` : null}
       
           <div id="detailMoreActions">
+
+          ${this.email?.flag.flagStatus !== "flagged" ? html`<fast-button class="detailActionButton" @click="${() => this.bookmark(this.email)}">
+             Flag
+
+                      <ion-icon name="flag-outline"></ion-icon>
+                    </fast-button>` : null}
       
             ${"showTrigger" in Notification.prototype ? html`<fast-button class="detailActionButton"
               @click="${() => this.setupReminder()}">
@@ -431,7 +469,7 @@ export class AppAbout extends LitElement {
         </section>
       
         ${this.email ? html`<div id="content">
-          <iframe .srcdoc="${this.email?.body.content}"></iframe>
+          <iframe sandbox .srcdoc="${this.email?.body.content}"></iframe>
         </div>` : html`<div>
         <fast-skeleton
             style="

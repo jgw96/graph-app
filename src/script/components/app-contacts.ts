@@ -98,6 +98,24 @@ export class AppContacts extends LitElement {
         background: var(--app-color-primary);
       }
 
+      @media(prefers-color-scheme: light) {
+        #contactsBlock {
+          background: #ffffff4d;
+        }
+
+        #contactsList {
+          background: #f5f5f5;
+        }
+
+        ##contactsBlock fast-switch::part(label) {
+          color: black;
+        }
+
+        .contactInfo .displayName {
+          color: black;
+        }
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0.2;
