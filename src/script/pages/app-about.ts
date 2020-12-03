@@ -200,7 +200,6 @@ export class AppAbout extends LitElement {
 
       @media (min-width: 800px) {
         #detailBlock {
-          background: #ffffff8f;
           display: grid;
           grid-template-columns: minmax(150px, 34%) 1fr;
         }
@@ -283,7 +282,6 @@ export class AppAbout extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         #detailBlock {
-          background: rgb(24 24 24);
           color: white;
         }
 
