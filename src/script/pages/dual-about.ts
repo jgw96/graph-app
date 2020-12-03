@@ -214,7 +214,7 @@ export class DualAbout extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         #detailBlock {
-          background: #29292987;
+
           color: white;
         }
 
