@@ -69,7 +69,7 @@ export class AppHome extends LitElement {
 
       @media(prefers-color-scheme: light) {
         #advBlock .advInner {
-          background: #e2e2e2;
+          background: white;
         }
       }
 
@@ -405,6 +405,10 @@ export class AppHome extends LitElement {
         #homeToolbar {
           background: rgb(29 29 29 / 78%);
         }
+      }
+
+      .advInner ul li {
+        box-shadow: none;
       }
 
       @media(prefers-color-scheme: light) {
