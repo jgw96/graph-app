@@ -16,6 +16,16 @@ export class AppAttachments extends LitElement {
             border-radius: 8px;
           }
 
+          @media(prefers-color-scheme: light) {
+            #attachments {
+              background: var(--neutral-fill-input-active);
+            }
+
+            #attachments fast-button {
+              color: var(--app-color-primary);
+            }
+          }
+
           h3 {
             margin-top: 0;
           }

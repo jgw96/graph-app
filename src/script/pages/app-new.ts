@@ -85,6 +85,9 @@ export class AppNew extends LitElement {
       padding: 0px 1em 1em;
       height: 57.5vh;
       margin-top: 4px;
+
+      animation-name: slideinright;
+      animation-duration: 300ms;
     }
 
     #textAreaActions {
@@ -448,6 +451,17 @@ export class AppNew extends LitElement {
           @keyframes slideinleft {
             from {
               transform: translateX(-20px);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+
+          @keyframes slideinright {
+            from {
+              transform: translateX(50px);
               opacity: 0;
             }
             to {

@@ -1,6 +1,8 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { getAnEmail, flagEmail, markAsRead, listAttach } from '../services/mail';
 
+import { classMap } from 'lit-html/directives/class-map';
+
 import '../components/app-attachments';
 
 
@@ -15,11 +17,16 @@ export class AppAbout extends LitElement {
   @property() email: any = null;
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
+  @property({ type: Boolean }) emailLoaded: boolean = false;
 
   @property() attachments: any[] | null = null;
 
   static get styles() {
     return css`
+      .loading {
+        display: none;
+      }
+
       #detailActions button.back {
         background-color: var(--app-color-secondary);
       }
@@ -317,6 +324,13 @@ export class AppAbout extends LitElement {
       console.log(email);
       this.email = email;
 
+      const iframeEl = this.shadowRoot?.querySelector('iframe');
+      console.log('iframeEl', iframeEl);
+      iframeEl?.addEventListener('load', () => {
+        console.log('loaded');
+        this.emailLoaded = true;
+      })
+
       this.attachments = await listAttach(id);
       console.log(this.attachments);
     }
@@ -468,10 +482,10 @@ export class AppAbout extends LitElement {
           </div>
         </section>
       
-        ${this.email ? html`<div id="content">
-          <iframe sandbox .srcdoc="${this.email?.body.content}"></iframe>
-        </div>` : html`<div>
-        <fast-skeleton
+        <div id="content">
+          <iframe class=${classMap({ loading: !this.emailLoaded })} sandbox .srcdoc="${this.email?.body.content}"></iframe>
+
+        <fast-skeleton class=${classMap({ loading: this.emailLoaded })}
             style="
                 width: 100%;
                 height: 100%;
@@ -479,7 +493,8 @@ export class AppAbout extends LitElement {
             shape="rect"
             shimmer
         ></fast-skeleton>
-        </div>`}
+        </div> 
+      
       
         ${this.showReminder ? html`<div id="reminder">
           <label for="reminder-time">Set a Reminder:</label>

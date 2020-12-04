@@ -661,6 +661,7 @@ export class AppHome extends LitElement {
         ${this.mail && this.mail.length > 0 ? html`
       
         <section id="mainSection">
+
           <div id="filterActions">
       
             <div>
