@@ -766,7 +766,7 @@ export class AppHome extends LitElement {
       
           <div class="advOuter">
             <div class="advInner">
-              <img src="/assets/screenshots/offline_screen_mobile.png">
+              <img src="/assets/screenshots/offline_screen_mobile.webp">
               <p>Even send mail while offline and let us automatically send it once you are back online!</p>
             </div>
           </div>
