@@ -6,7 +6,7 @@ import { getAnEmail, sendMail, reply } from '../services/mail';
 import { Router } from '@vaadin/router';
 
 //@ts-ignore
-import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
+import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
 
 import '../components/app-contacts';
 import '../components/app-drawing';

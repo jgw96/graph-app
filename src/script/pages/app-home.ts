@@ -7,7 +7,7 @@ import { flagEmail, getMail } from '../services/mail';
 import { Router } from '@vaadin/router';
 
 //@ts-ignore
-import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
+import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
 
 @customElement('app-home')
 export class AppHome extends LitElement {
