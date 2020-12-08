@@ -548,12 +548,14 @@ export class AppHome extends LitElement {
   async getSavedAndUpdate() {
     console.log('getting mail');
     this.mailCopy = await getMail(true);
-    console.log('mailCopy', this.mailCopy);
-    this.mail = this.mailCopy;
 
-    console.log('this.mail', this.mail);
+    if (this.mailCopy && this.mailCopy.length > 0) {
+      this.mail = this.mailCopy;
 
-    sessionStorage.setItem('latestMail', JSON.stringify(this.mail));
+      console.log('this.mail', this.mail);
+  
+      sessionStorage.setItem('latestMail', JSON.stringify(this.mail));
+    }
   }
 
   async loadMore() {

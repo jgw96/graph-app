@@ -24,17 +24,6 @@ export async function getMail(initLoad?: boolean) {
 
     console.log("mail", data);
 
-    const cache = await caches.open("offline-mail");
-
-    if (cache) {
-      const cacheResp = await cache.matchAll(graphEndpoint);
-      cacheResp.forEach(async (element: any) => {
-        await cache.delete(element);
-      });
-
-      cache.put(graphEndpoint, response);
-    }
-
     // nextMail = data.  + '.@' + odata.nextLink;
     nextMail = data["@odata.nextLink"];
 
