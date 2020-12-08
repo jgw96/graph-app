@@ -712,7 +712,7 @@ export class AppHome extends LitElement {
                 </div>
       
                 <div id="actions">
-                  <span id="nameBlock">from <span id="name">${email.from.emailAddress.name}</span></span>
+                  <span id="nameBlock">from <span id="name">${email.from?.emailAddress.name || `No sender name`}</span></span>
       
                   <div id="actionsButtons">
                     ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}">
