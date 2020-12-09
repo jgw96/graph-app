@@ -87,6 +87,13 @@ export class AppDictate extends LitElement {
         console.log(s);
         console.log(e.result);
 
+        let event = new CustomEvent("thinking-text", {
+          detail: {
+            messageData: e.result.text,
+          },
+        });
+        this.dispatchEvent(event);
+
         // this.transcript = e.result.text;
       };
 

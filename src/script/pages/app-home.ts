@@ -219,7 +219,7 @@ export class AppHome extends LitElement {
 
         grid-gap: 10px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));
       }
 
       ul li {
@@ -318,7 +318,7 @@ export class AppHome extends LitElement {
       }
 
       #actionsButtons {
-        min-width: 6em;
+        max-width: 6em;
       }
 
       #actions button, #homeToolbar button {
@@ -388,6 +388,12 @@ export class AppHome extends LitElement {
         --dile-toast-border-radius: 6px;
       }
 
+      ul::-webkit-scrollbar {
+          width: 8px;
+          background: #222222;
+          border-radius: 4px;
+        }
+
       @media(prefers-color-scheme: dark) {
         ul li {
           background: #212121;
@@ -434,12 +440,6 @@ export class AppHome extends LitElement {
           overflow-x: hidden;
           overflow-y: scroll;
           height: 78vh;
-        }
-
-        ul::-webkit-scrollbar {
-          width: 8px;
-          background: #222222;
-          border-radius: 4px;
         }
 
         #homeToolbar {

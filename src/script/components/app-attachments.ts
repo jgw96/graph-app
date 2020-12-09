@@ -71,6 +71,13 @@ export class AppAttachments extends LitElement {
           li ion-icon {
             font-size: 22px;
           }
+
+          @media (max-width: 800px) {
+            #attachments {
+              width: auto;
+              margin-bottom: 1em;
+            }
+          }
         `
   }
 
