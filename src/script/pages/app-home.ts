@@ -433,7 +433,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 80vh;
+          height: 78vh;
         }
 
         ul::-webkit-scrollbar {
@@ -457,7 +457,7 @@ export class AppHome extends LitElement {
           margin-right: 10px;
 
           justify-content: space-between;
-          height: 90vh;
+          height: 89vh;
         }
 
         #desktopNew {
