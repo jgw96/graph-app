@@ -71,7 +71,7 @@ export class AppHeader extends LitElement {
 
       @media(prefers-color-scheme: light) {
         #settingsContainer {
-          background: rgba(255, 255, 255, 0.3);
+          background: #ffffffbf;
           backdrop-filter: blur(10px);
         }
 
@@ -160,6 +160,16 @@ export class AppHeader extends LitElement {
       @media(max-width: 340px) {
         #settingsButton {
           display: none
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0.2;
+        }
+        
+        to {
+          opacity: 1;
         }
       }
     `;

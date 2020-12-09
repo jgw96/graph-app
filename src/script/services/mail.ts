@@ -323,3 +323,28 @@ export async function sendMail(
     }
   }
 }
+
+export async function downloadAttach(mail: any, attachment: any) {
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+
+  const fetchURL = `https://graph.microsoft.com/beta/me/messages/${mail.id}/attachments/${attachment.id}/$value`;
+
+  const fetchRequest = new Request(fetchURL, {
+    headers: headers
+  });
+
+  const response = await fetch(fetchRequest);
+  const blob = await response.blob();
+  console.log(blob);
+
+  if (blob) {
+    return blob;
+  }
+  else {
+    return null;
+  }
+}

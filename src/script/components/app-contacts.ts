@@ -73,6 +73,12 @@ export class AppContacts extends LitElement {
         border-radius: 4px;
       }
 
+      @media(prefers-color-scheme: light) {
+            #contactsList ul::-webkit-scrollbar {
+              background: #ffffff;
+            }
+          }
+
       #contactsList fast-menu-item {
         margin-top: 10px;
         background: transparent;
@@ -157,7 +163,7 @@ export class AppContacts extends LitElement {
     let addresses: any[] = [];
 
     contacts.forEach((contact) => {
-      if ((contact.email && contact.email[0]) || ( contact.emailAddresses && contact.emailAddresses[0].address )) {
+      if ((contact.email && contact.email[0]) || (contact.emailAddresses && contact.emailAddresses[0].address)) {
         if (contact.email && contact.email[0]) {
           addresses.push(contact.email[0]);
         }

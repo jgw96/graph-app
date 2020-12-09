@@ -57,6 +57,10 @@ const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('sentEmail'
   maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
 });
 
+const attachBgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('attemptedAttach', {
+  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
+});
+
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes('me/sendEmail'),
   new workbox.strategies.NetworkOnly({
@@ -64,6 +68,13 @@ workbox.routing.registerRoute(
   }),
   'POST'
 );
+
+workbox.routing.registerRoute(
+  ({ url }) => url.href.includes('/$value'),
+  new workbox.strategies.NetworkOnly({
+    plugins: [attachBgSyncPlugin]
+  })
+)
 
 self.addEventListener('notificationclick', (event) => {
   clients.openWindow(event.notification.body.split("Mail: ").pop());

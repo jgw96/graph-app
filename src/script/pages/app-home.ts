@@ -411,12 +411,6 @@ export class AppHome extends LitElement {
         box-shadow: none;
       }
 
-      @media(prefers-color-scheme: light) {
-        #introBlock {
-          background: white;
-        }
-      }
-
       @media(min-width: 1000px) {
         #introBlock {
           margin-left: 16em;
@@ -439,7 +433,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 80.2vh;
+          height: 80vh;
         }
 
         ul::-webkit-scrollbar {
@@ -463,7 +457,7 @@ export class AppHome extends LitElement {
           margin-right: 10px;
 
           justify-content: space-between;
-          height: 88vh;
+          height: 90vh;
         }
 
         #desktopNew {
@@ -476,11 +470,25 @@ export class AppHome extends LitElement {
         #mainSection {
           grid-template-columns: minmax(240px, 18%) 1fr;
         }
+
+        ul {
+          height: 82vh;
+        }
       }
 
       @media(max-width: 1000px) {
         #filterActions {
           display: none;
+        }
+      }
+
+      @media(prefers-color-scheme: light) {
+        #introBlock {
+          background: white;
+        }
+
+        ul::-webkit-scrollbar {
+          background: #ffffff;
         }
       }
 
@@ -693,6 +701,8 @@ export class AppHome extends LitElement {
           <div id="mainListBlock">
             <fast-text-field id="searchInput" placeholder="..."
               @change="${(event: any) => this.searchMail(event.target.value)}" type="search">Search Mail</fast-text-field>
+
+              
             <ul>
               ${this.mail?.map((email) => {
       return html`

@@ -1,12 +1,17 @@
 import { fileSave } from 'browser-nativefs';
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html, customElement, internalProperty, property } from 'lit-element';
+
+import { downloadAttach } from '../services/mail';
 
 @customElement('app-attachments')
 export class AppAttachments extends LitElement {
-    @property() attachments: any[] | null = null;
+  @internalProperty() attachments: any[] | null = null;
+  @internalProperty() loading: boolean = false;
 
-    static get styles() {
-        return css`
+  @property() mail: any | null;
+
+  static get styles() {
+    return css`
           #attachments {
             display: flex;
             flex-direction: column;
@@ -45,6 +50,12 @@ export class AppAttachments extends LitElement {
             border-radius: 4px;
           }
 
+          @media(prefers-color-scheme: light) {
+            ul::-webkit-scrollbar {
+              background: #ffffff;
+            }
+          }
+
           li {
             background: var(--background-color);
             padding: 10px;
@@ -61,58 +72,70 @@ export class AppAttachments extends LitElement {
             font-size: 22px;
           }
         `
+  }
+
+  constructor() {
+    super();
+  }
+
+  firstUpdated() {
+    console.log('attach', this.attachments)
+  }
+
+  b64toBlob = (b64Data: any, contentType = '', sliceSize = 512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
     }
 
-    constructor() {
-        super();
-      }
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+  }
 
-      firstUpdated() {
-        console.log('attach', this.attachments)
-      }
+  async download(attachment: any) {
+    this.loading = true;
 
-      b64toBlob = (b64Data: any, contentType='', sliceSize=512) => {
-        const byteCharacters = atob(b64Data);
-        const byteArrays = [];
-      
-        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-          const slice = byteCharacters.slice(offset, offset + sliceSize);
-      
-          const byteNumbers = new Array(slice.length);
-          for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-          }
-      
-          const byteArray = new Uint8Array(byteNumbers);
-          byteArrays.push(byteArray);
-        }
-      
-        const blob = new Blob(byteArrays, {type: contentType});
-        return blob;
-      }
+    try {
+      const blob = await downloadAttach(this.mail, attachment);
 
-      async download(attachment: any) {
-        const blob = this.b64toBlob(attachment.contentBytes, attachment.contentType);
-        console.log(blob)
-
+      if (blob) {
         await fileSave(blob, {
           fileName: attachment.name,
           extensions: [
             `.${attachment.contentType}`
           ]
-        })
-      }
+        });
 
-      render() {
-        return html`
+        this.loading = false;
+
+        return;
+      }
+    }
+    catch (err) {
+      this.loading = false;
+    }
+
+  }
+
+  render() {
+    return html`
         <div id="attachments">
         
           <h3>Attachments</h3>
           <ul>
-            ${
-              this.attachments ? 
-                this.attachments.map((attachment) => {
-                  return html`
+            ${this.attachments ?
+        this.attachments.map((attachment) => {
+          return html`
                     <li>
                       <span id="name">${attachment.name}</span>
 
@@ -120,12 +143,14 @@ export class AppAttachments extends LitElement {
                     </li>
                     
                   `
-                })
-               : null
-            }
+        })
+        : null
+      }
             
           </ul>
+
+          ${this.loading ? html`<fast-progress></fast-progress>` : null}
           </div>
         `;
-      }
+  }
 }

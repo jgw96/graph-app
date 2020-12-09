@@ -247,6 +247,12 @@ export class AppAbout extends LitElement {
         }
       }
 
+      @media(prefers-color-scheme: light) {
+        #reminder {
+          background: white;
+        }
+      }
+
       @media (max-width: 800px) {
         #detailActions {
           position: fixed;
@@ -451,7 +457,7 @@ export class AppAbout extends LitElement {
             shimmer
         ></fast-skeleton>`}
 
-        ${this.attachments && this.attachments.length > 0 ? html`<app-attachments .attachments=${this.attachments}></app-attachments>` : null}
+        ${this.attachments && this.attachments.length > 0 ? html`<app-attachments .attachments=${this.attachments} .mail="${this.email}"></app-attachments>` : null}
       
           <div id="detailMoreActions">
 

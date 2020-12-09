@@ -485,6 +485,12 @@ export class AppNew extends LitElement {
               transform: translateX(0px); 
             } 
           } 
+
+          @media(prefers-color-scheme: light) {
+            #appNewBody::-webkit-scrollbar, #toxicityReport::-webkit-scrollbar, #attachmentsList::-webkit-scrollbar {
+              background: #ffffff;
+            }
+          }
         `
   }
 
