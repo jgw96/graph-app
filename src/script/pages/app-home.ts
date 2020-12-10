@@ -67,6 +67,10 @@ export class AppHome extends LitElement {
         width: 50em;
       }
 
+      #advBlock .advInner img {
+        content-visibility: auto;
+      }
+
       @media(prefers-color-scheme: light) {
         #advBlock .advInner {
           background: white;
