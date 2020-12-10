@@ -25,6 +25,8 @@ const syncContent = async () => {
           await cache.delete(element);
         });
 
+        await navigator.setAppBadge();
+
         cache.put(graphEndpoint, response);
       }
     }

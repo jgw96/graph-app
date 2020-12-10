@@ -13,6 +13,7 @@ export class AppDictate extends LitElement {
   @internalProperty() recog: any | null = null;
   @internalProperty() lines: string[] = [];
   @internalProperty() started: boolean = false;
+  @internalProperty() wakeLock: any | null = null;
 
   static get styles() {
     return css``;
@@ -53,23 +54,36 @@ export class AppDictate extends LitElement {
   }
 
   async dictate() {
+    if ("setAppBadge" in navigator) {
+      await (navigator as any).setAppBadge();
+    }
+
     this.recog.startContinuousRecognitionAsync();
 
     this.started = true;
 
-    let event = new CustomEvent("start-text", {
-        detail: {
-          message: "start",
-        },
-      });
-      this.dispatchEvent(event);
+    this.wakeLock = await this.requestWakeLock();
 
+    let event = new CustomEvent("start-text", {
+      detail: {
+        message: "start",
+      },
+    });
+    this.dispatchEvent(event);
   }
 
   async stop() {
     this.recog.stopContinuousRecognitionAsync();
 
     this.started = false;
+
+    if ("setAppBadge" in navigator) {
+      await (navigator as any).clearAppBadge();
+    }
+
+    if (this.wakeLock) {
+      this.wakeLock.release();
+    }
 
     let event = new CustomEvent("done-text", {
       detail: {
@@ -114,6 +128,24 @@ export class AppDictate extends LitElement {
       };
     }
   }
+
+  requestWakeLock = async () => {
+    if ("wakeLock" in navigator) {
+      let wakeLock: any;
+
+      try {
+        wakeLock = await (navigator as any).wakeLock.request();
+
+        wakeLock.addEventListener("release", () => {
+          console.log("Screen Wake Lock released:", wakeLock.released);
+        });
+
+        return wakeLock;
+      } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+      }
+    }
+  };
 
   render() {
     return html`
