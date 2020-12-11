@@ -25,6 +25,10 @@ export class AppHome extends LitElement {
   static get styles() {
     return css`
 
+    .flagButton {
+      margin-right: 6px;
+    }
+
     #pagerButtons {
       display: flex;
       justify-content: center;
@@ -322,7 +326,7 @@ export class AppHome extends LitElement {
       }
 
       #actionsButtons {
-        max-width: 6em;
+        max-width: 7em;
       }
 
       #actions button, #homeToolbar button {
@@ -729,7 +733,7 @@ export class AppHome extends LitElement {
                   <span id="nameBlock">from <span id="name">${email.from?.emailAddress.name || `No sender name`}</span></span>
       
                   <div id="actionsButtons">
-                    ${email.flag.flagStatus !== "flagged" ? html`<fast-button @click="${() => this.bookmark(email)}">
+                    ${email.flag.flagStatus !== "flagged" ? html`<fast-button class="flagButton" @click="${() => this.bookmark(email)}">
                       <ion-icon name="flag-outline"></ion-icon>
                     </fast-button>` : null}
                     <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
