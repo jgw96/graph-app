@@ -6,7 +6,7 @@
 :root {
   --app-color-primary: #686bd2;
   --app-color-secondary: #ff0076;
-  --font-family: system-ui;
+  --font-family: system-ui, sans-serif;
 }
 
 html,

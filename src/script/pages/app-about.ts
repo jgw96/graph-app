@@ -23,6 +23,12 @@ export class AppAbout extends LitElement {
 
   static get styles() {
     return css`
+
+      #openWindow ion-icon {
+        color: var(--app-color-primary);
+        font-size: 18px;
+      }
+
       .loading {
         display: none;
       }
@@ -58,7 +64,7 @@ export class AppAbout extends LitElement {
         position: fixed;
         bottom: 14px;
         left: 14px;
-        width: 30vw;
+        width: 32vw;
         background: #222222;
         padding: 10px;
         border-radius: 8px;
@@ -182,6 +188,7 @@ export class AppAbout extends LitElement {
     
         animation: shine 1s infinite;
       }
+
     
       @keyframes shine {
         to {
@@ -215,10 +222,10 @@ export class AppAbout extends LitElement {
         background: var(--app-color-primary);
       }
 
-      @media (min-width: 800px) {
+      @media (min-width: 900px) {
         #detailBlock {
           display: grid;
-          grid-template-columns: minmax(150px, 34%) 1fr;
+          grid-template-columns: minmax(150px, 40%) 1fr;
         }
 
         #detailActions {
@@ -264,6 +271,10 @@ export class AppAbout extends LitElement {
           display: flex;
           justify-content: space-between;
           background: #ffffff69;
+        }
+
+        #openWindow, #flagButtonAbout {
+          display: none;
         }
 
         #content {
@@ -434,6 +445,14 @@ export class AppAbout extends LitElement {
     }
   }
 
+  openInNew() {
+    window.open(
+      location.href,
+      "My Popup",
+      "left=50,top=50,width=1000,height=800"
+    );
+  }
+
   render() {
     return html`
       <div id="detailBlock">
@@ -444,6 +463,10 @@ export class AppAbout extends LitElement {
               Back
       
               <ion-icon name="chevron-back-outline"></ion-icon>
+            </fast-button>
+
+            <fast-button appearance="outline" id="openWindow" appearance="stealth" @click="${() => this.openInNew()}">
+              <ion-icon name="open"></ion-icon>
             </fast-button>
           </div>
       
@@ -461,7 +484,7 @@ export class AppAbout extends LitElement {
       
           <div id="detailMoreActions">
 
-          ${this.email?.flag.flagStatus !== "flagged" ? html`<fast-button class="detailActionButton" @click="${() => this.bookmark(this.email)}">
+          ${this.email?.flag.flagStatus !== "flagged" ? html`<fast-button id="flagButtonAbout" class="detailActionButton" @click="${() => this.bookmark(this.email)}">
              Flag
 
                       <ion-icon name="flag-outline"></ion-icon>
@@ -489,7 +512,7 @@ export class AppAbout extends LitElement {
         </section>
       
         <div id="content">
-          <iframe class=${classMap({ loading: !this.emailLoaded })} sandbox .srcdoc="${this.email?.body.content}"></iframe>
+          <iframe class=${classMap({ loading: !this.emailLoaded })} sandbox="allow-popups" .srcdoc="${this.email?.body.content}"></iframe>
 
         <fast-skeleton class=${classMap({ loading: this.emailLoaded })}
             style="
