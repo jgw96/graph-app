@@ -26,7 +26,7 @@ export class AppHome extends LitElement {
     return css`
 
     .flagButton {
-      margin-right: 6px;
+      margin-right: 2px;
     }
 
     #pagerButtons {
@@ -237,6 +237,7 @@ export class AppHome extends LitElement {
         padding-top: 1px;
         padding-bottom: 10px;
         border-radius: 6px;
+        content-visibility: auto;
 
         display: flex;
         flex-direction: column;
@@ -246,6 +247,7 @@ export class AppHome extends LitElement {
         transition: box-shadow 200ms;
 
         box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+        
       }
 
       ul li:hover {
@@ -360,6 +362,8 @@ export class AppHome extends LitElement {
 
       ul li #name {
         color: var(--app-color-primary);
+        display: inline-block;
+        max-width: 14em;
       }
 
       #homeToolbar {
@@ -552,7 +556,48 @@ export class AppHome extends LitElement {
     (window as any).requestIdleCallback(async () => {
       const underlying = new Worker("/workers/search.js");
       this.worker = Comlink.wrap(underlying);
-    })
+    });
+
+    (window as any).requestIdleCallback(async () => {
+      if ('connection' in navigator && (navigator as any).connection.effectiveType === "4g") {
+        this.setupInfinite()
+      }
+      else if ('connection' in navigator === false) {
+        this.setupInfinite();
+      }
+    });
+  }
+
+  async setupInfinite() {
+    let options = null;
+
+    if (window.matchMedia('(max-width: 1000px)').matches) {
+      options = {
+        rootMargin: '0px',
+        threshold: 0
+      }
+    }
+    else {
+      options = {
+        root: this.shadowRoot?.querySelector('ul'),
+        rootMargin: '0px',
+        threshold: 0
+      }
+    }
+
+    let observer = new IntersectionObserver(async (entries) => {
+      entries.forEach(async entry => {
+        if (entry.isIntersecting) {
+          await this.loadMore();
+        }
+      });
+    }, options);
+
+    const observedEl = this.shadowRoot?.querySelector("#pagerButtons");
+
+    if (observedEl) {
+      observer.observe(observedEl);
+    }
   }
 
   async searchMail(query: string) {
@@ -569,7 +614,7 @@ export class AppHome extends LitElement {
       this.mail = this.mailCopy;
 
       console.log('this.mail', this.mail);
-  
+
       sessionStorage.setItem('latestMail', JSON.stringify(this.mail));
     }
   }
