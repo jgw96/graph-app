@@ -425,6 +425,26 @@ export class AppHome extends LitElement {
         }
       }
 
+      @media (min-width: 1000px) and (prefers-color-scheme: dark) {
+        ul li {
+          background: rgb(33 33 33 / 79%);
+          backdrop-filter: blur(10px);
+
+          content-visibility: auto;
+          contain-intrinsic-size: 156px;
+        }
+      }
+
+      @media (min-width: 1000px) and (prefers-color-scheme: light) {
+        ul li {
+          background: #ffffffbf;
+          backdrop-filter: blur(10px);
+
+          content-visibility: auto;
+          contain-intrinsic-size: 156px;
+        }
+      }
+
       .advInner ul li {
         box-shadow: none;
       }

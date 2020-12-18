@@ -1,4 +1,4 @@
-import { clear } from 'idb-keyval';
+import { clear, get, set } from 'idb-keyval';
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 
 import '../components/app-login';
@@ -13,6 +13,7 @@ export class AppHeader extends LitElement {
   @internalProperty() authed: boolean = false;
   @internalProperty() openSettings: boolean = false;
   @internalProperty() checked: boolean | null = false;
+  @internalProperty() themeChecked: boolean | null = false;
 
   static get styles() {
     return css`
@@ -182,6 +183,29 @@ export class AppHeader extends LitElement {
   async firstUpdated() {
     console.log(this.checked);
 
+    const themeCheck = await get("themed");
+    console.log('themeCheck', themeCheck);
+
+    if (themeCheck === true) {
+      this.themeChecked = true;
+
+      (window as any).requestIdleCallback(async () => {
+        (CSS as any).paintWorklet.addModule('https://unpkg.com/css-houdini-circles/dist/circles.js');
+      })
+    }
+    else if (themeCheck === false) {
+      console.log('setting it false');
+      this.themeChecked = false;
+    }
+    else {
+      // on by default
+      this.themeChecked = true;
+
+      (window as any).requestIdleCallback(async () => {
+        (CSS as any).paintWorklet.addModule('https://unpkg.com/css-houdini-circles/dist/circles.js');
+      })
+    }
+
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration && 'periodicSync' in registration) {
       const tags = await (registration as any).periodicSync.getTags();
@@ -256,6 +280,18 @@ export class AppHeader extends LitElement {
     localStorage.clear();
   }
 
+  async doTheme(iffy: boolean) {
+    if (iffy) {
+      (CSS as any).paintWorklet.addModule('https://unpkg.com/css-houdini-circles/dist/circles.js');
+
+      await set("themed", true);
+    }
+    else {
+      await set("themed", false);
+      location.reload();
+    }
+  }
+
   render() {
     return html`
       <header>
@@ -276,6 +312,12 @@ export class AppHeader extends LitElement {
                 Update Mail in the Background
                 <span slot="checked-message">On</span>
                 <span slot="unchecked-message">Off</span>
+              </fast-switch>
+
+              <fast-switch checked="${this.themeChecked}" @change="${(ev: any) => this.doTheme(ev.target.checked)}">
+                Use Background Theme
+                <span slot="checked-message">Yes</span>
+                <span slot="unchecked-message">No</span>
               </fast-switch>
 
               <fast-button @click="${() => this.clearStorage()}">

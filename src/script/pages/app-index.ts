@@ -27,6 +27,19 @@ export class AppIndex extends LitElement {
       #routerOutlet > .entering {
         animation: 160ms fadeIn linear;
       }
+
+      @media (min-width: 800px) {
+        main {
+          --colors: #686bd2, #ff0076;
+          --min-radius: 20;
+          --max-radius: 100;
+          --num-circles: 30;
+          --min-opacity: 10;
+          --max-opacity: 50;
+
+          background-image: paint(circles);
+        }
+      }
     
       @keyframes fadeOut {
         from {
