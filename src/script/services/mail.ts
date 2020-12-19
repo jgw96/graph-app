@@ -324,6 +324,99 @@ export async function sendMail(
   }
 }
 
+export async function saveDraft(subject: string,
+  body: string,
+  recipients: any[],
+  attachments: File[]) {
+  let sendMail: any = null;
+
+  if (attachments) {
+    console.log("attachments", attachments);
+
+    const stuffToSend = await processAttachments(attachments);
+
+    console.log("stuffToSend", stuffToSend);
+
+    if (stuffToSend) {
+      sendMail = {
+        subject: subject,
+        body: {
+          contentType: "HTML",
+          content: body,
+        },
+        toRecipients: recipients,
+        attachments: stuffToSend,
+      };
+    } else {
+      sendMail = {
+        subject: subject,
+        body: {
+          contentType: "HTML",
+          content: body,
+        },
+        toRecipients: recipients,
+      };
+    }
+
+    if (sendMail) {
+      const token = await getToken();
+
+      const headers = new Headers();
+      const bearer = "Bearer " + token;
+      headers.append("Authorization", bearer);
+      const options = {
+        method: "POST",
+        headers: {
+          Authorization: bearer,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sendMail),
+      };
+      const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+
+      try {
+        await fetch(graphEndpoint, options);
+      } catch (err) {
+        throw new Error(`error sending message: ${err.message}`);
+      }
+    }
+  } else {
+    sendMail = {
+      subject: subject,
+      body: {
+        contentType: "HTML",
+        content: body,
+      },
+      toRecipients: recipients,
+    };
+
+    if (sendMail) {
+      const token = await getToken();
+
+      const headers = new Headers();
+      const bearer = "Bearer " + token;
+      headers.append("Authorization", bearer);
+      const options = {
+        method: "POST",
+        headers: {
+          Authorization: bearer,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sendMail),
+      };
+      const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+
+      try {
+        await fetch(graphEndpoint, options);
+      } catch (err) {
+        console.error("error sending message", err);
+      }
+    }
+  }
+}
+
 export async function downloadAttach(mail: any, attachment: any) {
   const token = await getToken();
 

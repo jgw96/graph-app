@@ -778,34 +778,39 @@ export class AppHome extends LitElement {
               
             <ul>
               ${this.mail?.map((email) => {
-      return html`
-              <li>
-      
-                <div>
-                  <div class="emailHeader">
-                    <h3>${email.subject}</h3>
-                    ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}"
-                      appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon>
-                    </fast-button>` : null}
-                  </div>
-      
-                  <p class="preview">
-                    ${email.bodyPreview}
-                  </p>
-                </div>
-      
-                <div id="actions">
-                  <span id="nameBlock">from <span id="name">${email.from?.emailAddress.name || `No sender name`}</span></span>
-      
-                  <div id="actionsButtons">
-                    ${email.flag.flagStatus !== "flagged" ? html`<fast-button class="flagButton" @click="${() => this.bookmark(email)}">
-                      <ion-icon name="flag-outline"></ion-icon>
-                    </fast-button>` : null}
-                    <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
-                  </div>
-                </div>
-              </li>
-              `
+      if (email.isDraft === false) {
+        return html`
+                  <li>
+          
+                    <div>
+                      <div class="emailHeader">
+                        <h3>${email.subject}</h3>
+                        ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}"
+                          appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon>
+                        </fast-button>` : null}
+                      </div>
+          
+                      <p class="preview">
+                        ${email.bodyPreview}
+                      </p>
+                    </div>
+          
+                    <div id="actions">
+                      <span id="nameBlock">from <span id="name">${email.from?.emailAddress.name || `No sender name`}</span></span>
+          
+                      <div id="actionsButtons">
+                        ${email.flag.flagStatus !== "flagged" ? html`<fast-button class="flagButton" @click="${() => this.bookmark(email)}">
+                          <ion-icon name="flag-outline"></ion-icon>
+                        </fast-button>` : null}
+                        <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
+                      </div>
+                    </div>
+                  </li>
+                  `
+      }
+      else {
+        return null;
+      }
     })}
 
                 <div id="pagerButtons">

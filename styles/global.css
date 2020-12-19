@@ -39,6 +39,13 @@ fast-design-system-provider {
   }
 }
 
+@media (max-width: 800px) {
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (min-width: 1000px) {
   html,
   body {
@@ -53,9 +60,9 @@ fast-design-system-provider {
   }
 
   html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  background: #ffffff;
-}
+  body::-webkit-scrollbar {
+    background: #ffffff;
+  }
 
   fast-design-system-provider {
     --background-color: #edebe9;
