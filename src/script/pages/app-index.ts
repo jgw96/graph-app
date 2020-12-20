@@ -38,6 +38,8 @@ export class AppIndex extends LitElement {
           --max-opacity: 50;
 
           background-image: paint(circles);
+
+          height: 88vh;
         }
       }
     
