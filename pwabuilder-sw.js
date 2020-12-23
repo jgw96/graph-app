@@ -1,9 +1,13 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.1/workbox-sw.js');
-importScripts('https://cdn.jsdelivr.net/npm/idb-keyval@3/dist/idb-keyval-iife.min.js');
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/5.1.1/workbox-sw.js"
+);
+importScripts(
+  "https://cdn.jsdelivr.net/npm/idb-keyval@3/dist/idb-keyval-iife.min.js"
+);
 
 const syncContent = async () => {
   if (navigator.connection.effectiveType === "4g") {
-    const token = await idbKeyval.get('graphToken');
+    const token = await idbKeyval.get("graphToken");
 
     if (token) {
       const headers = new Headers();
@@ -11,13 +15,13 @@ const syncContent = async () => {
       headers.append("Authorization", bearer);
       const options = {
         method: "GET",
-        headers: headers
+        headers: headers,
       };
       const graphEndpoint = `https://graph.microsoft.com/beta/me/messages`;
 
       const response = await fetch(graphEndpoint, options);
 
-      const cache = await caches.open('offline-mail');
+      const cache = await caches.open("offline-mail");
 
       if (cache) {
         const cacheResp = await cache.matchAll(graphEndpoint);
@@ -31,7 +35,7 @@ const syncContent = async () => {
       }
     }
   }
-}
+};
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
@@ -40,9 +44,10 @@ self.addEventListener("message", (event) => {
 });
 
 workbox.routing.registerRoute(
-  ({ url }) => url.href.includes('https://graph.microsoft.com/beta/me/messages'),
+  ({ url }) =>
+    url.href.includes("https://graph.microsoft.com/beta/me/messages"),
   new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'offline-mail',
+    cacheName: "offline-mail",
     plugins: [
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50,
@@ -55,35 +60,41 @@ workbox.routing.registerRoute(
   })
 );
 
-const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('sentEmail', {
-  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
-});
+const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
+  "sentEmail",
+  {
+    maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
+  }
+);
 
-const attachBgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('attemptedAttach', {
-  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
-});
-
-workbox.routing.registerRoute(
-  ({ url }) => url.href.includes('me/sendEmail'),
-  new workbox.strategies.NetworkOnly({
-    plugins: [bgSyncPlugin]
-  }),
-  'POST'
+const attachBgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
+  "attemptedAttach",
+  {
+    maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
+  }
 );
 
 workbox.routing.registerRoute(
-  ({ url }) => url.href.includes('/$value'),
+  ({ url }) => url.href.includes("me/sendEmail"),
   new workbox.strategies.NetworkOnly({
-    plugins: [attachBgSyncPlugin]
-  })
-)
+    plugins: [bgSyncPlugin],
+  }),
+  "POST"
+);
 
-self.addEventListener('notificationclick', (event) => {
+workbox.routing.registerRoute(
+  ({ url }) => url.href.includes("/$value"),
+  new workbox.strategies.NetworkOnly({
+    plugins: [attachBgSyncPlugin],
+  })
+);
+
+self.addEventListener("notificationclick", (event) => {
   clients.openWindow(event.notification.body.split("Mail: ").pop());
 });
 
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'mail-sync') {
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "mail-sync") {
     event.waitUntil(syncContent());
   }
 });
@@ -91,43 +102,47 @@ self.addEventListener('periodicsync', (event) => {
 async function shareTargetHandler({ event }) {
   event.respondWith(Response.redirect("/newEmail"));
 
-  event.waitUntil(async function () {
+  event.waitUntil(
+    (async function () {
+      const data = await event.request.formData();
+      console.log("data", data);
+      const client = await self.clients.get(
+        event.resultingClientId || event.clientId
+      );
+      // Get the data from the named element 'file'
+      const file = data.get("file");
 
-    const data = await event.request.formData();
-    console.log('data', data);
-    const client = await self.clients.get(event.resultingClientId || event.clientId);
-    // Get the data from the named element 'file'
-    const file = data.get('file');
+      console.log("file", file);
+      client.postMessage({ file, action: "load-image" });
+    })()
+  );
+}
 
-    console.log('file', file);
-    client.postMessage({ file, action: 'load-image' });
-  }());
-};
-
-workbox.routing.registerRoute(
-  '/attach/file/',
-  shareTargetHandler,
-  'POST'
-);
+workbox.routing.registerRoute("/attach/file/", shareTargetHandler, "POST");
 
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes("comlink"),
-  new workbox.strategies.CacheFirst(),
+  new workbox.strategies.CacheFirst()
 );
 
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes("@microsoft/fast-components"),
-  new workbox.strategies.CacheFirst(),
+  new workbox.strategies.CacheFirst()
 );
 
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes("ionic"),
-  new workbox.strategies.CacheFirst(),
+  new workbox.strategies.CacheFirst()
 );
 
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes("@pwabuilder"),
-  new workbox.strategies.CacheFirst(),
+  new workbox.strategies.CacheFirst()
+);
+
+workbox.routing.registerRoute(
+  ({ url }) => url.href.includes("/me/drive/recent/"),
+  new workbox.strategies.StaleWhileRevalidate()
 );
 
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);

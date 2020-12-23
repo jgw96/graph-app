@@ -26,6 +26,12 @@ export class AppFiles extends LitElement {
         height: 24em;
       }
 
+      ul fast-skeleton {
+        margin-top: 6px;
+        border-radius: 4px;
+        height: 36px;
+      }
+
       fast-dialog::part(control) {
         padding-left: 1em;
         padding-right: 1em;
@@ -77,6 +83,16 @@ export class AppFiles extends LitElement {
           background: #ffffff;
         }
       }
+
+      @keyframes fadein {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
     `;
   }
 
@@ -119,9 +135,7 @@ export class AppFiles extends LitElement {
     return html`
       <div>
         <fast-dialog
-          id="example1"
-          class="example-dialog"
-          aria-label="Simple modal dialog"
+          aria-label="Recent Files from OneDrive"
           modal="true"
         >
           <div id="filesHeader">
@@ -148,7 +162,41 @@ export class AppFiles extends LitElement {
                   `;
                 })}
               </ul>`
-            : null}
+            : html`
+                <ul>
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+
+                  <div>
+                    <fast-skeleton shape="rect"></fast-skeleton>
+                  </div>
+                </ul>
+              `}
         </fast-dialog>
       </div>
     `;

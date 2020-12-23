@@ -876,6 +876,8 @@ export class AppNew extends LitElement {
         text: "OneDrive",
         icon: "cloud-outline",
         handler: async () => {
+          await actionSheet.dismiss();
+          
           this.pickFiles = true;
         },
       },
