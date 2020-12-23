@@ -1,7 +1,7 @@
 import * as msal from "@azure/msal-browser";
 import { set } from "idb-keyval";
 
-const scopes = ['user.read', 'people.read', "Mail.ReadWrite", 'mail.send']
+const scopes = ['user.read', 'people.read', "Mail.ReadWrite", 'mail.send', "files.read"]
 
 const msalConfig = {
     auth: {

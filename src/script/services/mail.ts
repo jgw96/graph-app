@@ -155,7 +155,7 @@ const processAttachments = async (attachments: any[]) => {
 
     const attachment = attachments[0];
 
-    if (attachment) {
+    if (attachment && attachment.handle) {
       const reader = new FileReader();
 
       reader.readAsDataURL(attachments[0]);
@@ -176,7 +176,13 @@ const processAttachments = async (attachments: any[]) => {
 
         resolve(attachToSend);
       };
-    } else {
+    } 
+    else if (attachment && attachment.sourceUrl) {
+      attachToSend.push(attachment);
+
+      resolve(attachToSend);
+    }
+    else {
       resolve(null);
     }
   });

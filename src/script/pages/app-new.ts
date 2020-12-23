@@ -1,4 +1,11 @@
-import { LitElement, css, html, customElement, property } from "lit-element";
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from "lit-element";
 
 import "@dile/dile-toast/dile-toast";
 
@@ -12,6 +19,8 @@ import "../components/app-contacts";
 import "../components/app-drawing";
 import "../components/app-camera";
 import "../components/app-dictate";
+import "../components/app-files";
+
 import { del } from "idb-keyval";
 import { initIdle } from "../utils/idle";
 
@@ -33,6 +42,8 @@ export class AppNew extends LitElement {
 
   @property({ type: Boolean }) replying: boolean = false;
   @property() emailReplyTo: any | null = null;
+
+  @internalProperty() pickFiles: boolean = false;
 
   worker: any | null = null;
   textWorker: any | null = null;
@@ -555,14 +566,14 @@ export class AppNew extends LitElement {
   }
 
   async handleIdle() {
-    console.log('initiing idle');
+    console.log("initiing idle");
     const idleDetector = await initIdle();
 
     this.idleInit = true;
 
     console.log(idleDetector);
 
-    idleDetector.addEventListener('change', () => {
+    idleDetector.addEventListener("change", () => {
       const userState = idleDetector.userState;
       const screenState = idleDetector.screenState;
       console.log(`Idle change: ${userState}, ${screenState}.`);
@@ -738,7 +749,7 @@ export class AppNew extends LitElement {
     if (this.idleInit === false) {
       (window as any).requestIdleCallback(async () => {
         await this.handleIdle();
-      })
+      });
     }
   }
 
@@ -853,12 +864,19 @@ export class AppNew extends LitElement {
     actionSheet.cssClass = "my-custom-class";
     actionSheet.buttons = [
       {
-        text: "Attach File",
+        text: "Local File",
         icon: "document-outline",
         handler: async () => {
           await actionSheet.dismiss();
 
           await this.attachFile();
+        },
+      },
+      {
+        text: "OneDrive",
+        icon: "cloud-outline",
+        handler: async () => {
+          this.pickFiles = true;
         },
       },
       {
@@ -870,7 +888,7 @@ export class AppNew extends LitElement {
         },
       },
       {
-        text: "Attach Drawing",
+        text: "Drawing",
         icon: "brush-outline",
         handler: async () => {
           await actionSheet.dismiss();
@@ -975,16 +993,18 @@ export class AppNew extends LitElement {
     console.log(ev.detail.messageData);
 
     let textArray = ev.detail.messageData;
-    let completeText = '';
+    let completeText = "";
 
     textArray.forEach((text: string) => {
       completeText = completeText + " " + text;
-    })
+    });
 
     this.body = completeText;
     console.log(this.body);
 
-    (this.shadowRoot?.querySelector("#contentTextArea") as HTMLInputElement).value = this.body;
+    (this.shadowRoot?.querySelector(
+      "#contentTextArea"
+    ) as HTMLInputElement).value = this.body;
   }
 
   doneDictate() {
@@ -1015,13 +1035,17 @@ export class AppNew extends LitElement {
     console.log(htmlBody);
 
     try {
-      await saveDraft(this.subject || "", htmlBody, recip || [], this.attachments || null);
+      await saveDraft(
+        this.subject || "",
+        htmlBody,
+        recip || [],
+        this.attachments || null
+      );
 
       let toastElement: any = this.shadowRoot?.getElementById("myToast");
       await toastElement?.open("Draft Saved...", "success");
 
       this.loading = false;
-
     } catch (err) {
       console.error(err);
 
@@ -1053,7 +1077,7 @@ export class AppNew extends LitElement {
         handler: async () => {
           await actionSheet.dismiss();
 
-          await this.doAiCheck()
+          await this.doAiCheck();
         },
       },
       {
@@ -1069,6 +1093,30 @@ export class AppNew extends LitElement {
     return actionSheet.present();
   }
 
+  handleDriveAttach(fileData: any) {
+    console.log(fileData);
+
+    const attachItem = {
+      "@odata.type": "#microsoft.graph.referenceAttachment",
+      name: fileData.name,
+      sourceUrl:
+        fileData.webUrl,
+      providerType: "oneDriveConsumer",
+      isFolder: "False",
+    };
+
+    this.attachments = [...this.attachments, attachItem];
+  }
+
+  closePickFiles(ev: CustomEvent) {
+    console.log(ev);
+    this.pickFiles = false;
+  }
+
+  openPickFiles() {
+    this.pickFiles = true;
+  }
+
   async disconnectedCallback() {
     super.disconnectedCallback();
 
@@ -1080,8 +1128,8 @@ export class AppNew extends LitElement {
       <div id="appNewBody">
         ${this.loading ? html`<fast-progress></fast-progress>` : null}
         ${this.emailReplyTo
-        ? html`<h2 id="replyingHeader">Replying</h2>`
-        : null}
+          ? html`<h2 id="replyingHeader">Replying</h2>`
+          : null}
 
         <div id="subjectBar">
           <div id="addressBlock">
@@ -1100,8 +1148,8 @@ export class AppNew extends LitElement {
           </div>
 
           ${this.emailReplyTo
-        ? null
-        : html`<fast-text-field
+            ? null
+            : html`<fast-text-field
                 @change="${(event: any) => this.updateSubject(event)}"
                 type="text"
                 id="subject"
@@ -1110,7 +1158,7 @@ export class AppNew extends LitElement {
         </div>
 
         ${this.preview
-        ? html`<div id="previewBlock">
+          ? html`<div id="previewBlock">
               <div id="preview">
                 <div id="previewHeader">
                   <h3>Preview</h3>
@@ -1120,8 +1168,8 @@ export class AppNew extends LitElement {
                   </fast-button>
                 </div>
                 ${this.preview.type.includes("text")
-            ? html`<span>${this.previewContent}</span>`
-            : html`<img src="${this.previewContent}" />`}
+                  ? html`<span>${this.previewContent}</span>`
+                  : html`<img src="${this.previewContent}" />`}
 
                 <div id="previewActionsBlock">
                   <fast-button
@@ -1134,9 +1182,9 @@ export class AppNew extends LitElement {
                 </div>
               </div>
             </div>`
-        : null}
+          : null}
         ${this.aiData
-        ? html`<div id="aiBlock">
+          ? html`<div id="aiBlock">
               <div id="aiData">
                 <div id="aiBlockHeader">
                   <h3>Toxicity Report</h3>
@@ -1147,9 +1195,9 @@ export class AppNew extends LitElement {
                 </div>
 
                 ${this.aiData.length > 0
-            ? html`<ul id="toxicityReport">
+                  ? html`<ul id="toxicityReport">
                       ${this.aiData.map((dataPoint: any) => {
-              return html`
+                        return html`
                           <li>
                             <h4 class="bad">${dataPoint.label}</h4>
                             <p>
@@ -1157,9 +1205,9 @@ export class AppNew extends LitElement {
                             </p>
                           </li>
                         `;
-            })}
+                      })}
                     </ul>`
-            : html`<div id="happyReport">
+                  : html`<div id="happyReport">
                       <img src="/assets/robot.svg" />
                       <h4>Your email sounds good to us!</h4>
                     </div>`}
@@ -1169,7 +1217,7 @@ export class AppNew extends LitElement {
                 >
               </div>
             </div>`
-        : null}
+          : null}
 
         <section id="textAreaSection">
           <fast-text-area
@@ -1181,13 +1229,13 @@ export class AppNew extends LitElement {
           </fast-text-area>
 
           ${this.textPreview
-        ? html`<div
+            ? html`<div
                 id="textPreview"
                 .innerHTML="${this.textPreviewContent
-            ? this.textPreviewContent
-            : null}"
+                  ? this.textPreviewContent
+                  : null}"
               ></div>`
-        : null}
+            : null}
         </section>
 
         <div id="textAreaActions">
@@ -1202,14 +1250,14 @@ export class AppNew extends LitElement {
         </div>
 
         ${this.emailReplyTo
-        ? html`<iframe
+          ? html`<iframe
               id="replyEmailSection"
               .srcdoc="${this.emailReplyTo.body.content}"
             >
             </iframe>`
-        : null}
+          : null}
         ${this.attachments.length === 0
-        ? html`<ion-fab vertical="bottom" horizontal="end">
+          ? html`<ion-fab vertical="bottom" horizontal="end">
               <ion-fab-button>
                 <ion-icon name="attach-outline"></ion-icon>
               </ion-fab-button>
@@ -1226,7 +1274,7 @@ export class AppNew extends LitElement {
                 </ion-fab-button>
               </ion-fab-list>
             </ion-fab>`
-        : null}
+          : null}
 
         <div id="newEmailActions">
           <fast-button @click="${() => this.goBack()}" id="backButton">
@@ -1242,7 +1290,12 @@ export class AppNew extends LitElement {
               <ion-icon name="save-outline"></ion-icon>
             </fast-button>
 
-            <app-dictate @got-text="${(ev: CustomEvent) => this.handleDictate(ev)}" @done-text="${() => this.doneDictate()}" id="aiCheck" @start-text="${() => this.startDictate()}"></app-dictate>
+            <app-dictate
+              @got-text="${(ev: CustomEvent) => this.handleDictate(ev)}"
+              @done-text="${() => this.doneDictate()}"
+              id="aiCheck"
+              @start-text="${() => this.startDictate()}"
+            ></app-dictate>
 
             <fast-button id="aiCheck" @click="${() => this.doAiCheck()}">
               AI Toxicity Check
@@ -1250,14 +1303,17 @@ export class AppNew extends LitElement {
               <ion-icon name="happy-outline"></ion-icon>
             </fast-button>
 
-            <fast-button id="moreActionsMobile" @click="${() => this.moreActions()}">
+            <fast-button
+              id="moreActionsMobile"
+              @click="${() => this.moreActions()}"
+            >
               More Actions
 
               <ion-icon name="caret-up-outline"></ion-icon>
             </fast-button>
 
             ${this.attachments.length === 0
-        ? html`<fast-button
+              ? html`<fast-button
                   @click="${() => this.presentActionSheet()}"
                   id="attachButton"
                 >
@@ -1265,9 +1321,9 @@ export class AppNew extends LitElement {
 
                   <ion-icon name="attach-outline"></ion-icon>
                 </fast-button>`
-        : null}
+              : null}
             ${this.emailReplyTo
-        ? html`<fast-button
+              ? html`<fast-button
                   id="sendButton"
                   @click="${() => this.reply()}"
                 >
@@ -1275,7 +1331,7 @@ export class AppNew extends LitElement {
 
                   <ion-icon name="mail-outline"></ion-icon>
                 </fast-button>`
-        : html`<fast-button id="sendButton" @click="${() => this.send()}">
+              : html`<fast-button id="sendButton" @click="${() => this.send()}">
                   Send
 
                   <ion-icon name="mail-outline"></ion-icon>
@@ -1284,30 +1340,48 @@ export class AppNew extends LitElement {
         </div>
 
         ${this.attachments.length > 0
-        ? html`<div id="attachmentsBlock">
+          ? html`<div id="attachmentsBlock">
               <ul id="attachmentsList">
                 ${this.attachments.map((attachment: any) => {
-          if (attachment.type.includes("image")) {
-            return html`
+                  if (attachment.type && attachment.type.includes("image")) {
+                    return html`
                       <img
                         @click=${() => this.openFile(attachment.handle)}
                         id="attachedImage"
                         src=${URL.createObjectURL(attachment)}
                       />
                     `;
-          } else {
-            return html`
+                  } else if (attachment.handle) {
+                    return html`
                       <span
                         @click=${() => this.openFile(attachment.handle)}
                         id="attachedDoc"
                         >${attachment.name}</span
                       >
                     `;
-          }
-        })}
+                  }
+                  else {
+                    return html`
+                      <span
+                        id="attachedDoc"
+                        >${attachment.name}</span
+                      >
+                    `;
+                  }
+                })}
               </ul>
             </div>`
-        : null}
+          : null}
+        ${this.pickFiles
+          ? html`<app-files
+              @attach-file="${(ev: CustomEvent) =>
+                this.handleDriveAttach(ev.detail.data)}"
+
+              @close-attach="${(ev: CustomEvent) => {
+                this.closePickFiles(ev)
+              }}"
+            ></app-files>`
+          : null}
       </div>
 
       <dile-toast id="myToast" duration="3000"></dile-toast>
