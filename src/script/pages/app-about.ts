@@ -24,6 +24,16 @@ export class AppAbout extends LitElement {
   static get styles() {
     return css`
 
+    fast-button::part(content) {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    fast-button ion-icon {
+      margin-left: 4px;
+    }
+
       #openWindow ion-icon {
         color: var(--app-color-primary);
         font-size: 18px;

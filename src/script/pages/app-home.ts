@@ -1,21 +1,20 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html, customElement, property } from "lit-element";
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
-import '@pwabuilder/pwainstall';
-import '@dile/dile-toast/dile-toast';
-import { flagEmail, getMail } from '../services/mail';
-import { Router } from '@vaadin/router';
+import "@pwabuilder/pwainstall";
+import "@dile/dile-toast/dile-toast";
+import { flagEmail, getMail } from "../services/mail";
+import { Router } from "@vaadin/router";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
 
-@customElement('app-home')
+@customElement("app-home")
 export class AppHome extends LitElement {
-
-  @property({ type: Array }) mail: any[] | null = [];
+  @property({ type: Array }) mail: any[] = [];
   @property({ type: Array }) mailCopy: any[] | null = [];
 
-  @property({ type: String }) activeCat: string = 'all';
+  @property({ type: String }) activeCat: string = "all";
   @property({ type: Boolean }) loading: boolean = false;
 
   @property({ type: Boolean }) initLoad: boolean = false;
@@ -24,21 +23,38 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return css`
+      fast-button::part(content) {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+  
+      fast-button ion-icon {
+        margin-left: 4px;
+      }
 
-    .flagButton {
-      margin-right: 2px;
-    }
+      .fakeCard {
+        height: 156px;
+      }
 
-    #pagerButtons {
-      display: flex;
-      justify-content: center;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
+      fast-buttons::part(content) ion-icon {
+        margin-left: 4px;
+      }
 
-    #pagerButtons fast-button::part(control) {
-      color: var(--app-color-primary);
-    }
+      .flagButton {
+        margin-right: 2px;
+      }
+
+      #pagerButtons {
+        display: flex;
+        justify-content: center;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      #pagerButtons fast-button::part(control) {
+        color: var(--app-color-primary);
+      }
 
       #advBlock {
         overflow: scroll hidden;
@@ -62,7 +78,8 @@ export class AppHome extends LitElement {
       }
 
       #advBlock .advInner {
-        background: #1c1c1c;
+        background: rgba(29, 29, 29, 0.78);
+        backdrop-filter: blur(10px);
         padding: 1em;
         display: flex;
         flex-direction: column;
@@ -75,7 +92,7 @@ export class AppHome extends LitElement {
         content-visibility: auto;
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         #advBlock .advInner {
           background: white;
         }
@@ -103,7 +120,7 @@ export class AppHome extends LitElement {
         height: 22em;
       }
 
-      @media(max-width: 800px) {
+      @media (max-width: 800px) {
         #advBlock {
           white-space: initial;
         }
@@ -121,7 +138,7 @@ export class AppHome extends LitElement {
           text-align: center;
           width: initial;
         }
-        
+
         #advBlock .advOuter {
           display: initial;
           width: initial;
@@ -170,7 +187,7 @@ export class AppHome extends LitElement {
         margin-bottom: 8px;
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         fast-menu-item {
           background: white;
           color: black;
@@ -246,15 +263,16 @@ export class AppHome extends LitElement {
         margin-bottom: 10px;
         transition: box-shadow 200ms;
 
-        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-        
+        box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132),
+          0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
       }
 
       ul li:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132),
+          0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
       }
 
-      ul li:nth-child(-n+14) {
+      ul li:nth-child(-n + 14) {
         animation-name: slidein;
         animation-duration: 300ms;
       }
@@ -290,9 +308,7 @@ export class AppHome extends LitElement {
         text-transform: uppercase;
       }
 
-
       @media (min-width: 1200px) {
-
         ul li {
           display: flex;
           flex-direction: column;
@@ -306,7 +322,6 @@ export class AppHome extends LitElement {
           margin-left: 24em;
           margin-right: 24em;
         }
-        
       }
 
       ul li h3 {
@@ -331,11 +346,13 @@ export class AppHome extends LitElement {
         max-width: 7em;
       }
 
-      #actions button, #homeToolbar button {
+      #actions button,
+      #homeToolbar button {
         background-color: var(--app-color-primary);
       }
 
-      #actions button ion-icon, #homeToolbar button ion-icon {
+      #actions button ion-icon,
+      #homeToolbar button ion-icon {
         margin-left: 6px;
       }
 
@@ -368,14 +385,14 @@ export class AppHome extends LitElement {
 
       #homeToolbar {
         position: fixed;
-          bottom: 0;
-          backdrop-filter: blur(10px);
-          left: 0;
-          right: 0;
-          padding: 8px;
-          display: flex;
-          justify-content: flex-end;
-          background: #ffffff69;
+        bottom: 0;
+        backdrop-filter: blur(10px);
+        left: 0;
+        right: 0;
+        padding: 8px;
+        display: flex;
+        justify-content: flex-end;
+        background: #ffffff69;
       }
 
       #homeToolbar button {
@@ -401,12 +418,12 @@ export class AppHome extends LitElement {
       }
 
       ul::-webkit-scrollbar {
-          width: 8px;
-          background: #222222;
-          border-radius: 4px;
-        }
+        width: 8px;
+        background: #222222;
+        border-radius: 4px;
+      }
 
-      @media(prefers-color-scheme: dark) {
+      @media (prefers-color-scheme: dark) {
         ul li {
           background: #212121;
           color: white;
@@ -449,7 +466,7 @@ export class AppHome extends LitElement {
         box-shadow: none;
       }
 
-      @media(min-width: 1000px) {
+      @media (min-width: 1000px) {
         #introBlock {
           margin-left: 16em;
           margin-right: 16em;
@@ -498,7 +515,7 @@ export class AppHome extends LitElement {
         }
       }
 
-      @media(min-width: 1300px) {
+      @media (min-width: 1300px) {
         #mainSection {
           grid-template-columns: minmax(240px, 18%) 1fr;
         }
@@ -508,13 +525,13 @@ export class AppHome extends LitElement {
         }
       }
 
-      @media(max-width: 1000px) {
+      @media (max-width: 1000px) {
         #filterActions {
           display: none;
         }
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         #introBlock {
           background: white;
         }
@@ -535,7 +552,7 @@ export class AppHome extends LitElement {
         }
       }
 
-      @media(screen-spanning: single-fold-vertical) {
+      @media (screen-spanning: single-fold-vertical) {
         #mainSection {
           grid-template-columns: minmax(47vw, 22%) 1fr;
           grid-gap: 47px;
@@ -558,14 +575,13 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    const loadCheck = sessionStorage.getItem('latestMail');
-    console.log('loadCheck', loadCheck);
+    const loadCheck = sessionStorage.getItem("latestMail");
+    console.log("loadCheck", loadCheck);
 
     if (loadCheck) {
       this.initLoad = false;
       await this.getSavedAndUpdate();
-    }
-    else {
+    } else {
       this.initLoad = true;
 
       setTimeout(async () => {
@@ -579,10 +595,12 @@ export class AppHome extends LitElement {
     });
 
     (window as any).requestIdleCallback(async () => {
-      if ('connection' in navigator && (navigator as any).connection.effectiveType === "4g") {
-        this.setupInfinite()
-      }
-      else if ('connection' in navigator === false) {
+      if (
+        "connection" in navigator &&
+        (navigator as any).connection.effectiveType === "4g"
+      ) {
+        this.setupInfinite();
+      } else if ("connection" in navigator === false) {
         this.setupInfinite();
       }
     });
@@ -591,22 +609,21 @@ export class AppHome extends LitElement {
   async setupInfinite() {
     let options = null;
 
-    if (window.matchMedia('(max-width: 1000px)').matches) {
+    if (window.matchMedia("(max-width: 1000px)").matches) {
       options = {
-        rootMargin: '0px',
-        threshold: 0
-      }
-    }
-    else {
+        rootMargin: "0px",
+        threshold: 0,
+      };
+    } else {
       options = {
-        root: this.shadowRoot?.querySelector('ul'),
-        rootMargin: '0px',
-        threshold: 0
-      }
+        root: this.shadowRoot?.querySelector("ul"),
+        rootMargin: "0px",
+        threshold: 0,
+      };
     }
 
     let observer = new IntersectionObserver(async (entries) => {
-      entries.forEach(async entry => {
+      entries.forEach(async (entry) => {
         if (entry.isIntersecting) {
           await this.loadMore();
         }
@@ -627,15 +644,17 @@ export class AppHome extends LitElement {
   }
 
   async getSavedAndUpdate() {
-    console.log('getting mail');
+    console.log("getting mail maybe");
     this.mailCopy = await getMail(true);
 
     if (this.mailCopy && this.mailCopy.length > 0) {
-      this.mail = this.mailCopy;
+      this.mail = [...this.mailCopy];
 
-      console.log('this.mail', this.mail);
+      this.initLoad = false;
 
-      sessionStorage.setItem('latestMail', JSON.stringify(this.mail));
+      console.log("this.mail", this.mail);
+
+      sessionStorage.setItem("latestMail", JSON.stringify(this.mail));
     }
   }
 
@@ -658,7 +677,7 @@ export class AppHome extends LitElement {
     let focused: any[] = [];
 
     this.mailCopy?.forEach((mail) => {
-      if (mail.inferenceClassification === 'focused') {
+      if (mail.inferenceClassification === "focused") {
         focused.push(mail);
       }
     });
@@ -676,7 +695,7 @@ export class AppHome extends LitElement {
     let other: any[] = [];
 
     this.mailCopy?.forEach((mail) => {
-      if (mail.inferenceClassification === 'other') {
+      if (mail.inferenceClassification === "other") {
         other.push(mail);
       }
     });
@@ -705,20 +724,18 @@ export class AppHome extends LitElement {
 
     this.mail = [...newMail];
 
-    let toastElement: any = this.shadowRoot?.getElementById('myToast');
-    toastElement?.open('Inbox Refreshed...', 'success');
+    let toastElement: any = this.shadowRoot?.getElementById("myToast");
+    toastElement?.open("Inbox Refreshed...", "success");
   }
 
   setCat(cat: string) {
     this.activeCat = cat;
 
-    if (cat === 'focused') {
+    if (cat === "focused") {
       this.getFocused();
-    }
-    else if (cat === 'other') {
-      this.getOther()
-    }
-    else if (cat === 'all') {
+    } else if (cat === "other") {
+      this.getOther();
+    } else if (cat === "all") {
       this.getSavedAndUpdate();
     }
   }
@@ -729,12 +746,13 @@ export class AppHome extends LitElement {
     try {
       await flagEmail(email);
 
-      let toastElement: any = this.shadowRoot?.getElementById('myToast');
-      toastElement?.open('Email Flagged', 'success');
+      let toastElement: any = this.shadowRoot?.getElementById("myToast");
+      toastElement?.open("Email Flagged", "success");
 
-      setTimeout(async () => { await this.refresh() }, 200);
-    }
-    catch (err) {
+      setTimeout(async () => {
+        await this.refresh();
+      }, 200);
+    } catch (err) {
       console.error(err);
     }
   }
@@ -742,137 +760,197 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <div>
-      
         ${this.loading ? html`<fast-progress></fast-progress>` : null}
-      
-        ${this.mail && this.mail.length > 0 ? html`
-      
-        <section id="mainSection">
+        ${this.initLoad === false
+          ? html`
+              <section id="mainSection">
+                <div id="filterActions">
+                  <div>
+                    <h3>Filters</h3>
+                    <fast-menu-item @click="${() => this.setCat("all")}"
+                      >All</fast-menu-item
+                    >
+                    <fast-menu-item @click="${() => this.setCat("focused")}"
+                      >Focused</fast-menu-item
+                    >
+                    <fast-menu-item @click="${() => this.setCat("other")}"
+                      >Other</fast-menu-item
+                    >
+                  </div>
 
-          <div id="filterActions">
-      
-            <div>
-              <h3>Filters</h3>
-              <fast-menu-item @click="${() => this.setCat('all')}">All</fast-menu-item>
-              <fast-menu-item @click="${() => this.setCat('focused')}">Focused</fast-menu-item>
-              <fast-menu-item @click="${() => this.setCat('other')}">Other</fast-menu-item>
-            </div>
-      
-            <div id="menuActions">
-              <fast-button @click="${() => this.refresh()}">
-                Refresh
-                <ion-icon name="reload"></ion-icon>
-              </fast-button>
-      
-              <fast-button id="desktopNew" @click="${() => this.newEmail()}">
-                New Email
-                <ion-icon name="add"></ion-icon>
-              </fast-button>
-            </div>
-          </div>
-      
-          <div id="mainListBlock">
-            <fast-text-field id="searchInput" placeholder="..."
-              @change="${(event: any) => this.searchMail(event.target.value)}" type="search">Search Mail</fast-text-field>
+                  <div id="menuActions">
+                    <fast-button @click="${() => this.refresh()}">
+                      Refresh
+                      <ion-icon name="reload"></ion-icon>
+                    </fast-button>
 
-              
-            <ul>
-              ${this.mail?.map((email) => {
-      if (email.isDraft === false) {
-        return html`
-                  <li>
-          
-                    <div>
-                      <div class="emailHeader">
-                        <h3>${email.subject}</h3>
-                        ${email.flag.flagStatus === "flagged" ? html`<fast-button @click="${() => this.read(email.id)}"
-                          appearance="lightweight">flagged <ion-icon name="alert-circle-outline"></ion-icon>
-                        </fast-button>` : null}
-                      </div>
-          
-                      <p class="preview">
-                        ${email.bodyPreview}
-                      </p>
-                    </div>
-          
-                    <div id="actions">
-                      <span id="nameBlock">from <span id="name">${email.from?.emailAddress.name || `No sender name`}</span></span>
-          
-                      <div id="actionsButtons">
-                        ${email.flag.flagStatus !== "flagged" ? html`<fast-button class="flagButton" @click="${() => this.bookmark(email)}">
-                          <ion-icon name="flag-outline"></ion-icon>
-                        </fast-button>` : null}
-                        <fast-button class="readButton" @click="${() => this.read(email.id)}">Read</fast-button>
-                      </div>
-                    </div>
-                  </li>
-                  `
-      }
-      else {
-        return null;
-      }
-    })}
-
-                <div id="pagerButtons">
-                  <fast-button appearance="stealth" @click="${() => this.loadMore()}">
-                    More
-
-                    <ion-icon name="chevron-forward-outline"></ion-icon>
-                  </fast-button>
+                    <fast-button
+                      id="desktopNew"
+                      @click="${() => this.newEmail()}"
+                    >
+                      New Email
+                      <ion-icon name="add"></ion-icon>
+                    </fast-button>
+                  </div>
                 </div>
-            </ul>
-          </div>
-      
-      
-        </section>
-      
-        <div id="homeToolbar">
-          <fast-button @click="${() => this.refresh()}">
-            Refresh
-            <ion-icon name="reload"></ion-icon>
-          </fast-button>
-      
-          <fast-button id="newEmailButton" @click="${() => this.newEmail()}">
-            New Email
-            <ion-icon name="add"></ion-icon>
-          </fast-button>
-        </div>
-      
-        ` : this.initLoad ? html`<div id="introBlock">
-          Sign in to quickly access your latest email and save them for offline use!
-      
-          <span id="introSpan">Powered by the Microsoft Graph.</span>
-      
-          <app-login></app-login>
-        </div>`: null}
-      
-        ${this.initLoad && this.mail && this.mail.length <= 0 ? html` <div id="advBlock">
-          <div class="advOuter">
-            <div class="advInner" id="firstBlock">
-              <img src="/assets/icons/mailbox.svg" alt="app icon">
-      
-              <ul>
-                <li>Easily access your mail, even when offline!</li>
-                <li>Set reminders for your mail that also work offline!</li>
-              </ul>
-            </div>
-          </div>
-      
-          <div class="advOuter">
-            <div class="advInner">
-              <img src="/assets/screenshots/offline_screen_mobile.webp">
-              <p>Even send mail while offline and let us automatically send it once you are back online!</p>
-            </div>
-          </div>
-      </div>
-      ` : null}
-      
-      <pwa-install>Install Mail GO</pwa-install>
-      
-      <dile-toast id="myToast" duration="3000"></dile-toast>
-      </div>
 
+                <div id="mainListBlock">
+                  <fast-text-field
+                    id="searchInput"
+                    placeholder="..."
+                    @change="${(event: any) =>
+                      this.searchMail(event.target.value)}"
+                    type="search"
+                    >Search Mail</fast-text-field
+                  >
 
+                  <ul>
+                    ${this.mail.length > 0
+                      ? this.mail?.map((email) => {
+                          if (email.isDraft === false) {
+                            return html`
+                              <li>
+                                <div>
+                                  <div class="emailHeader">
+                                    <h3>${email.subject}</h3>
+                                    ${email.flag.flagStatus === "flagged"
+                                      ? html`<fast-button
+                                          @click="${() => this.read(email.id)}"
+                                          appearance="lightweight"
+                                          >flagged
+                                          <ion-icon
+                                            name="alert-circle-outline"
+                                          ></ion-icon>
+                                        </fast-button>`
+                                      : null}
+                                  </div>
+
+                                  <p class="preview">${email.bodyPreview}</p>
+                                </div>
+
+                                <div id="actions">
+                                  <span id="nameBlock"
+                                    >from
+                                    <span id="name"
+                                      >${email.from?.emailAddress.name ||
+                                      `No sender name`}</span
+                                    ></span
+                                  >
+
+                                  <div id="actionsButtons">
+                                    ${email.flag.flagStatus !== "flagged"
+                                      ? html`<fast-button
+                                          class="flagButton"
+                                          @click="${() => this.bookmark(email)}"
+                                        >
+                                          <ion-icon
+                                            name="flag-outline"
+                                          ></ion-icon>
+                                        </fast-button>`
+                                      : null}
+                                    <fast-button
+                                      class="readButton"
+                                      @click="${() => this.read(email.id)}"
+                                      >Read</fast-button
+                                    >
+                                  </div>
+                                </div>
+                              </li>
+                            `;
+                          } else {
+                            return null;
+                          }
+                        })
+                      : html`
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+
+                        <li class="fakeCard"></li>
+                      `}
+
+                    <div id="pagerButtons">
+                      <fast-button
+                        appearance="stealth"
+                        @click="${() => this.loadMore()}"
+                      >
+                        More
+
+                        <ion-icon name="chevron-forward-outline"></ion-icon>
+                      </fast-button>
+                    </div>
+                  </ul>
+                </div>
+              </section>
+
+              <div id="homeToolbar">
+                <fast-button @click="${() => this.refresh()}">
+                  Refresh
+                  <ion-icon name="reload"></ion-icon>
+                </fast-button>
+
+                <fast-button
+                  id="newEmailButton"
+                  @click="${() => this.newEmail()}"
+                >
+                  New Email
+                  <ion-icon name="add"></ion-icon>
+                </fast-button>
+              </div>
+            `
+          : this.initLoad
+          ? html`<div id="introBlock">
+              Sign in to quickly access your latest email and save them for
+              offline use!
+
+              <span id="introSpan">Powered by the Microsoft Graph.</span>
+
+              <app-login></app-login>
+            </div>`
+          : null}
+        ${this.initLoad && this.mail && this.mail.length <= 0
+          ? html`
+              <div id="advBlock">
+                <div class="advOuter">
+                  <div class="advInner" id="firstBlock">
+                    <img src="/assets/icons/mailbox.svg" alt="app icon" />
+
+                    <ul>
+                      <li>Easily access your mail, even when offline!</li>
+                      <li>
+                        Set reminders for your mail that also work offline!
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="advOuter">
+                  <div class="advInner">
+                    <img src="/assets/screenshots/offline_screen_mobile.webp" />
+                    <p>
+                      Even send mail while offline and let us automatically send
+                      it once you are back online!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            `
+          : null}
+
+        <pwa-install>Install Mail GO</pwa-install>
+
+        <dile-toast id="myToast" duration="3000"></dile-toast>
+      </div>
     `;
   }
 }

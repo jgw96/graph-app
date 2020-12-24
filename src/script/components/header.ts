@@ -27,7 +27,7 @@ export class AppHeader extends LitElement {
 
         position: sticky;
         top: 0;
-        background: white;
+        background: rgba(255, 255, 255, 0.41);
         backdrop-filter: blur(10px);
         z-index: 1;
       }

@@ -56,6 +56,7 @@ export class AppContacts extends LitElement {
         border-radius: 4px;
 
         padding: 1em 2em;
+        overflow: hidden;
       }
 
       #contactsList ul {

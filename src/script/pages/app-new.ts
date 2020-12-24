@@ -54,6 +54,16 @@ export class AppNew extends LitElement {
 
   static get styles() {
     return css`
+    fast-button::part(content) {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    fast-button ion-icon {
+      margin-left: 4px;
+    }
+
       #replyingHeader {
         margin-top: 0;
         font-size: 1.4em;
