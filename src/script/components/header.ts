@@ -231,30 +231,61 @@ export class AppHeader extends LitElement {
     this.openSettings = false;
   }
 
+  checkPeriodic = async () => {
+    const status = await (navigator as any).permissions.query({
+      name: "periodic-background-sync",
+    });
+  
+    if (status.state === "granted") {
+      // Periodic background sync can be used.
+      const registration: ServiceWorkerRegistration | undefined = await navigator.serviceWorker.getRegistration();
+  
+      if (registration && "periodicSync" in registration) {
+        try {
+          await (registration as any).periodicSync.register("mail-sync", {
+            // An interval of one day.
+            minInterval: 24 * 60 * 60 * 1000,
+          });
+  
+          Notification.requestPermission(async (status) => {
+            console.log("Notification permission status:", status);
+  
+            if (status === "granted") {
+              const options = {
+                body: "We will notify you when new email is recieved in the background",
+                icon: "/assets/icons/icon_48.png",
+                vibrate: [100],
+                data: {
+                  dateOfArrival: Date.now(),
+                },
+                actions: [
+                  { action: "close", title: "Close" },
+                ],
+              };
+
+              if (registration) {
+                await (registration as ServiceWorkerRegistration).showNotification("Email will sync in the background", options);
+              }
+            }
+          });
+        } catch (error) {
+          // Periodic background sync cannot be used.
+          console.error(error);
+
+          this.checked = false;
+        }
+      }
+    } else {
+      // Periodic background sync cannot be used.
+      console.log("background sync not supported or permission not granted");
+
+      this.checked = false;
+    }
+  };
+
   async updateMail(value: boolean) {
     if (value === true) {
-      const status = await (navigator.permissions as any).query({
-        name: 'periodic-background-sync',
-      });
-      if (status.state === 'granted') {
-        // Periodic background sync can be used.
-
-        const registration = await navigator.serviceWorker.getRegistration();
-        if (registration && 'periodicSync' in registration) {
-          try {
-            await (registration as any).periodicSync.register('mail-sync', {
-              // An interval of one day.
-              minInterval: 24 * 60 * 60 * 1000,
-            });
-          } catch (error) {
-            // Periodic background sync cannot be used.
-            console.error(error);
-          }
-        }
-      } else {
-        // Periodic background sync cannot be used.
-        console.log("background sync not supported");
-      }
+      await this.checkPeriodic();
     }
     else {
       const registration = await navigator.serviceWorker.getRegistration();

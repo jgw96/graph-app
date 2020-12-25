@@ -9,7 +9,7 @@
     "build:watch": "tsc --watch",
     "build:dev": "tsc",
     "start": "concurrently \"tsc --watch\" \"es-dev-server --app-index index.html --compatibility none --node-resolve --watch --open\"",
-    "dev": "concurrently \"tsc --watch\" \"es-dev-server --app-index index.html --compatibility none --node-resolve --watch --open\""
+    "dev": "concurrently \"tsc --watch\" \"es-dev-server --port 8081 --app-index index.html --compatibility none --node-resolve --watch --open\""
   },
   "author": "",
   "license": "ISC",

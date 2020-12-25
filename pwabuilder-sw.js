@@ -32,6 +32,26 @@ const syncContent = async () => {
         await navigator.setAppBadge();
 
         cache.put(graphEndpoint, response);
+
+        if (Notification.permission === "granted") {
+          const options = {
+            body: "New email was received in the background",
+            icon: "/assets/icons/icon_48.png",
+            vibrate: [100],
+            data: {
+              dateOfArrival: Date.now(),
+            },
+            actions: [
+              { action: "open", title: "Open" },
+              { action: "close", title: "Close" },
+            ],
+
+            // TODO 2.5 - add actions to the notification
+
+            // TODO 5.1 - add a tag to the notification
+          };
+          await registration.showNotification("New mail available", options);
+        }
       }
     }
   }
@@ -90,7 +110,17 @@ workbox.routing.registerRoute(
 );
 
 self.addEventListener("notificationclick", (event) => {
-  clients.openWindow(event.notification.body.split("Mail: ").pop());
+  const notification = event.notification;
+  const action = event.action;
+
+  if (action === "close") {
+    notification.close();
+  } else {
+    clients.openWindow("/");
+    notification.close();
+  }
+
+  // TODO 5.3 - close all notifications when one is clicked
 });
 
 self.addEventListener("periodicsync", (event) => {
@@ -145,4 +175,4 @@ workbox.routing.registerRoute(
   new workbox.strategies.StaleWhileRevalidate()
 );
 
-workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
+// workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
