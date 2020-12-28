@@ -3,8 +3,10 @@ import { LitElement, css, html, customElement, property } from "lit-element";
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import "@pwabuilder/pwainstall";
 import "@dile/dile-toast/dile-toast";
-import { flagEmail, getMail } from "../services/mail";
+import { getMail } from "../services/mail";
 import { Router } from "@vaadin/router";
+
+import '../components/email-card';
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -33,16 +35,8 @@ export class AppHome extends LitElement {
         margin-left: 4px;
       }
 
-      .fakeCard {
-        height: 156px;
-      }
-
       fast-buttons::part(content) ion-icon {
         margin-left: 4px;
-      }
-
-      .flagButton {
-        margin-right: 2px;
       }
 
       #pagerButtons {
@@ -162,10 +156,6 @@ export class AppHome extends LitElement {
         font-weight: bold;
       }
 
-      .readButton {
-        background: var(--app-color-primary);
-      }
-
       fast-progress {
         position: absolute;
         width: 100%;
@@ -247,32 +237,7 @@ export class AppHome extends LitElement {
         grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));
       }
 
-      ul li {
-        background: white;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 1px;
-        padding-bottom: 10px;
-        border-radius: 6px;
-        content-visibility: auto;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        margin-bottom: 10px;
-        transition: box-shadow 200ms;
-
-        box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132),
-          0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
-      }
-
-      ul li:hover {
-        box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132),
-          0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
-      }
-
-      ul li:nth-child(-n + 14) {
+      ul email-card:nth-child(-n + 14) {
         animation-name: slidein;
         animation-duration: 300ms;
       }
@@ -309,51 +274,11 @@ export class AppHome extends LitElement {
       }
 
       @media (min-width: 1200px) {
-        ul li {
-          display: flex;
-          flex-direction: column;
-        }
-
-        ul li #nameBlock {
-          flex-grow: 1;
-        }
 
         #introBlock {
           margin-left: 24em;
           margin-right: 24em;
         }
-      }
-
-      ul li h3 {
-        margin-bottom: 5px;
-        font-size: 16px;
-        margin-top: 10px;
-
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 16em;
-      }
-
-      #actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 22px;
-      }
-
-      #actionsButtons {
-        max-width: 7em;
-      }
-
-      #actions button,
-      #homeToolbar button {
-        background-color: var(--app-color-primary);
-      }
-
-      #actions button ion-icon,
-      #homeToolbar button ion-icon {
-        margin-left: 6px;
       }
 
       #nameBlock {
@@ -363,26 +288,6 @@ export class AppHome extends LitElement {
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
-      .preview {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 14px;
-      }
-
-      .emailHeader {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      ul li #name {
-        color: var(--app-color-primary);
-        display: inline-block;
-        max-width: 14em;
-      }
-
       #homeToolbar {
         position: fixed;
         bottom: 0;
@@ -424,41 +329,12 @@ export class AppHome extends LitElement {
       }
 
       @media (prefers-color-scheme: dark) {
-        ul li {
-          background: #212121;
-          color: white;
-        }
-
-        ul li #name {
-          color: white;
-        }
-
         #introBlock {
           color: white;
         }
 
         #homeToolbar {
           background: rgb(29 29 29 / 78%);
-        }
-      }
-
-      @media (min-width: 1000px) and (prefers-color-scheme: dark) {
-        ul li {
-          background: rgb(33 33 33 / 79%);
-          backdrop-filter: blur(10px);
-
-          content-visibility: auto;
-          contain-intrinsic-size: 156px;
-        }
-      }
-
-      @media (min-width: 1000px) and (prefers-color-scheme: light) {
-        ul li {
-          background: #ffffffbf;
-          backdrop-filter: blur(10px);
-
-          content-visibility: auto;
-          contain-intrinsic-size: 156px;
         }
       }
 
@@ -576,7 +452,6 @@ export class AppHome extends LitElement {
 
   async firstUpdated() {
     const loadCheck = sessionStorage.getItem("latestMail");
-    console.log("loadCheck", loadCheck);
 
     if (loadCheck) {
       this.initLoad = false;
@@ -707,10 +582,6 @@ export class AppHome extends LitElement {
     this.loading = false;
   }
 
-  async read(id: string) {
-    Router.go(`/email?id=${id}`);
-  }
-
   async newEmail() {
     Router.go("/newEmail");
   }
@@ -740,12 +611,8 @@ export class AppHome extends LitElement {
     }
   }
 
-  async bookmark(email: any) {
-    console.log(email);
-
+  async bookmark() {
     try {
-      await flagEmail(email);
-
       let toastElement: any = this.shadowRoot?.getElementById("myToast");
       toastElement?.open("Email Flagged", "success");
 
@@ -809,74 +676,21 @@ export class AppHome extends LitElement {
                       ? this.mail?.map((email) => {
                           if (email.isDraft === false) {
                             return html`
-                              <li>
-                                <div>
-                                  <div class="emailHeader">
-                                    <h3>${email.subject}</h3>
-                                    ${email.flag.flagStatus === "flagged"
-                                      ? html`<fast-button
-                                          @click="${() => this.read(email.id)}"
-                                          appearance="lightweight"
-                                          >flagged
-                                          <ion-icon
-                                            name="alert-circle-outline"
-                                          ></ion-icon>
-                                        </fast-button>`
-                                      : null}
-                                  </div>
-
-                                  <p class="preview">${email.bodyPreview}</p>
-                                </div>
-
-                                <div id="actions">
-                                  <span id="nameBlock"
-                                    >from
-                                    <span id="name"
-                                      >${email.from?.emailAddress.name ||
-                                      `No sender name`}</span
-                                    ></span
-                                  >
-
-                                  <div id="actionsButtons">
-                                    ${email.flag.flagStatus !== "flagged"
-                                      ? html`<fast-button
-                                          class="flagButton"
-                                          @click="${() => this.bookmark(email)}"
-                                        >
-                                          <ion-icon
-                                            name="flag-outline"
-                                          ></ion-icon>
-                                        </fast-button>`
-                                      : null}
-                                    <fast-button
-                                      class="readButton"
-                                      @click="${() => this.read(email.id)}"
-                                      >Read</fast-button
-                                    >
-                                  </div>
-                                </div>
-                              </li>
+                              <email-card @flag-email="${() => this.bookmark()}" .email="${email}"></email-card>
                             `;
                           } else {
                             return null;
                           }
                         })
                       : html`
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
-
-                        <li class="fakeCard"></li>
+                        <email-card></email-card>
+                        <email-card></email-card>
+                        <email-card></email-card>
+                        <email-card></email-card>
+                        <email-card></email-card>
+                        <email-card></email-card>
+                        <email-card></email-card>
+                        <email-card></email-card>
                       `}
 
                     <div id="pagerButtons">
