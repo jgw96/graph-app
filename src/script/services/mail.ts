@@ -2,6 +2,34 @@ import { getToken } from "../services/auth";
 
 let nextMail: any = null;
 
+export async function unsub(id: number) {
+  if (id) {
+    const token = await getToken();
+
+    const headers = new Headers();
+    const bearer = "Bearer " + token;
+    headers.append("Authorization", bearer);
+
+    const options = {
+      method: "POST",
+      headers: headers
+    };
+    const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}/unsubscribe`;
+
+    try {
+      await fetch(graphEndpoint, options);
+      return true;
+    }
+    catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
+  else {
+    return false;
+  }
+}
+
 export async function getMail(initLoad?: boolean) {
   console.log("getMail");
 
@@ -176,13 +204,11 @@ const processAttachments = async (attachments: any[]) => {
 
         resolve(attachToSend);
       };
-    } 
-    else if (attachment && attachment.sourceUrl) {
+    } else if (attachment && attachment.sourceUrl) {
       attachToSend.push(attachment);
 
       resolve(attachToSend);
-    }
-    else {
+    } else {
       resolve(null);
     }
   });
@@ -330,10 +356,12 @@ export async function sendMail(
   }
 }
 
-export async function saveDraft(subject: string,
+export async function saveDraft(
+  subject: string,
   body: string,
   recipients: any[],
-  attachments: File[]) {
+  attachments: File[]
+) {
   let sendMail: any = null;
 
   if (attachments) {
@@ -433,7 +461,7 @@ export async function downloadAttach(mail: any, attachment: any) {
   const fetchURL = `https://graph.microsoft.com/beta/me/messages/${mail.id}/attachments/${attachment.id}/$value`;
 
   const fetchRequest = new Request(fetchURL, {
-    headers: headers
+    headers: headers,
   });
 
   const response = await fetch(fetchRequest);
@@ -442,8 +470,7 @@ export async function downloadAttach(mail: any, attachment: any) {
 
   if (blob) {
     return blob;
-  }
-  else {
+  } else {
     return null;
   }
 }

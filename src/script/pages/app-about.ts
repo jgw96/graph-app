@@ -1,19 +1,22 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { getAnEmail, flagEmail, markAsRead, listAttach } from '../services/mail';
+import { LitElement, css, html, customElement, property } from "lit-element";
+import {
+  getAnEmail,
+  flagEmail,
+  markAsRead,
+  listAttach,
+  unsub,
+} from "../services/mail";
 
-import { classMap } from 'lit-html/directives/class-map';
+import { classMap } from "lit-html/directives/class-map";
 
-import '../components/app-attachments';
+import "../components/app-attachments";
 
-
-import { Router } from '@vaadin/router';
+import { Router } from "@vaadin/router";
 
 declare var TimestampTrigger: any;
 
-
-@customElement('app-about')
+@customElement("app-about")
 export class AppAbout extends LitElement {
-
   @property() email: any = null;
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
@@ -23,16 +26,15 @@ export class AppAbout extends LitElement {
 
   static get styles() {
     return css`
+      fast-button::part(content) {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
 
-    fast-button::part(content) {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    fast-button ion-icon {
-      margin-left: 4px;
-    }
+      fast-button ion-icon {
+        margin-left: 4px;
+      }
 
       #openWindow ion-icon {
         color: var(--app-color-primary);
@@ -83,7 +85,7 @@ export class AppAbout extends LitElement {
         animation-duration: 280ms;
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         #detailMoreActions {
           background: rgb(226, 226, 226);
         }
@@ -169,45 +171,38 @@ export class AppAbout extends LitElement {
         margin: auto;
         width: 90&;
         height: 500px; /* change height to see repeat-y behavior */
-        
-        background-image:
-          radial-gradient( circle 50px at 50px 50px, lightgray 99%, transparent 0 ),
-          linear-gradient( 100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 80% ),
-          linear-gradient( lightgray 20px, transparent 0 ),
-          linear-gradient( lightgray 20px, transparent 0 ),
-          linear-gradient( lightgray 20px, transparent 0 ),
-          linear-gradient( lightgray 20px, transparent 0 );
-    
+
+        background-image: radial-gradient(
+            circle 50px at 50px 50px,
+            lightgray 99%,
+            transparent 0
+          ),
+          linear-gradient(
+            100deg,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0) 80%
+          ),
+          linear-gradient(lightgray 20px, transparent 0),
+          linear-gradient(lightgray 20px, transparent 0),
+          linear-gradient(lightgray 20px, transparent 0),
+          linear-gradient(lightgray 20px, transparent 0);
+
         background-repeat: repeat-y;
-    
-        background-size:
-          100px 200px, /* circle */
-          50px 200px, /* highlight */
-          150px 200px,
-          350px 200px,
-          300px 200px,
-          250px 200px;
-    
-        background-position:
-          0 0, /* circle */
-          0 0, /* highlight */
-          120px 0,
-          120px 40px,
-          120px 80px,
-          120px 120px;
-    
+
+        background-size: 100px 200px, /* circle */ 50px 200px,
+          /* highlight */ 150px 200px, 350px 200px, 300px 200px, 250px 200px;
+
+        background-position: 0 0, /* circle */ 0 0, /* highlight */ 120px 0,
+          120px 40px, 120px 80px, 120px 120px;
+
         animation: shine 1s infinite;
       }
 
-    
       @keyframes shine {
         to {
-          background-position:
-            0 0,
-            100% 0, /* move highlight to right */
-            120px 0,
-            120px 40px,
-            120px 80px,
+          background-position: 0 0, 100% 0,
+            /* move highlight to right */ 120px 0, 120px 40px, 120px 80px,
             120px 120px;
         }
       }
@@ -230,6 +225,10 @@ export class AppAbout extends LitElement {
       #replyButton {
         margin-left: 8px;
         background: var(--app-color-primary);
+      }
+
+      #unsubButton {
+        margin-left: 8px;
       }
 
       @media (min-width: 900px) {
@@ -257,14 +256,14 @@ export class AppAbout extends LitElement {
         }
       }
 
-      @media(min-width: 1300px) {
+      @media (min-width: 1300px) {
         #reminder {
           left: 28em;
           right: 28em;
         }
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         #reminder {
           background: white;
         }
@@ -283,7 +282,8 @@ export class AppAbout extends LitElement {
           background: #ffffff69;
         }
 
-        #openWindow, #flagButtonAbout {
+        #openWindow,
+        #flagButtonAbout {
           display: none;
         }
 
@@ -307,7 +307,7 @@ export class AppAbout extends LitElement {
         }
       }
 
-      @media(screen-spanning: single-fold-vertical) {
+      @media (screen-spanning: single-fold-vertical) {
         #detailBlock {
           grid-gap: 36px;
           grid-template-columns: minmax(240px, 48.8%) 1fr;
@@ -344,19 +344,19 @@ export class AppAbout extends LitElement {
 
   async firstUpdated() {
     const search = new URLSearchParams(location.search);
-    const id = search.get('id');
+    const id = search.get("id");
 
     if (id) {
       const email = await getAnEmail(id);
       console.log(email);
       this.email = email;
 
-      const iframeEl = this.shadowRoot?.querySelector('iframe');
-      console.log('iframeEl', iframeEl);
-      iframeEl?.addEventListener('load', () => {
-        console.log('loaded');
+      const iframeEl = this.shadowRoot?.querySelector("iframe");
+      console.log("iframeEl", iframeEl);
+      iframeEl?.addEventListener("load", () => {
+        console.log("loaded");
         this.emailLoaded = true;
-      })
+      });
 
       this.attachments = await listAttach(id);
       console.log(this.attachments);
@@ -370,10 +370,10 @@ export class AppAbout extends LitElement {
   async share() {
     if ((navigator as any).share) {
       await (navigator as any).share({
-        title: 'Shared Email',
-        text: 'Check out this email',
+        title: "Shared Email",
+        text: "Check out this email",
         url: location.href,
-      })
+      });
     }
   }
 
@@ -384,19 +384,20 @@ export class AppAbout extends LitElement {
 
   askPermission() {
     return new Promise(function (resolve, reject) {
-      const permissionResult = Notification.requestPermission(function (result) {
+      const permissionResult = Notification.requestPermission(function (
+        result
+      ) {
         resolve(result);
       });
 
       if (permissionResult) {
         permissionResult.then(resolve, reject);
       }
-    })
-      .then(function (permissionResult) {
-        if (permissionResult !== 'granted') {
-          throw new Error('We weren\'t granted permission.');
-        }
-      });
+    }).then(function (permissionResult) {
+      if (permissionResult !== "granted") {
+        throw new Error("We weren't granted permission.");
+      }
+    });
   }
 
   async setReminder() {
@@ -410,15 +411,15 @@ export class AppAbout extends LitElement {
         r.showNotification("Mail Reminder", {
           tag: Math.random(),
           body: `Your reminder from Mail: ${location.href}`,
-          showTrigger: new TimestampTrigger(Date.now() + (new Date(this.reminderTime).getTime() - Date.now())),
-          icon: "/assets/icons/icon_512.png"
+          showTrigger: new TimestampTrigger(
+            Date.now() + (new Date(this.reminderTime).getTime() - Date.now())
+          ),
+          icon: "/assets/icons/icon_512.png",
         });
-
-      };
+      }
 
       this.showReminder = false;
-    }
-    catch {
+    } catch {
       console.log("couldnt set reminder");
       this.showReminder = false;
     }
@@ -449,8 +450,7 @@ export class AppAbout extends LitElement {
 
     try {
       await flagEmail(email);
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
     }
   }
@@ -463,55 +463,105 @@ export class AppAbout extends LitElement {
     );
   }
 
+  async unsubscribe(id: number) {
+    const returnValue = await unsub(id);
+
+    if (returnValue === true) {
+      console.log("success");
+
+      let toastElement: any = this.shadowRoot?.getElementById("myToast");
+      toastElement?.open("Unsubscribed...", "success");
+    } else {
+      console.log("failure");
+
+      let toastElement: any = this.shadowRoot?.getElementById("myToast");
+      toastElement?.open("Could not unsubscribe...", "failure");
+    }
+  }
+
   render() {
     return html`
       <div id="detailBlock">
-      
         <section id="detailAction">
           <div id="detailActions">
-            <fast-button @click="${() => this.back()}" class="back" aria-label="back button">
+            <fast-button
+              @click="${() => this.back()}"
+              class="back"
+              aria-label="back button"
+            >
               Back
-      
+
               <ion-icon name="chevron-back-outline"></ion-icon>
             </fast-button>
 
-            <fast-button appearance="outline" id="openWindow" appearance="stealth" @click="${() => this.openInNew()}">
+            <fast-button
+              appearance="outline"
+              id="openWindow"
+              appearance="stealth"
+              @click="${() => this.openInNew()}"
+            >
               <ion-icon name="open"></ion-icon>
             </fast-button>
           </div>
-      
-          ${this.email ? html`<h2>${this.email?.subject}</h2>` : html`<fast-skeleton
-            style="
+
+          ${this.email
+            ? html`<h2>${this.email?.subject}</h2>`
+            : html`<fast-skeleton
+                style="
                 margin-top: 2em;
                 width: 300px;
                 height: 54px;
             "
-            shape="rect"
-            shimmer
-        ></fast-skeleton>`}
+                shape="rect"
+                shimmer
+              ></fast-skeleton>`}
+          ${this.attachments && this.attachments.length > 0
+            ? html`<app-attachments
+                .attachments=${this.attachments}
+                .mail="${this.email}"
+              ></app-attachments>`
+            : null}
 
-        ${this.attachments && this.attachments.length > 0 ? html`<app-attachments .attachments=${this.attachments} .mail="${this.email}"></app-attachments>` : null}
-      
           <div id="detailMoreActions">
+            ${this.email?.flag.flagStatus !== "flagged"
+              ? html`<fast-button
+                  id="flagButtonAbout"
+                  class="detailActionButton"
+                  @click="${() => this.bookmark(this.email)}"
+                >
+                  Flag
 
-          ${this.email?.flag.flagStatus !== "flagged" ? html`<fast-button id="flagButtonAbout" class="detailActionButton" @click="${() => this.bookmark(this.email)}">
-             Flag
+                  <ion-icon name="flag-outline"></ion-icon>
+                </fast-button>`
+              : null}
+            ${"showTrigger" in Notification.prototype
+              ? html`<fast-button
+                  class="detailActionButton"
+                  @click="${() => this.setupReminder()}"
+                >
+                  Reminder
 
-                      <ion-icon name="flag-outline"></ion-icon>
-                    </fast-button>` : null}
-      
-            ${"showTrigger" in Notification.prototype ? html`<fast-button class="detailActionButton"
-              @click="${() => this.setupReminder()}">
-              Reminder
-      
-              <ion-icon name="notifications-circle-outline"></ion-icon>
-            </fast-button>` : null}
-      
-            <fast-button @click="${() => this.share()}" aria-label="share button">
+                  <ion-icon name="notifications-circle-outline"></ion-icon>
+                </fast-button>`
+              : null}
+
+            <fast-button
+              @click="${() => this.share()}"
+              aria-label="share button"
+            >
               Share
-      
+
               <ion-icon name="share-outline"></ion-icon>
             </fast-button>
+
+            ${this.email?.unsubscribeEnabled ? html`<fast-button
+              id="unsubButton"
+              @click="${() => this.unsubscribe(this.email.id)}"
+            >
+              Unsubscribe
+
+              <ion-icon name="close-outline"></ion-icon>
+            </fast-button>` : null}
 
             <fast-button id="replyButton" @click="${() => this.reply()}">
               Reply
@@ -520,29 +570,45 @@ export class AppAbout extends LitElement {
             </fast-button>
           </div>
         </section>
-      
-        <div id="content">
-          <iframe class=${classMap({ loading: !this.emailLoaded })} sandbox="allow-popups" .srcdoc="${this.email?.body.content}"></iframe>
 
-        <fast-skeleton class=${classMap({ loading: this.emailLoaded })}
+        <div id="content">
+          <iframe
+            class=${classMap({ loading: !this.emailLoaded })}
+            sandbox="allow-popups"
+            .srcdoc="${this.email?.body.content}"
+          ></iframe>
+
+          <fast-skeleton
+            class=${classMap({ loading: this.emailLoaded })}
             style="
                 width: 100%;
                 height: 100%;
             "
             shape="rect"
             shimmer
-        ></fast-skeleton>
-        </div> 
-      
-      
-        ${this.showReminder ? html`<div id="reminder">
-          <label for="reminder-time">Set a Reminder:</label>
-          <input type="datetime-local" id="reminder-time" name="reminder-time" @change="${this.handleDate}"
-            .value="${this.reminderTime}">
-          <fast-button @click="${() => this.setReminder()}">Set</fast-button>
-          <fast-button id="cancelButton" @click="${() => this.cancel()}">Cancel</fast-button>
-        </div>` : null}
-      
+          ></fast-skeleton>
+        </div>
+
+        ${this.showReminder
+          ? html`<div id="reminder">
+              <label for="reminder-time">Set a Reminder:</label>
+              <input
+                type="datetime-local"
+                id="reminder-time"
+                name="reminder-time"
+                @change="${this.handleDate}"
+                .value="${this.reminderTime}"
+              />
+              <fast-button @click="${() => this.setReminder()}"
+                >Set</fast-button
+              >
+              <fast-button id="cancelButton" @click="${() => this.cancel()}"
+                >Cancel</fast-button
+              >
+            </div>`
+          : null}
+
+        <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>
     `;
   }
