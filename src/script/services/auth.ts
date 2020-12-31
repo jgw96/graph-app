@@ -23,10 +23,12 @@ msalInstance.handleRedirectPromise().then(async (tokenResponse: any) => {
     // If the tokenResponse === null, you are not coming back from an auth redirect.
 
     if (tokenResponse !== null) {
-        console.log(tokenResponse);
+        console.log('redirect promise handled', tokenResponse);
 
         await set('graphToken', tokenResponse.accessToken);
         localStorage.setItem('graphToken', tokenResponse.accessToken);
+
+        location.reload();
     }
 }).catch((error: Error) => {
     // handle error, either in the library or coming back from the server
@@ -55,9 +57,12 @@ export async function login() {
                 forceRefresh: false
             };
 
+            console.log('init silent auth');
+
             await msalInstance.ssoSilent(silentRequest);
         }
         else {
+            console.log("init login redirect")
             await msalInstance.loginRedirect({
                 scopes
             });
@@ -101,11 +106,13 @@ export async function getToken() {
 
             if (silentRequest) {
                 msalInstance.acquireTokenSilent(silentRequest).then((tokenResponse: any) => {
+                    console.log('did the silent request');
                     // Do something with the tokenResponse
                     console.log(tokenResponse);
                     resolve(tokenResponse.accessToken);
                 }).catch(async (error: any) => {
                     console.error(error);
+                    console.log('could not do silent request');
                     const tokenResponse: any = await msalInstance.acquireTokenRedirect(request)
                     resolve(tokenResponse.accessToken);
                 });

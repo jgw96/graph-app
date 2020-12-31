@@ -461,7 +461,7 @@ export class AppHome extends LitElement {
 
       setTimeout(async () => {
         await this.getSavedAndUpdate();
-      }, 1200);
+      }, 800);
     }
 
     (window as any).requestIdleCallback(async () => {
@@ -519,11 +519,13 @@ export class AppHome extends LitElement {
   }
 
   async getSavedAndUpdate() {
-    console.log("getting mail maybe");
+    this.loading = true;
+
     this.mailCopy = await getMail(true);
 
     if (this.mailCopy && this.mailCopy.length > 0) {
       this.mail = [...this.mailCopy];
+      this.loading = false;
 
       this.initLoad = false;
 
