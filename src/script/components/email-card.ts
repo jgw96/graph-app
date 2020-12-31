@@ -103,7 +103,7 @@ export class EmailCard extends LitElement {
       }
 
       .flagButton {
-        margin-right: 2px;
+        margin-right: 6px;
       }
 
       .readButton {
@@ -133,6 +133,10 @@ export class EmailCard extends LitElement {
 
         li #name {
           color: white;
+        }
+
+        fast-skeleton {
+          --skeleton-fill-default: #131212;
         }
       }
 

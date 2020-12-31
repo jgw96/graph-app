@@ -335,6 +335,12 @@ export class AppAbout extends LitElement {
           }
         }
       }
+
+      @media (prefers-color-scheme: dark) {
+        fast-skeleton {
+          --skeleton-fill-default: #131212;
+        }
+      }
     `;
   }
 

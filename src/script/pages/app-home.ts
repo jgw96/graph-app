@@ -6,7 +6,8 @@ import "@dile/dile-toast/dile-toast";
 import { getMail } from "../services/mail";
 import { Router } from "@vaadin/router";
 
-import '../components/email-card';
+import "../components/email-card";
+import "../components/app-loading";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -30,7 +31,7 @@ export class AppHome extends LitElement {
         display: flex;
         justify-content: space-between;
       }
-  
+
       fast-button ion-icon {
         margin-left: 4px;
       }
@@ -274,7 +275,6 @@ export class AppHome extends LitElement {
       }
 
       @media (min-width: 1200px) {
-
         #introBlock {
           margin-left: 24em;
           margin-right: 24em;
@@ -459,9 +459,7 @@ export class AppHome extends LitElement {
     } else {
       this.initLoad = true;
 
-      setTimeout(async () => {
-        await this.getSavedAndUpdate();
-      }, 800);
+      await this.getSavedAndUpdate();
     }
 
     (window as any).requestIdleCallback(async () => {
@@ -519,13 +517,18 @@ export class AppHome extends LitElement {
   }
 
   async getSavedAndUpdate() {
-    this.loading = true;
+    if (this.initLoad === false) {
+      this.loading = true;
+    }
 
     this.mailCopy = await getMail(true);
 
     if (this.mailCopy && this.mailCopy.length > 0) {
       this.mail = [...this.mailCopy];
-      this.loading = false;
+
+      if (this.initLoad === false) {
+        this.loading = false;
+      }
 
       this.initLoad = false;
 
@@ -629,7 +632,7 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <div>
-        ${this.loading ? html`<fast-progress></fast-progress>` : null}
+        ${this.loading ? html`<app-loading></app-loading>` : null}
         ${this.initLoad === false
           ? html`
               <section id="mainSection">
@@ -678,22 +681,25 @@ export class AppHome extends LitElement {
                       ? this.mail?.map((email) => {
                           if (email.isDraft === false) {
                             return html`
-                              <email-card @flag-email="${() => this.bookmark()}" .email="${email}"></email-card>
+                              <email-card
+                                @flag-email="${() => this.bookmark()}"
+                                .email="${email}"
+                              ></email-card>
                             `;
                           } else {
                             return null;
                           }
                         })
                       : html`
-                        <email-card></email-card>
-                        <email-card></email-card>
-                        <email-card></email-card>
-                        <email-card></email-card>
-                        <email-card></email-card>
-                        <email-card></email-card>
-                        <email-card></email-card>
-                        <email-card></email-card>
-                      `}
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                        `}
 
                     <div id="pagerButtons">
                       <fast-button

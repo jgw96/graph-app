@@ -84,6 +84,12 @@ export class AppFiles extends LitElement {
         }
       }
 
+      @media (prefers-color-scheme: dark) {
+        fast-skeleton {
+          --skeleton-fill-default: #131212;
+        }
+      }
+
       @keyframes fadein {
         from {
           opacity: 0;
