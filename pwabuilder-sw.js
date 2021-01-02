@@ -44,11 +44,7 @@ const syncContent = async () => {
             actions: [
               { action: "open", title: "Open" },
               { action: "close", title: "Close" },
-            ],
-
-            // TODO 2.5 - add actions to the notification
-
-            // TODO 5.1 - add a tag to the notification
+            ]
           };
           await registration.showNotification("New mail available", options);
         }
@@ -94,6 +90,13 @@ const attachBgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
   }
 );
 
+const unsubBgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
+  "unsubAttempts",
+  {
+    maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
+  }
+)
+
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes("me/sendEmail"),
   new workbox.strategies.NetworkOnly({
@@ -108,6 +111,14 @@ workbox.routing.registerRoute(
     plugins: [attachBgSyncPlugin],
   })
 );
+
+workbox.routing.registerRoute(
+  ({ url }) => url.href.includes("/unsubscribe"),
+  new workbox.strategies.NetworkOnly({
+    plugins: [unsubBgSyncPlugin],
+  }),
+  "POST"
+)
 
 self.addEventListener("notificationclick", (event) => {
   const notification = event.notification;
