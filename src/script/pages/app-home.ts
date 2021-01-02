@@ -459,7 +459,9 @@ export class AppHome extends LitElement {
     } else {
       this.initLoad = true;
 
-      await this.getSavedAndUpdate();
+      setTimeout(async () => {
+        await this.getSavedAndUpdate();
+      }, 1200)
     }
 
     (window as any).requestIdleCallback(async () => {
