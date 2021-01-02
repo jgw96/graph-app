@@ -98,10 +98,14 @@ export class AppIndex extends LitElement {
     ]);
   }
 
+  authed() {
+    (this.shadowRoot?.querySelector("#routerOutlet app-home") as any || null)?.getSavedAndUpdate(true);
+  }
+
   render() {
     return html`
       <div>
-        <app-header></app-header>
+        <app-header @user-authed="${() => this.authed()}"></app-header>
 
         <main>
           <div id="routerOutlet"></div>

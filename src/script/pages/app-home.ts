@@ -458,10 +458,6 @@ export class AppHome extends LitElement {
       await this.getSavedAndUpdate();
     } else {
       this.initLoad = true;
-
-      setTimeout(async () => {
-        await this.getSavedAndUpdate();
-      }, 1200)
     }
 
     (window as any).requestIdleCallback(async () => {
@@ -518,7 +514,7 @@ export class AppHome extends LitElement {
     this.mail = [...searchResults];
   }
 
-  async getSavedAndUpdate() {
+  public async getSavedAndUpdate() {
     if (this.initLoad === false) {
       this.loading = true;
     }
