@@ -12,50 +12,68 @@ export async function unsub(id: number) {
 
     const options = {
       method: "POST",
-      headers: headers
+      headers: headers,
     };
     const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}/unsubscribe`;
 
     try {
       await fetch(graphEndpoint, options);
       return true;
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
       return false;
     }
-  }
-  else {
+  } else {
     return false;
   }
+}
+
+export async function doMailFetch() {
+  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+
+  const token = await getToken();
+  console.log("token", token);
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "GET",
+    headers: headers,
+  };
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  return data;
 }
 
 export async function getMail(initLoad?: boolean) {
   console.log("getMail");
 
   if (initLoad) {
-    const token = await getToken();
-    console.log("token", token);
-
-    const headers = new Headers();
-    const bearer = "Bearer " + token;
-    headers.append("Authorization", bearer);
-    const options = {
-      method: "GET",
-      headers: headers,
-    };
-
     const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+    const cache = await caches.open("offline-mail");
+    const cacheResponse = await cache.match(graphEndpoint);
 
-    const response = await fetch(graphEndpoint, options);
-    const data = await response.json();
+    if (cacheResponse) {
+      const data = await cacheResponse.json();
 
-    console.log("mail", data);
+      // kick off request to update cache
+      // dont await though so we can just move on
+      // doMailFetch();
 
-    // nextMail = data.  + '.@' + odata.nextLink;
-    nextMail = data["@odata.nextLink"];
+      return data.value;
+    } else {
+      const data = await doMailFetch();
 
-    return data.value;
+      console.log("mail", data);
+
+      // nextMail = data.  + '.@' + odata.nextLink;
+      nextMail = data["@odata.nextLink"];
+
+      return data.value;
+    }
   } else {
     const token = await getToken();
     console.log("token", token);
@@ -71,15 +89,31 @@ export async function getMail(initLoad?: boolean) {
     const graphEndpoint =
       nextMail || "https://graph.microsoft.com/beta/me/messages";
 
-    const response = await fetch(graphEndpoint, options);
-    const data = await response.json();
+    const cache = await caches.open("offline-mail");
+    const cacheResponse = await cache.match(graphEndpoint);
 
-    console.log("mail", data);
+    if (cacheResponse) {
+      const data = await cacheResponse.json();
 
-    // nextMail = data.  + '.@' + odata.nextLink;
-    nextMail = data["@odata.nextLink"];
+      console.log("mail", data);
 
-    return data.value;
+      // nextMail = data.  + '.@' + odata.nextLink;
+      nextMail = data["@odata.nextLink"];
+
+      // kick off request to update cache
+      // dont await though so we can just move on
+      // fetch(graphEndpoint, options);
+
+      return data.value;
+    } else {
+      const response = await fetch(graphEndpoint, options);
+      const data = await response.json();
+
+      // nextMail = data.  + '.@' + odata.nextLink;
+      nextMail = data["@odata.nextLink"];
+
+      return data.value;
+    }
   }
 }
 

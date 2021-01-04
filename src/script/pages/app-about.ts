@@ -434,7 +434,7 @@ export class AppAbout extends LitElement {
   async disconnectedCallback() {
     super.disconnectedCallback();
 
-    await markAsRead(this.email);
+    markAsRead(this.email);
   }
 
   setupReminder() {
