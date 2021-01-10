@@ -519,7 +519,14 @@ export class AppHome extends LitElement {
       this.loading = true;
     }
 
-    this.mailCopy = await getMail(true);
+    const mailCheck = sessionStorage.getItem("latestMail");
+
+    if (mailCheck) {
+      this.mailCopy = JSON.parse(mailCheck);
+    }
+    else {
+      this.mailCopy = await getMail(true);
+    }
 
     if (this.mailCopy && this.mailCopy.length > 0) {
       this.mail = [...this.mailCopy];
