@@ -27,8 +27,6 @@ msalInstance.handleRedirectPromise().then(async (tokenResponse: any) => {
 
         await set('graphToken', tokenResponse.accessToken);
         localStorage.setItem('graphToken', tokenResponse.accessToken);
-
-        location.reload();
     }
 }).catch((error: Error) => {
     // handle error, either in the library or coming back from the server
