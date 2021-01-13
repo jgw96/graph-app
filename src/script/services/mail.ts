@@ -52,28 +52,8 @@ export async function getMail(initLoad?: boolean) {
   console.log("getMail");
 
   if (initLoad) {
-    const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
-    const cache = await caches.open("offline-mail");
-    const cacheResponse = await cache.match(graphEndpoint);
-
-    if (cacheResponse) {
-      const data = await cacheResponse.json();
-
-      // kick off request to update cache
-      // dont await though so we can just move on
-      // doMailFetch();
-
-      return data.value;
-    } else {
-      const data = await doMailFetch();
-
-      console.log("mail", data);
-
-      // nextMail = data.  + '.@' + odata.nextLink;
-      nextMail = data["@odata.nextLink"];
-
-      return data.value;
-    }
+    const data = await doMailFetch();
+    return data.value;
   } else {
     const token = await getToken();
     console.log("token", token);
@@ -89,31 +69,13 @@ export async function getMail(initLoad?: boolean) {
     const graphEndpoint =
       nextMail || "https://graph.microsoft.com/beta/me/messages";
 
-    const cache = await caches.open("offline-mail");
-    const cacheResponse = await cache.match(graphEndpoint);
+    const response = await fetch(graphEndpoint, options);
+    const data = await response.json();
 
-    if (cacheResponse) {
-      const data = await cacheResponse.json();
+    // nextMail = data.  + '.@' + odata.nextLink;
+    nextMail = data["@odata.nextLink"];
 
-      console.log("mail", data);
-
-      // nextMail = data.  + '.@' + odata.nextLink;
-      nextMail = data["@odata.nextLink"];
-
-      // kick off request to update cache
-      // dont await though so we can just move on
-      // fetch(graphEndpoint, options);
-
-      return data.value;
-    } else {
-      const response = await fetch(graphEndpoint, options);
-      const data = await response.json();
-
-      // nextMail = data.  + '.@' + odata.nextLink;
-      nextMail = data["@odata.nextLink"];
-
-      return data.value;
-    }
+    return data.value;
   }
 }
 

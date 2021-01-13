@@ -530,7 +530,7 @@ export class AppHome extends LitElement {
   }
 
   public async getSavedAndUpdate() {
-    if (this.initLoad === true) {
+    if (this.initLoad === false) {
       this.loading = true;
     }
 
@@ -545,7 +545,7 @@ export class AppHome extends LitElement {
     if (this.mailCopy && this.mailCopy.length > 0) {
       this.mail = [...this.mailCopy];
 
-      if (this.initLoad === true) {
+      if (this.initLoad === false) {
         this.loading = false;
       }
 
