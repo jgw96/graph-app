@@ -274,6 +274,16 @@ export class AppHome extends LitElement {
         text-transform: uppercase;
       }
 
+      #mainListHeader {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+
+      #mainListRefresh ion-icon {
+        margin-left: initial;
+      }
+
       @media (min-width: 1200px) {
         #introBlock {
           margin-left: 24em;
@@ -353,7 +363,7 @@ export class AppHome extends LitElement {
         }
 
         #searchInput {
-          max-width: 20em;
+          width: 20em;
         }
 
         #menuActions {
@@ -403,6 +413,10 @@ export class AppHome extends LitElement {
 
       @media (max-width: 1000px) {
         #filterActions {
+          display: none;
+        }
+
+        #mainListRefresh {
           display: none;
         }
       }
@@ -523,8 +537,7 @@ export class AppHome extends LitElement {
 
     if (mailCheck) {
       this.mailCopy = JSON.parse(mailCheck);
-    }
-    else {
+    } else {
       this.mailCopy = await getMail(true);
     }
 
@@ -656,11 +669,6 @@ export class AppHome extends LitElement {
                   </div>
 
                   <div id="menuActions">
-                    <fast-button @click="${() => this.refresh()}">
-                      Refresh
-                      <ion-icon name="reload"></ion-icon>
-                    </fast-button>
-
                     <fast-button
                       id="desktopNew"
                       @click="${() => this.newEmail()}"
@@ -672,14 +680,20 @@ export class AppHome extends LitElement {
                 </div>
 
                 <div id="mainListBlock">
-                  <fast-text-field
-                    id="searchInput"
-                    placeholder="..."
-                    @change="${(event: any) =>
-                      this.searchMail(event.target.value)}"
-                    type="search"
-                    >Search Mail</fast-text-field
-                  >
+                  <div id="mainListHeader">
+                    <fast-text-field
+                      id="searchInput"
+                      placeholder="..."
+                      @change="${(event: any) =>
+                        this.searchMail(event.target.value)}"
+                      type="search"
+                      >Search Mail</fast-text-field
+                    >
+
+                    <fast-button id="mainListRefresh" @click="${() => this.refresh()}">
+                      <ion-icon name="reload"></ion-icon>
+                    </fast-button>
+                  </div>
 
                   <ul>
                     ${this.mail.length > 0
