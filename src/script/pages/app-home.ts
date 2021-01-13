@@ -472,6 +472,7 @@ export class AppHome extends LitElement {
       await this.getSavedAndUpdate();
     } else {
       this.initLoad = true;
+      await this.getSavedAndUpdate();
     }
 
     (window as any).requestIdleCallback(async () => {
@@ -529,7 +530,7 @@ export class AppHome extends LitElement {
   }
 
   public async getSavedAndUpdate() {
-    if (this.initLoad === false) {
+    if (this.initLoad === true) {
       this.loading = true;
     }
 
@@ -544,7 +545,7 @@ export class AppHome extends LitElement {
     if (this.mailCopy && this.mailCopy.length > 0) {
       this.mail = [...this.mailCopy];
 
-      if (this.initLoad === false) {
+      if (this.initLoad === true) {
         this.loading = false;
       }
 
