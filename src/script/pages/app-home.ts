@@ -1,4 +1,4 @@
-import { LitElement, css, html, customElement, property } from "lit-element";
+import { LitElement, css, html, customElement, property, internalProperty } from "lit-element";
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import "@pwabuilder/pwainstall";
@@ -22,6 +22,8 @@ export class AppHome extends LitElement {
 
   @property({ type: Boolean }) initLoad: boolean = false;
 
+  @internalProperty() listMode: string = "grid";
+
   worker: any | null = null;
 
   static get styles() {
@@ -30,6 +32,11 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      .listModeButton {
+        display: inline-flex;
+        width: 108px;
       }
 
       fast-button ion-icon {
@@ -118,6 +125,10 @@ export class AppHome extends LitElement {
       @media (max-width: 800px) {
         #advBlock {
           white-space: initial;
+        }
+
+        .listModeButton {
+          display: none;
         }
 
         #searchInput {
@@ -283,6 +294,7 @@ export class AppHome extends LitElement {
       #mainListRefresh ion-icon {
         margin-left: initial;
       }
+      
 
       @media (min-width: 1200px) {
         #introBlock {
@@ -648,12 +660,31 @@ export class AppHome extends LitElement {
     }
   }
 
+  async updateList(mode: string) {
+    const sheet: any = new CSSStyleSheet();
+
+    if (mode === "grid") {
+      this.listMode = "grid";
+
+      await sheet.replace(' ul {display: grid; grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));}');
+
+      (this.shadowRoot as any).adoptedStyleSheets = [...(this.shadowRoot as any).adoptedStyleSheets, sheet];
+    }
+    else {
+      this.listMode = "list";
+
+      await sheet.replace('ul { display: initial }');
+
+      (this.shadowRoot as any).adoptedStyleSheets = [...(this.shadowRoot as any).adoptedStyleSheets, sheet];
+    }
+  }
+
   render() {
     return html`
       <div>
         ${this.loading ? html`<app-loading></app-loading>` : null}
         ${this.initLoad === false
-          ? html`
+        ? html`
               <section id="mainSection">
                 <div id="filterActions">
                   <div>
@@ -686,31 +717,41 @@ export class AppHome extends LitElement {
                       id="searchInput"
                       placeholder="..."
                       @change="${(event: any) =>
-                        this.searchMail(event.target.value)}"
+            this.searchMail(event.target.value)}"
                       type="search"
                       >Search Mail</fast-text-field
                     >
 
-                    <fast-button id="mainListRefresh" @click="${() => this.refresh()}">
-                      <ion-icon name="reload"></ion-icon>
-                    </fast-button>
+                    <div>
+                      ${this.listMode === "grid" ? html`<fast-button class="listModeButton" @click="${() => this.updateList("list")}" id="gridOrList">
+                        List Layout
+                        <ion-icon name="list-outline"></ion-icon>
+                      </fast-button>` : html`<fast-button class="listModeButton" id="gridOrList" @click="${() => this.updateList("grid")}">
+                        Grid Layout
+                        <ion-icon name="grid-outline"></ion-icon>
+                      </fast-button>`}
+
+                      <fast-button id="mainListRefresh" @click="${() => this.refresh()}">
+                        <ion-icon name="reload"></ion-icon>
+                      </fast-button>
+                    </div>
                   </div>
 
                   <ul>
                     ${this.mail.length > 0
-                      ? this.mail?.map((email) => {
-                          if (email.isDraft === false) {
-                            return html`
+            ? this.mail?.map((email) => {
+              if (email.isDraft === false) {
+                return html`
                               <email-card
                                 @flag-email="${() => this.bookmark()}"
                                 .email="${email}"
                               ></email-card>
                             `;
-                          } else {
-                            return null;
-                          }
-                        })
-                      : html`
+              } else {
+                return null;
+              }
+            })
+            : html`
                           <email-card></email-card>
                           <email-card></email-card>
                           <email-card></email-card>
@@ -750,7 +791,7 @@ export class AppHome extends LitElement {
                 </fast-button>
               </div>
             `
-          : this.initLoad
+        : this.initLoad
           ? html`<div id="introBlock">
               Sign in to quickly access your latest email and save them for
               offline use!
@@ -761,7 +802,7 @@ export class AppHome extends LitElement {
             </div>`
           : null}
         ${this.initLoad && this.mail && this.mail.length <= 0
-          ? html`
+        ? html`
               <div id="advBlock">
                 <div class="advOuter">
                   <div class="advInner" id="firstBlock">
@@ -787,7 +828,7 @@ export class AppHome extends LitElement {
                 </div>
               </div>
             `
-          : null}
+        : null}
 
         <pwa-install>Install Mail GO</pwa-install>
 

@@ -17,6 +17,10 @@ export class AppHeader extends LitElement {
 
   static get styles() {
     return css`
+      #headerActions {
+        display: flex;
+      }
+      
       header {
         display: flex;
         justify-content: space-between;
