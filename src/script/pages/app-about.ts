@@ -21,7 +21,6 @@ export class AppAbout extends LitElement {
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
   @property({ type: Boolean }) emailLoaded: boolean = false;
-
   @property() attachments: any[] | null = null;
 
   static get styles() {
@@ -322,6 +321,13 @@ export class AppAbout extends LitElement {
         }
       }
 
+      @media (max-width: 340px) {
+        #detailMoreActions {
+          backdrop-filter: none;
+          width: initial;
+        }
+      }
+
       @media (screen-spanning: single-fold-vertical) {
         #detailBlock {
           grid-gap: 36px;
@@ -513,7 +519,7 @@ export class AppAbout extends LitElement {
   openInNew() {
     window.open(
       location.href,
-      "My Popup",
+      Math.random().toString(),
       "left=50,top=50,width=1000,height=800"
     );
   }

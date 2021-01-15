@@ -167,7 +167,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  ({ url }) => url.href.includes("@microsoft/fast-components"),
+  ({ url }) => url.href.includes("fast-components"),
   new workbox.strategies.CacheFirst()
 );
 

@@ -1,10 +1,12 @@
-import { LitElement, css, html, customElement, property } from "lit-element";
+import { LitElement, css, html, customElement, property, internalProperty } from "lit-element";
 
-import { login, logout, getAccount } from "../services/auth";
+import { login, logout, getAccount, getPhoto } from "../services/auth";
 
 @customElement("app-login")
 export class AppLogin extends LitElement {
   @property() userAccount: any = null;
+
+  @internalProperty() imageBlob: string | null = null;
 
   static get styles() {
     return css`
@@ -13,10 +15,38 @@ export class AppLogin extends LitElement {
         border: solid 1px;
         border-color: var(--app-color-primary);
         color: var(--app-color-primary);
+        width: 100px;
+      }
+
+      #logoutButton::part(content) {
+        display: flex;
+        align-items: center;
+      }
+
+      #logoutButton img {
+        animation-name: fadeIn;
+        animation-duration: 280ms;
+      }
+
+      #logoutButton img, #logoutButton fast-skeleton {
+        border-radius: 50%;
+        height: 2em;
+        width: 2em;
+        margin-left: 8px;
       }
 
       #loginButton {
         background-color: var(--app-color-primary);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0.2;
+        }
+        
+        to {
+          opacity: 1;
+        }
       }
     `;
   }
@@ -35,11 +65,11 @@ export class AppLogin extends LitElement {
         console.log(this.userAccount);
 
         let event = new CustomEvent("authed", {
-            detail: {
-              authed: true,
-            },
-          });
-          this.dispatchEvent(event);
+          detail: {
+            authed: true,
+          },
+        });
+        this.dispatchEvent(event);
       }, 1200);
     } else {
       setTimeout(async () => {
@@ -47,11 +77,15 @@ export class AppLogin extends LitElement {
         console.log(this.userAccount);
 
         let event = new CustomEvent("authed", {
-            detail: {
-              authed: true,
-            },
-          });
-          this.dispatchEvent(event);
+          detail: {
+            authed: true,
+          },
+        });
+        this.dispatchEvent(event);
+
+        const blob = await getPhoto();
+        console.log(blob);
+        this.imageBlob = URL.createObjectURL(blob);
       }, 1200);
     }
   }
@@ -67,7 +101,7 @@ export class AppLogin extends LitElement {
   async logout() {
     try {
       sessionStorage.clear();
-      
+
       await logout();
     } catch (err) {
       console.error(err);
@@ -77,9 +111,13 @@ export class AppLogin extends LitElement {
   render() {
     return html`
       ${this.userAccount
-        ? html`<fast-button @click="${() => this.logout()}" id="logoutButton"
-            >Logout</fast-button
-          >`
+        ? html`<div>
+            <fast-button @click="${() => this.logout()}" id="logoutButton"
+            >Logout ${this.imageBlob ? html`<img .src="${this.imageBlob}" alt="profile photo">` : html`<fast-skeleton
+                shape="circle"
+            ></fast-skeleton>`}</fast-button>
+            </div>
+            `
         : html` <fast-button @click="${() => this.login()}" id="loginButton"
             >Login with Microsoft</fast-button
           >`}

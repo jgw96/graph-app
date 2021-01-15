@@ -1,64 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mail GO</title>
 
-<head>
-  <meta charset="utf-8">
-  <title>Mail GO</title>
+    <base href="/" />
 
-  <base href="/">
+    <!-- This meta viewport ensures the webpage's dimensions change according to the device it's on. This is called Responsive Web Design.-->
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"
+    />
+    <meta
+      name="description"
+      content="Access your latest outlook messages offline!"
+    />
+    <meta name="theme-color" content="#686bd2" />
 
-  <!-- This meta viewport ensures the webpage's dimensions change according to the device it's on. This is called Responsive Web Design.-->
-  <meta name="viewport"
-    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <meta name="description" content="Access your latest outlook messages offline!">
-  <meta name="theme-color" content="#686bd2">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
 
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mail GO" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-  <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Mail GO">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta
+      http-equiv="origin-trial"
+      content="Aiht2qfQrIKHN/qqTA/N0dqoHZIJ3f/kv/C6K7wEmGHAKgTieAkvKkJUQ5sDWTOAjPFbItYV/EUx3eGhgyT4OAoAAABueyJvcmlnaW4iOiJodHRwczovL3d3dy5tZW1vc2FwcC5hcHA6NDQzIiwiaXNTdWJkb21haW4iOnRydWUsImZlYXR1cmUiOiJOYXRpdmVGaWxlU3lzdGVtMiIsImV4cGlyeSI6MTYwOTc4Njc3OH0="
+    />
+    <meta
+      http-equiv="origin-trial"
+      content="ArIVaTZ2B2kYWJGloDCNTy4iPgWQUezy7Zu5bWJZt7eR0Pv2kY/Tr9vIruS/ZbkidHgY9QXfxRa8usMAExZovQEAAABpeyJvcmlnaW4iOiJodHRwczovL3d3dy5tZW1vc2FwcC5hcHA6NDQzIiwiaXNTdWJkb21haW4iOnRydWUsImZlYXR1cmUiOiJGaWxlSGFuZGxpbmciLCJleHBpcnkiOjE2MDk3ODY3NjF9"
+    />
+    <meta
+      http-equiv="origin-trial"
+      content="Ase+6tWEJ+4uaR46v27eTLU7xjosQmp9vh8G2Y36ld35qX6A7OQ32J13lUcVz5oNtj9K9des73x2vibgOoJPFwwAAAB1eyJvcmlnaW4iOiJodHRwczovL3d3dy5tZW1vc2FwcC5hcHA6NDQzIiwiaXNTdWJkb21haW4iOmZhbHNlLCJmZWF0dXJlIjoiUGFyc2VVcmxQcm90b2NvbEhhbmRsZXIiLCJleHBpcnkiOjE2MDk3ODY3OTV9"
+    />
 
-  <meta http-equiv="origin-trial" content="Aiht2qfQrIKHN/qqTA/N0dqoHZIJ3f/kv/C6K7wEmGHAKgTieAkvKkJUQ5sDWTOAjPFbItYV/EUx3eGhgyT4OAoAAABueyJvcmlnaW4iOiJodHRwczovL3d3dy5tZW1vc2FwcC5hcHA6NDQzIiwiaXNTdWJkb21haW4iOnRydWUsImZlYXR1cmUiOiJOYXRpdmVGaWxlU3lzdGVtMiIsImV4cGlyeSI6MTYwOTc4Njc3OH0=">
-  <meta http-equiv="origin-trial" content="ArIVaTZ2B2kYWJGloDCNTy4iPgWQUezy7Zu5bWJZt7eR0Pv2kY/Tr9vIruS/ZbkidHgY9QXfxRa8usMAExZovQEAAABpeyJvcmlnaW4iOiJodHRwczovL3d3dy5tZW1vc2FwcC5hcHA6NDQzIiwiaXNTdWJkb21haW4iOnRydWUsImZlYXR1cmUiOiJGaWxlSGFuZGxpbmciLCJleHBpcnkiOjE2MDk3ODY3NjF9">
-  <meta http-equiv="origin-trial" content="Ase+6tWEJ+4uaR46v27eTLU7xjosQmp9vh8G2Y36ld35qX6A7OQ32J13lUcVz5oNtj9K9des73x2vibgOoJPFwwAAAB1eyJvcmlnaW4iOiJodHRwczovL3d3dy5tZW1vc2FwcC5hcHA6NDQzIiwiaXNTdWJkb21haW4iOmZhbHNlLCJmZWF0dXJlIjoiUGFyc2VVcmxQcm90b2NvbEhhbmRsZXIiLCJleHBpcnkiOjE2MDk3ODY3OTV9">
+    <link rel="preload" href="/assets/icons/mailbox.svg" as="image" />
+    <link rel="preload" href="/assets/fast-components.js" as="script" />
 
-  <link rel="preload" href="/assets/icons/mailbox.svg" as="image">
+    <!-- Imports an icon to represent the document. -->
+    <link rel="icon" href="assets/icons/icon_24.png" type="image/x-icon" />
 
-  <!-- Imports an icon to represent the document. -->
-  <link rel="icon" href="assets/icons/icon_24.png" type="image/x-icon">
+    <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
+    <link rel="manifest" href="manifest.json" />
 
-  <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
-  <link rel="manifest" href="manifest.json">
+    <!-- A stylesheet to design the pages. -->
+    <link href="styles/global.css" rel="stylesheet" />
 
-  <!-- A stylesheet to design the pages. -->
-  <link href="styles/global.css" rel="stylesheet">
+    <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
+    <script type="module" src="/build/src/script/pages/app-index.js"></script>
+  </head>
 
-  <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
-  <script type="module" src="/build/src/script/pages/app-index.js"></script>
+  <body>
+    <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
+    <fast-design-system-provider use-defaults>
+      <app-index></app-index>
+    </fast-design-system-provider>
 
-</head>
+    <script type="module" src="/assets/fast-components.js"></script>
 
-<body>
-  <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
-  <fast-design-system-provider use-defaults>
-    <app-index></app-index>
-  </fast-design-system-provider>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css"
+    />
 
-  <!-- For more info on the pwa-update component click here https://github.com/pwa-builder/pwa-update -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate"></script>
-  <pwa-update swpath="pwabuilder-sw.js"></pwa-update>
+    <!-- For more info on the pwa-update component click here https://github.com/pwa-builder/pwa-update -->
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate"
+    ></script>
+    <pwa-update swpath="pwabuilder-sw.js"></pwa-update>
 
-  <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
-
-  <script type="module" src="https://unpkg.com/@microsoft/fast-components"></script>
-
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
-  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
-
-</body>
-
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"
+    ></script>
+  </body>
 </html>

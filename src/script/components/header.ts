@@ -19,6 +19,7 @@ export class AppHeader extends LitElement {
     return css`
       #headerActions {
         display: flex;
+        align-items: center;
       }
       
       header {

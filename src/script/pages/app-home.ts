@@ -37,6 +37,7 @@ export class AppHome extends LitElement {
       .listModeButton {
         display: inline-flex;
         width: 108px;
+        margin-right: 6px;
       }
 
       fast-button ion-icon {
@@ -430,6 +431,12 @@ export class AppHome extends LitElement {
 
         #mainListRefresh {
           display: none;
+        }
+      }
+
+      @media (max-width: 340px) {
+        ul {
+          display: inherit;
         }
       }
 
