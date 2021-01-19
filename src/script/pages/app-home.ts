@@ -1,4 +1,11 @@
-import { LitElement, css, html, customElement, property, internalProperty } from "lit-element";
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from "lit-element";
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import "@pwabuilder/pwainstall";
@@ -295,7 +302,6 @@ export class AppHome extends LitElement {
       #mainListRefresh ion-icon {
         margin-left: initial;
       }
-      
 
       @media (min-width: 1200px) {
         #introBlock {
@@ -673,16 +679,23 @@ export class AppHome extends LitElement {
     if (mode === "grid") {
       this.listMode = "grid";
 
-      await sheet.replace(' ul {display: grid; grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));}');
+      await sheet.replace(
+        " ul {display: grid; grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));}"
+      );
 
-      (this.shadowRoot as any).adoptedStyleSheets = [...(this.shadowRoot as any).adoptedStyleSheets, sheet];
-    }
-    else {
+      (this.shadowRoot as any).adoptedStyleSheets = [
+        ...(this.shadowRoot as any).adoptedStyleSheets,
+        sheet,
+      ];
+    } else {
       this.listMode = "list";
 
-      await sheet.replace('ul { display: initial }');
+      await sheet.replace("ul { display: initial }");
 
-      (this.shadowRoot as any).adoptedStyleSheets = [...(this.shadowRoot as any).adoptedStyleSheets, sheet];
+      (this.shadowRoot as any).adoptedStyleSheets = [
+        ...(this.shadowRoot as any).adoptedStyleSheets,
+        sheet,
+      ];
     }
   }
 
@@ -691,7 +704,7 @@ export class AppHome extends LitElement {
       <div>
         ${this.loading ? html`<app-loading></app-loading>` : null}
         ${this.initLoad === false
-        ? html`
+          ? html`
               <section id="mainSection">
                 <div id="filterActions">
                   <div>
@@ -724,21 +737,34 @@ export class AppHome extends LitElement {
                       id="searchInput"
                       placeholder="..."
                       @change="${(event: any) =>
-            this.searchMail(event.target.value)}"
+                        this.searchMail(event.target.value)}"
                       type="search"
                       >Search Mail</fast-text-field
                     >
 
                     <div>
-                      ${this.listMode === "grid" ? html`<fast-button class="listModeButton" @click="${() => this.updateList("list")}" id="gridOrList">
-                        List Layout
-                        <ion-icon name="list-outline"></ion-icon>
-                      </fast-button>` : html`<fast-button class="listModeButton" id="gridOrList" @click="${() => this.updateList("grid")}">
-                        Grid Layout
-                        <ion-icon name="grid-outline"></ion-icon>
-                      </fast-button>`}
+                      ${this.listMode === "grid"
+                        ? html`<fast-button
+                            class="listModeButton"
+                            @click="${() => this.updateList("list")}"
+                            id="gridOrList"
+                          >
+                            List Layout
+                            <ion-icon name="list-outline"></ion-icon>
+                          </fast-button>`
+                        : html`<fast-button
+                            class="listModeButton"
+                            id="gridOrList"
+                            @click="${() => this.updateList("grid")}"
+                          >
+                            Grid Layout
+                            <ion-icon name="grid-outline"></ion-icon>
+                          </fast-button>`}
 
-                      <fast-button id="mainListRefresh" @click="${() => this.refresh()}">
+                      <fast-button
+                        id="mainListRefresh"
+                        @click="${() => this.refresh()}"
+                      >
                         <ion-icon name="reload"></ion-icon>
                       </fast-button>
                     </div>
@@ -746,19 +772,19 @@ export class AppHome extends LitElement {
 
                   <ul>
                     ${this.mail.length > 0
-            ? this.mail?.map((email) => {
-              if (email.isDraft === false) {
-                return html`
+                      ? this.mail?.map((email) => {
+                          if (email.isDraft === false) {
+                            return html`
                               <email-card
                                 @flag-email="${() => this.bookmark()}"
                                 .email="${email}"
                               ></email-card>
                             `;
-              } else {
-                return null;
-              }
-            })
-            : html`
+                          } else {
+                            return null;
+                          }
+                        })
+                      : html`
                           <email-card></email-card>
                           <email-card></email-card>
                           <email-card></email-card>
@@ -798,7 +824,7 @@ export class AppHome extends LitElement {
                 </fast-button>
               </div>
             `
-        : this.initLoad
+          : this.initLoad
           ? html`<div id="introBlock">
               Sign in to quickly access your latest email and save them for
               offline use!
@@ -809,7 +835,7 @@ export class AppHome extends LitElement {
             </div>`
           : null}
         ${this.initLoad && this.mail && this.mail.length <= 0
-        ? html`
+          ? html`
               <div id="advBlock">
                 <div class="advOuter">
                   <div class="advInner" id="firstBlock">
@@ -835,7 +861,7 @@ export class AppHome extends LitElement {
                 </div>
               </div>
             `
-        : null}
+          : null}
 
         <pwa-install>Install Mail GO</pwa-install>
 

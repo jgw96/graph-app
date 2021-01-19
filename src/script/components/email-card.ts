@@ -195,12 +195,12 @@ export class EmailCard extends LitElement {
             <div class="emailHeader">
               <h3>${this.email.subject}</h3>
               ${this.email.flag.flagStatus === "flagged"
-                ? html`<fast-button
+                ? html`<fast-badge
                     @click="${() => this.read(this.email.id)}"
                     appearance="lightweight"
                     >flagged
                     <ion-icon name="alert-circle-outline"></ion-icon>
-                  </fast-button>`
+                  </fast-badge>`
                 : null}
             </div>
 
@@ -226,6 +226,7 @@ export class EmailCard extends LitElement {
                 : null}
               <fast-button
                 class="readButton"
+                id="readButton"
                 @click="${() => this.read(this.email.id)}"
                 >Read</fast-button
               >

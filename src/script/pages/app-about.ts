@@ -1,4 +1,4 @@
-import { LitElement, css, html, customElement, property } from "lit-element";
+import { LitElement, css, html, customElement, property, internalProperty } from "lit-element";
 import {
   getAnEmail,
   flagEmail,
@@ -22,6 +22,8 @@ export class AppAbout extends LitElement {
   @property({ type: Boolean }) showReminder: boolean = false;
   @property({ type: Boolean }) emailLoaded: boolean = false;
   @property() attachments: any[] | null = null;
+
+  @internalProperty() openAttachments: boolean = false;
 
   static get styles() {
     return css`
@@ -540,6 +542,14 @@ export class AppAbout extends LitElement {
     }
   }
 
+  openAttach() {
+    this.openAttachments = true;
+  }
+  
+  closeAttach() {
+    this.openAttachments = false;
+  }
+
   render() {
     return html`
       <div id="detailBlock">
@@ -576,8 +586,9 @@ export class AppAbout extends LitElement {
                 shape="rect"
                 shimmer
               ></fast-skeleton>`}
-          ${this.attachments && this.attachments.length > 0
+          ${this.openAttachments && this.attachments && this.attachments.length > 0
             ? html`<app-attachments
+                 @close="${() => this.closeAttach()}"
                 .attachments=${this.attachments}
                 .mail="${this.email}"
               ></app-attachments>`
@@ -626,6 +637,16 @@ export class AppAbout extends LitElement {
                   <ion-icon name="close-outline"></ion-icon>
                 </fast-button>`
               : null}
+
+              ${this.attachments && this.attachments.length > 0 ?  html`
+                <fast-button
+                id="unsubButton"
+                @click="${() => this.openAttach()}">
+                  Attachments
+
+                  <ion-icon name="folder-outline"></ion-icon>
+                </fast-button>
+              ` : null}
 
             <fast-button id="replyButton" @click="${() => this.reply()}">
               Reply
