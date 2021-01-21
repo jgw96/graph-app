@@ -1,8 +1,6 @@
 import { getToken } from '../services/auth';
 
 export async function getContacts() {
-  console.log('getContacts')
-
   const token = await getToken();
   console.log('token', token);
 
