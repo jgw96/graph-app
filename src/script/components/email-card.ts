@@ -142,8 +142,7 @@ export class EmailCard extends LitElement {
 
       @media (min-width: 1000px) and (prefers-color-scheme: dark) {
         li {
-          background: rgb(33 33 33 / 79%);
-          backdrop-filter: blur(10px);
+          background: rgb(34 34 34);
 
           content-visibility: auto;
           contain-intrinsic-size: 156px;
@@ -152,8 +151,7 @@ export class EmailCard extends LitElement {
 
       @media (min-width: 1000px) and (prefers-color-scheme: light) {
         li {
-          background: #ffffffbf;
-          backdrop-filter: blur(10px);
+          background: #ffffff;
 
           content-visibility: auto;
           contain-intrinsic-size: 156px;
