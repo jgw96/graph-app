@@ -30,6 +30,12 @@ export class AppContacts extends LitElement {
         margin-bottom: 1em;
       }
 
+      #contactsHeader h3 {
+        font-size: 1.5em;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
       #contactsBlock {
         background: #181818e8;
         backdrop-filter: blur(10px);

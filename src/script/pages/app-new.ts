@@ -1145,7 +1145,7 @@ export class AppNew extends LitElement {
 
         <div id="subjectBar">
           <div id="addressBlock">
-            To:
+            <span>To:</span>
             <fast-text-field
               class="contacts"
               .value="${this.address}"

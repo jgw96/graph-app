@@ -97,6 +97,12 @@ export class AppHeader extends LitElement {
         margin-bottom: 1em;
       }
 
+      #settingsHeader h3 {
+        font-size: 1.5em;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
       #settingsActions {
         display: flex;
         flex-direction: column;

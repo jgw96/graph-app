@@ -10,8 +10,6 @@ const test2 = {
         const data = await response.json();
         const mailToSearch = data.value;
 
-        console.log('mailToSearch', mailToSearch);
-
         const result = mailToSearch.filter(mail => mail.subject.toLowerCase().includes(query.toLowerCase()) || mail.from.emailAddress.name.toLowerCase().includes(query.toLowerCase()) || mail.bodyPreview.toLowerCase().includes(query.toLowerCase()));
         console.log('searchResult', result)
 

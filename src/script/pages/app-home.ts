@@ -41,6 +41,21 @@ export class AppHome extends LitElement {
         justify-content: space-between;
       }
 
+      ion-fab {
+        position: fixed;
+      }
+
+      ion-fab-button {
+        --background: var(--app-color-primary);
+      }
+
+      #intro-actions {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        margin-bottom: -1em;
+      }
+
       .listModeButton {
         display: inline-flex;
         width: 108px;
@@ -98,6 +113,10 @@ export class AppHome extends LitElement {
         width: 50em;
       }
 
+      #advBlock .advInner li {
+        font-weight: bold;
+      }
+
       #advBlock .advInner img {
         content-visibility: auto;
       }
@@ -130,9 +149,21 @@ export class AppHome extends LitElement {
         height: 22em;
       }
 
+      #homeToolbar {
+        display: flex;
+      }
+
+      #mobileToolbar {
+        display: none;
+      }
+
       @media (max-width: 800px) {
         #advBlock {
           white-space: initial;
+        }
+
+        #intro-actions {
+          justify-content: center;
         }
 
         .listModeButton {
@@ -169,6 +200,14 @@ export class AppHome extends LitElement {
         #advBlock .advInner#firstBlock ul li {
           margin-bottom: 0;
           font-weight: bold;
+        }
+
+        #homeToolbar {
+          display: none;
+        }
+
+        #mobileToolbar {
+          display: initial;
         }
       }
 
@@ -239,6 +278,11 @@ export class AppHome extends LitElement {
         backdrop-filter: blur(10px);
       }
 
+      #introBlock h2 {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
       #introBlock app-login {
         margin-top: 1em;
       }
@@ -303,13 +347,6 @@ export class AppHome extends LitElement {
         margin-left: initial;
       }
 
-      @media (min-width: 1200px) {
-        #introBlock {
-          margin-left: 24em;
-          margin-right: 24em;
-        }
-      }
-
       #nameBlock {
         font-size: 12px;
 
@@ -324,7 +361,6 @@ export class AppHome extends LitElement {
         left: 0;
         right: 0;
         padding: 8px;
-        display: flex;
         justify-content: flex-end;
         background: #ffffff69;
       }
@@ -373,8 +409,10 @@ export class AppHome extends LitElement {
 
       @media (min-width: 1000px) {
         #introBlock {
-          margin-left: 16em;
-          margin-right: 16em;
+          margin-left: 5em;
+          margin-right: 5em;
+          align-items: flex-start;
+          text-align: start;
         }
 
         #mainListBlock {
@@ -417,6 +455,13 @@ export class AppHome extends LitElement {
         #desktopNew {
           background: #686bd2;
           margin-top: 8px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        #introBlock {
+          margin-left: 13em;
+          margin-right: 13em;
         }
       }
 
@@ -823,15 +868,27 @@ export class AppHome extends LitElement {
                   <ion-icon name="add"></ion-icon>
                 </fast-button>
               </div>
+
+              <div id="mobileToolbar">
+                <ion-fab vertical="bottom" horizontal="end">
+                  <ion-fab-button @click="${() => this.newEmail()}">
+                    <ion-icon name="add"></ion-icon>
+                  </ion-fab-button>
+                </ion-fab>
+              </div>
             `
           : this.initLoad
           ? html`<div id="introBlock">
-              Sign in to quickly access your latest email and save them for
-              offline use!
+              <h2>
+                Sign in to quickly access your latest email and save them for
+                offline use!
+              </h2>
 
               <span id="introSpan">Powered by the Microsoft Graph.</span>
 
-              <app-login></app-login>
+              <div id="intro-actions">
+                <app-login></app-login>
+              </div>
             </div>`
           : null}
         ${this.initLoad && this.mail && this.mail.length <= 0
