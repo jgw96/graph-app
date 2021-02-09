@@ -37,7 +37,10 @@ export class AppIndex extends LitElement {
           --min-opacity: 10;
           --max-opacity: 50;
 
-          background-image: paint(circles);
+          --voronoi-cell-colors: #686bd2, #ff0076;
+          --voronoi-number-of-cells: 25;
+
+          background-image: paint(var(--theme));
 
           height: 88vh;
         }

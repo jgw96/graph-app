@@ -3,6 +3,10 @@ import { LitElement, css, html, customElement, property, internalProperty } from
 
 import '../components/app-login';
 
+const themes = [
+  { name: "circles", url: "https://unpkg.com/css-houdini-circles/dist/circles.js" },
+  { name: "voronoi", url: "https://unpkg.com/css-houdini-voronoi@1.1.2/dist/worklet.js" }
+]
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
@@ -14,12 +18,23 @@ export class AppHeader extends LitElement {
   @internalProperty() openSettings: boolean = false;
   @internalProperty() checked: boolean | null = false;
   @internalProperty() themeChecked: boolean | null = false;
+  @internalProperty() chosenTheme: any | undefined;
 
   static get styles() {
     return css`
       #headerActions {
         display: flex;
         align-items: center;
+      }
+
+      fast-label {
+        margin-top: 12px;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      #themes {
+        margin-bottom: 12px;
       }
       
       header {
@@ -197,14 +212,22 @@ export class AppHeader extends LitElement {
     const themeCheck = await get("themed");
     console.log('themeCheck', themeCheck);
 
-    if (themeCheck === true) {
+    await set('themed', true);
+
+    if (themeCheck && themeCheck === true) {
       this.themeChecked = true;
 
+      const theme = await get("chosenTheme");
+      this.chosenTheme = theme;
+
+      let root = document.documentElement;
+      root.style.setProperty('--theme', (theme as any).name);
+
       (window as any).requestIdleCallback(async () => {
-        (CSS as any).paintWorklet.addModule('https://unpkg.com/css-houdini-circles/dist/circles.js');
+        (CSS as any).paintWorklet.addModule((theme as any).url || 'https://unpkg.com/css-houdini-circles/dist/circles.js');
       })
     }
-    else if (themeCheck === false) {
+    else if (themeCheck && themeCheck === false) {
       console.log('setting it false');
       this.themeChecked = false;
     }
@@ -212,8 +235,14 @@ export class AppHeader extends LitElement {
       // on by default
       this.themeChecked = true;
 
+      const theme = await get("chosenTheme");
+      this.chosenTheme = theme;
+
+      let root = document.documentElement;
+      root.style.setProperty('--theme', (theme as any).name);
+
       (window as any).requestIdleCallback(async () => {
-        (CSS as any).paintWorklet.addModule('https://unpkg.com/css-houdini-circles/dist/circles.js');
+        (CSS as any).paintWorklet.addModule((theme as any).url || 'https://unpkg.com/css-houdini-circles/dist/circles.js');
       })
     }
 
@@ -234,8 +263,14 @@ export class AppHeader extends LitElement {
     }
   }
 
-  openSettingsModal() {
+  async openSettingsModal() {
     this.openSettings = true;
+
+    await this.updateComplete;
+
+    const themeSelect = this.shadowRoot?.querySelector("#themes");
+    console.log('themeSelect', themeSelect);
+    (themeSelect as HTMLSelectElement).value = this.chosenTheme;
   }
 
   close() {
@@ -323,8 +358,8 @@ export class AppHeader extends LitElement {
   }
 
   async doTheme(iffy: boolean) {
-    if (iffy) {
-      (CSS as any).paintWorklet.addModule('https://unpkg.com/css-houdini-circles/dist/circles.js');
+    if (iffy && this.chosenTheme) {
+      (CSS as any).paintWorklet.addModule(this.chosenTheme);
 
       await set("themed", true);
     }
@@ -332,6 +367,17 @@ export class AppHeader extends LitElement {
       await set("themed", false);
       location.reload();
     }
+  }
+
+  async selectTheme(theme: any) {
+    this.chosenTheme = theme;
+
+    let root = document.documentElement;
+    root.style.setProperty('--theme', theme.name);
+
+    await set("chosenTheme", this.chosenTheme);
+
+    location.reload();
   }
 
   render() {
@@ -361,6 +407,17 @@ export class AppHeader extends LitElement {
                 <span slot="checked-message">Yes</span>
                 <span slot="unchecked-message">No</span>
               </fast-switch>
+
+              <fast-label for="themes">Available Themes</fast-label>
+              <fast-select @change="${(ev: any) => this.selectTheme(ev.target.value)}" id="themes">
+                ${
+                  themes.map((theme) => {
+                    return html`
+                      <fast-option .value="${{name: theme.name, url: theme.url}}">${theme.name}</fast-option>
+                    `
+                  })
+                }
+              </fast-select>
 
               <fast-button @click="${() => this.clearStorage()}">
                 Clear Storage

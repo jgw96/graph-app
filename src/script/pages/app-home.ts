@@ -43,6 +43,7 @@ export class AppHome extends LitElement {
 
       ion-fab {
         position: fixed;
+        z-index: 0;
       }
 
       ion-fab-button {
