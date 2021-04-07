@@ -1,4 +1,11 @@
-import { LitElement, css, html, customElement, property, internalProperty } from "lit-element";
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from "lit-element";
 import {
   getAnEmail,
   flagEmail,
@@ -332,12 +339,23 @@ export class AppAbout extends LitElement {
 
       @media (screen-spanning: single-fold-vertical) {
         #detailBlock {
+          display: grid;
           grid-gap: 36px;
           grid-template-columns: minmax(240px, 48.8%) 1fr;
         }
 
         #detailMoreActions {
           width: 44.4vw;
+
+          right: initial;
+          display: flex;
+          flex-direction: column;
+        }
+
+        #replyButton, #share-button, .detailActionButton {
+          margin-top: 10px;
+          margin-right: 0;
+          margin-left: 0;
         }
       }
 
@@ -545,7 +563,7 @@ export class AppAbout extends LitElement {
   openAttach() {
     this.openAttachments = true;
   }
-  
+
   closeAttach() {
     this.openAttachments = false;
   }
@@ -586,9 +604,11 @@ export class AppAbout extends LitElement {
                 shape="rect"
                 shimmer
               ></fast-skeleton>`}
-          ${this.openAttachments && this.attachments && this.attachments.length > 0
+          ${this.openAttachments &&
+          this.attachments &&
+          this.attachments.length > 0
             ? html`<app-attachments
-                 @close="${() => this.closeAttach()}"
+                @close="${() => this.closeAttach()}"
                 .attachments=${this.attachments}
                 .mail="${this.email}"
               ></app-attachments>`
@@ -621,6 +641,7 @@ export class AppAbout extends LitElement {
             <fast-button
               @click="${() => this.share()}"
               aria-label="share button"
+              id="share-button"
             >
               Share
 
@@ -637,16 +658,18 @@ export class AppAbout extends LitElement {
                   <ion-icon name="close-outline"></ion-icon>
                 </fast-button>`
               : null}
+            ${this.attachments && this.attachments.length > 0
+              ? html`
+                  <fast-button
+                    id="unsubButton"
+                    @click="${() => this.openAttach()}"
+                  >
+                    Attachments
 
-              ${this.attachments && this.attachments.length > 0 ?  html`
-                <fast-button
-                id="unsubButton"
-                @click="${() => this.openAttach()}">
-                  Attachments
-
-                  <ion-icon name="folder-outline"></ion-icon>
-                </fast-button>
-              ` : null}
+                    <ion-icon name="folder-outline"></ion-icon>
+                  </fast-button>
+                `
+              : null}
 
             <fast-button id="replyButton" @click="${() => this.reply()}">
               Reply

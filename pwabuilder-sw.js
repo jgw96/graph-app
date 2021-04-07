@@ -127,11 +127,9 @@ self.addEventListener("notificationclick", (event) => {
   if (action === "close") {
     notification.close();
   } else {
-    clients.openWindow("/");
+    clients.openWindow(notification.body.substring(notification.body.indexOf("https")));
     notification.close();
   }
-
-  // TODO 5.3 - close all notifications when one is clicked
 });
 
 self.addEventListener("periodicsync", (event) => {

@@ -469,6 +469,34 @@ export class AppNew extends LitElement {
         }
       }
 
+      @media(screen-spanning: single-fold-vertical) {
+        #appNewBody {
+          display: grid;
+    grid-template-columns: 48% 48%;
+    grid-gap: 47px;
+        }
+
+        #subjectBar {
+          margin-right: 4px;
+        }
+
+        #addressBlock span {
+          display: none;
+        }
+
+        #recip {
+          width: 80%;
+        }
+
+        #textAreaActions {
+          display: none;
+        }
+
+        #newEmailActions {
+          padding-right: 6px;
+        }
+      }
+
       @media (prefers-color-scheme: dark) {
         #newEmailActions {
           background: rgb(29 29 29 / 78%);
