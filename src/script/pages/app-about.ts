@@ -20,6 +20,9 @@ import "../components/app-attachments";
 
 import { Router } from "@vaadin/router";
 
+//@ts-ignore
+import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
+
 declare var TimestampTrigger: any;
 
 @customElement("app-about")
@@ -352,7 +355,9 @@ export class AppAbout extends LitElement {
           flex-direction: column;
         }
 
-        #replyButton, #share-button, .detailActionButton {
+        #replyButton,
+        #share-button,
+        .detailActionButton {
           margin-top: 10px;
           margin-right: 0;
           margin-left: 0;
@@ -516,6 +521,21 @@ export class AppAbout extends LitElement {
     await reminderAlert.present();
   }
 
+  async reader() {
+    // @ts-ignore
+    const reader = await import("/workers/reader.js");
+
+    const content = {
+      title: "Immersive Reader",
+      chunks: [
+        {
+          content: "Hello, world!",
+        },
+      ],
+    };
+    (window as any).ImmersiveReader.launchAsync("7c1759c1b0094400a2ef50a582dbaecf", "mailgo-reader", content);
+  }
+
   cancel() {
     this.showReminder = false;
   }
@@ -647,6 +667,10 @@ export class AppAbout extends LitElement {
 
               <ion-icon name="share-outline"></ion-icon>
             </fast-button>
+
+            <!--<fast-button @click="${() => this.reader()}" id="reader-button">
+              Reader View
+            </fast-button>-->
 
             ${this.email?.unsubscribeEnabled
               ? html`<fast-button

@@ -234,11 +234,11 @@ export class AppNew extends LitElement {
       #aiData {
         background: #303030;
         position: absolute;
-        top: 8em;
+        top: 5em;
         z-index: 9999;
-        bottom: 8em;
-        left: 8em;
-        right: 8em;
+        bottom: 5em;
+        left: 5em;
+        right: 5em;
         border-radius: 4px;
 
         padding: 1em 2em;
@@ -737,7 +737,7 @@ export class AppNew extends LitElement {
     console.log(htmlBody);
 
     try {
-      if (this.subject && recip && htmlBody) {
+      if (this.subject && this.subject.length > 1 && recip && recip.length > 0 && htmlBody && htmlBody.length > 1) {
         await sendMail(this.subject, htmlBody, recip, this.attachments);
 
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
@@ -755,7 +755,7 @@ export class AppNew extends LitElement {
 
         this.loading = false;
       }
-      Router.go("/");
+      // Router.go("/");
     } catch (err) {
       console.error(err);
 
@@ -1371,7 +1371,7 @@ export class AppNew extends LitElement {
 
                   <ion-icon name="mail-outline"></ion-icon>
                 </fast-button>`
-              : html`<fast-button id="sendButton" @click="${() => this.send()}">
+              : html`<fast-button ?disabled="${this.body && this.body.length > 1 && this.subject && this.subject.length > 1 ? false : true}" id="sendButton" @click="${() => this.send()}">
                   Send
 
                   <ion-icon name="mail-outline"></ion-icon>
