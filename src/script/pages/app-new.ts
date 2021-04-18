@@ -673,6 +673,7 @@ export class AppNew extends LitElement {
         this.attachments = [imageBlob, ...this.attachments];
       }
     });*/
+    console.log('in share target function');
     const cache = await caches.open("shareTarget");
     const result = [];
 
@@ -683,7 +684,7 @@ export class AppNew extends LitElement {
       }
     }
 
-    console.log(result);
+    console.log('share taget result', result);
   }
 
   async fileHandler() {

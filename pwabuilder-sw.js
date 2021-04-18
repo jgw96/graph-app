@@ -151,8 +151,8 @@ async function shareTargetHandler({ event }) {
     await cache.put(
       // TODO: Handle scenarios in which mediaFile.name isn't set,
       // or doesn't include a proper extension.
-      mediaFile.name,
-      new Response(mediaFile, {
+      mediaFile.url,
+      new Response(mediaFile.url, {
         headers: {
           "content-length": mediaFile.size,
           "content-type": mediaFile.type,
@@ -161,7 +161,7 @@ async function shareTargetHandler({ event }) {
     );
   }
 
-  return Response.redirect(`/newEmail?name=${mediaFiles[0].name}`, 303);
+  return Response.redirect(`/newEmail?name=${mediaFiles[0].url}`, 303);
 }
 
 workbox.routing.registerRoute("/attach/file/", shareTargetHandler, "POST");
