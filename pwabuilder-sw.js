@@ -161,6 +161,10 @@ async function shareTargetHandler({ event }) {
       const formData = await event.request.formData();
       const file = formData.get("file");
 
+      const client = await self.clients.get(
+        event.resultingClientId || event.clientId
+      );
+
       client.postMessage({ file, action: "load-image" });
 
       return Response.redirect("/newEmail", 303);
