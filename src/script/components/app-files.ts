@@ -41,6 +41,15 @@ export class AppFiles extends LitElement {
 
       fast-dialog::part(overlay) {
         backdrop-filter: blur(10px);
+        width: 50vw;
+        left: initial;
+        right: 0;
+      }
+
+      fast-dialog::part(positioning-region) {
+        width: 48vw;
+        left: initial;
+        right: 0;
       }
 
       fast-menu-item::part(content) {
@@ -140,10 +149,7 @@ export class AppFiles extends LitElement {
   render() {
     return html`
       <div>
-        <fast-dialog
-          aria-label="Recent Files from OneDrive"
-          modal="true"
-        >
+        <fast-dialog aria-label="Recent Files from OneDrive" modal="true">
           <div id="filesHeader">
             <h2>Recent Files from OneDrive</h2>
 

@@ -90,6 +90,18 @@ export class AppHeader extends LitElement {
         padding: 1em 2em;
       }
 
+      @media(screen-spanning: single-fold-vertical) {
+        #settingsContainer {
+          width: 49vw;
+          right: 0;
+          left: initial;
+        }
+
+        #settingsBlock {
+          inset: 0em;
+        }
+      }
+
       @media(prefers-color-scheme: light) {
         #settingsContainer {
           background: #ffffffbf;

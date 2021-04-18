@@ -111,6 +111,23 @@ export class AppContacts extends LitElement {
         background: var(--app-color-primary);
       }
 
+      @media(screen-spanning: single-fold-vertical) {
+        #contactsBlock {
+          width: 50vw;
+          left: initial;
+          right: 0;
+        }
+
+        #contactsList {
+          inset: 0;
+          margin-left: 10px;
+        }
+
+        #contactsList ul {
+          max-height: 80vh;
+        }
+      }
+
       @media(prefers-color-scheme: light) {
         #contactsBlock {
           background: #ffffff4d;

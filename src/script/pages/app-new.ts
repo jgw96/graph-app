@@ -44,6 +44,7 @@ export class AppNew extends LitElement {
   @property() emailReplyTo: any | null = null;
 
   @internalProperty() pickFiles: boolean = false;
+  @internalProperty() drawing: boolean = false;
 
   worker: any | null = null;
   textWorker: any | null = null;
@@ -54,15 +55,15 @@ export class AppNew extends LitElement {
 
   static get styles() {
     return css`
-    fast-button::part(content) {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-    }
+      fast-button::part(content) {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
 
-    fast-button ion-icon {
-      margin-left: 4px;
-    }
+      fast-button ion-icon {
+        margin-left: 4px;
+      }
 
       #replyingHeader {
         margin-top: 0;
@@ -469,11 +470,32 @@ export class AppNew extends LitElement {
         }
       }
 
-      @media(screen-spanning: single-fold-vertical) {
+      inking-canvas::part(canvas) {
+        min-width: 154px !important;
+        height: 70vh !important;
+        width: 98vw !important;
+      }
+
+      #drawing-button {
+        margin-right: 12px;
+      }
+
+      @media(max-width: 800px) {
+        inking-canvas::part(canvas) {
+          height: 66vh !important;
+          width: 94vw !important;
+        }
+
+        #drawing-button {
+          margin-right: 4px;
+        }
+      }
+
+      @media (screen-spanning: single-fold-vertical) {
         #appNewBody {
           display: grid;
-    grid-template-columns: 48% 48%;
-    grid-gap: 47px;
+          grid-template-columns: 48% 48%;
+          grid-gap: 47px;
         }
 
         #subjectBar {
@@ -494,6 +516,21 @@ export class AppNew extends LitElement {
 
         #newEmailActions {
           padding-right: 6px;
+        }
+
+        #aiBlock {
+          width: 50vw;
+          left: initial;
+          right: 0;
+        }
+
+        #aiData {
+          inset: 0;
+          margin-left: 12px;
+        }
+
+        inking-canvas::part(canvas) {
+          width: 47vw !important;
         }
       }
 
@@ -737,8 +774,29 @@ export class AppNew extends LitElement {
     console.log(htmlBody);
 
     try {
-      if (this.subject && this.subject.length > 1 && recip && recip.length > 0 && htmlBody && htmlBody.length > 1) {
-        await sendMail(this.subject, htmlBody, recip, this.attachments);
+      if (
+        this.subject &&
+        this.subject.length > 1 &&
+        recip &&
+        recip.length > 0
+      ) {
+        // im drawing an email
+        if (this.drawing === true) {
+          const canvasComp: any = this.shadowRoot?.querySelector(
+            "inking-canvas"
+          );
+          const canvas: HTMLCanvasElement = canvasComp.getCanvas();
+
+          canvas.toBlob(async (blob) => {
+            if (blob) {
+              await sendMail(this.subject, htmlBody, recip, [new File([blob], "email", {
+                type: "image/png"
+              })]);
+            }
+          });
+        } else {
+          await sendMail(this.subject, htmlBody, recip, this.attachments);
+        }
 
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
         await toastElement?.open("Mail Sent...", "success");
@@ -915,7 +973,7 @@ export class AppNew extends LitElement {
         icon: "cloud-outline",
         handler: async () => {
           await actionSheet.dismiss();
-          
+
           this.pickFiles = true;
         },
       },
@@ -1139,8 +1197,7 @@ export class AppNew extends LitElement {
     const attachItem = {
       "@odata.type": "#microsoft.graph.referenceAttachment",
       name: fileData.name,
-      sourceUrl:
-        fileData.webUrl,
+      sourceUrl: fileData.webUrl,
       providerType: "oneDriveConsumer",
       isFolder: "False",
     };
@@ -1258,25 +1315,32 @@ export class AppNew extends LitElement {
               </div>
             </div>`
           : null}
+        ${this.drawing === false
+          ? html`<section id="textAreaSection">
+              <fast-text-area
+                id="contentTextArea"
+                @input="${(event: any) => this.updatePreview(event)}"
+                @change="${(event: any) => this.updateBody(event)}"
+                placeholder="Content of email..."
+              >
+              </fast-text-area>
 
-        <section id="textAreaSection">
-          <fast-text-area
-            id="contentTextArea"
-            @input="${(event: any) => this.updatePreview(event)}"
-            @change="${(event: any) => this.updateBody(event)}"
-            placeholder="Content of email..."
-          >
-          </fast-text-area>
-
-          ${this.textPreview
-            ? html`<div
-                id="textPreview"
-                .innerHTML="${this.textPreviewContent
-                  ? this.textPreviewContent
-                  : null}"
-              ></div>`
-            : null}
-        </section>
+              ${this.textPreview
+                ? html`<div
+                    id="textPreview"
+                    .innerHTML="${this.textPreviewContent
+                      ? this.textPreviewContent
+                      : null}"
+                  ></div>`
+                : null}
+            </section>`
+          : html`<inking-canvas name="myInkingCanvas">
+              <inking-toolbar canvas="myInkingCanvas">
+                <inking-toolbar-highlighter></inking-toolbar-highlighter>
+                <inking-toolbar-pen></inking-toolbar-pen>
+                <inking-toolbar-eraser></inking-toolbar-eraser>
+              </inking-toolbar>
+            </inking-canvas>`}
 
         <div id="textAreaActions">
           <span id="markdownSpan">Supports Markdown</span>
@@ -1344,6 +1408,13 @@ export class AppNew extends LitElement {
             </fast-button>
 
             <fast-button
+              id="drawing-button"
+              @click="${() => (this.drawing = !this.drawing)}"
+              >Draw
+              <ion-icon name="brush-outline"></ion-icon>
+            </fast-button>
+
+            <fast-button
               id="moreActionsMobile"
               @click="${() => this.moreActions()}"
             >
@@ -1371,7 +1442,13 @@ export class AppNew extends LitElement {
 
                   <ion-icon name="mail-outline"></ion-icon>
                 </fast-button>`
-              : html`<fast-button ?disabled="${this.body && this.body.length > 1 && this.subject && this.subject.length > 1 ? false : true}" id="sendButton" @click="${() => this.send()}">
+              : html`<fast-button
+                  ?disabled="${this.subject && this.subject.length > 1
+                    ? false
+                    : true}"
+                  id="sendButton"
+                  @click="${() => this.send()}"
+                >
                   Send
 
                   <ion-icon name="mail-outline"></ion-icon>
@@ -1399,13 +1476,9 @@ export class AppNew extends LitElement {
                         >${attachment.name}</span
                       >
                     `;
-                  }
-                  else {
+                  } else {
                     return html`
-                      <span
-                        id="attachedDoc"
-                        >${attachment.name}</span
-                      >
+                      <span id="attachedDoc">${attachment.name}</span>
                     `;
                   }
                 })}
@@ -1416,9 +1489,8 @@ export class AppNew extends LitElement {
           ? html`<app-files
               @attach-file="${(ev: CustomEvent) =>
                 this.handleDriveAttach(ev.detail.data)}"
-
               @close-attach="${(ev: CustomEvent) => {
-                this.closePickFiles(ev)
+                this.closePickFiles(ev);
               }}"
             ></app-files>`
           : null}

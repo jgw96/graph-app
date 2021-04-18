@@ -76,15 +76,12 @@
       defer
       src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"
     ></script>
-    <link
-      rel="stylesheet"
-      href="/assets/ionic.css"
-    />
+    <link rel="stylesheet" href="/assets/ionic.css" />
 
     <!-- For more info on the pwa-update component click here https://github.com/pwa-builder/pwa-update -->
     <script
       type="module"
-      async 
+      async
       defer
       src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate"
     ></script>
@@ -98,6 +95,15 @@
       nomodule=""
       src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"
     ></script>
+
+    <style>
+      @media (screen-spanning: single-fold-vertical) {
+        ion-action-sheet {
+          width: 49vw;
+          right: 0 !important;
+          left: initial !important;
+        }
+      }
+    </style>
   </body>
 </html>
-

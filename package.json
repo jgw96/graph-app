@@ -23,6 +23,7 @@
     "@pwabuilder/pwainstall": "^1.6.7",
     "@vaadin/router": "^1.7.2",
     "browser-nativefs": "^0.12.0",
+    "font-select": "^1.1.0",
     "idb-keyval": "^5.0.4",
     "lit-element": "^2.4.0"
   },

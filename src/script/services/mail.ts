@@ -179,7 +179,10 @@ const processAttachments = async (attachments: any[]) => {
 
     const attachment = attachments[0];
 
-    if (attachment && attachment.handle) {
+    console.log('attachment', attachment);
+
+    if (attachment && attachment.handle || !attachment.sourceUrl) {
+      console.log('in here');
       const reader = new FileReader();
 
       reader.readAsDataURL(attachments[0]);
@@ -195,6 +198,8 @@ const processAttachments = async (attachments: any[]) => {
           contentType: attachments[0].type,
           contentBytes: base64String,
         };
+
+        console.log('attachFile', attachFile);
 
         attachToSend.push(attachFile);
 
