@@ -680,7 +680,7 @@ export class AppNew extends LitElement {
 
     for (const request of await cache.keys()) {
       // If the request URL matches, add the response to the result
-      if (request.url.endsWith('.png')) {
+      if (request.url.endsWith('.png') || request.url.endsWith(".jpg")) {
         result.push(await cache.match(name));
       }
     }
