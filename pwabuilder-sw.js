@@ -143,33 +143,25 @@ self.addEventListener("periodicsync", (event) => {
 async function shareTargetHandler({ event }) {
   // event.respondWith(Response.redirect("/newEmail"));
 
-  /*(async function () {
-      const data = await event.request.formData();
-      console.log("data", data);
-      const client = await self.clients.get(
-        event.resultingClientId || event.clientId
-      );
-      // Get the data from the named element 'file'
-      const file = data.get("file");
+  const formData = await event.request.formData();
+  const mediaFiles = formData.getAll("file");
+  const cache = await caches.open("shareTarget");
 
-      console.log("file", file);
-      client.postMessage({ file, action: "load-image" });
-    })()*/
+  for (const mediaFile of mediaFiles) {
+    await cache.put(
+      // TODO: Handle scenarios in which mediaFile.name isn't set,
+      // or doesn't include a proper extension.
+      mediaFile.name,
+      new Response(mediaFile, {
+        headers: {
+          "content-length": mediaFile.size,
+          "content-type": mediaFile.type,
+        },
+      })
+    );
+  }
 
-  event.respondWith(
-    (async () => {
-      const formData = await event.request.formData();
-      const file = formData.get("file");
-
-      const client = await self.clients.get(
-        event.resultingClientId || event.clientId
-      );
-
-      client.postMessage({ file, action: "load-image" });
-
-      return Response.redirect("/newEmail", 303);
-    })()
-  );
+  return Response.redirect(`/newEmail?name=${mediaFiles[0].name}`, 303);
 }
 
 workbox.routing.registerRoute("/attach/file/", shareTargetHandler, "POST");

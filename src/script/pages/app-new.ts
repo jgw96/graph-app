@@ -619,7 +619,11 @@ export class AppNew extends LitElement {
       }
     }
 
-    await this.shareTarget();
+    const name = search.get("name");
+
+    if (name) {
+      await this.shareTarget(name);
+    }
 
     await this.fileHandler();
 
@@ -659,8 +663,8 @@ export class AppNew extends LitElement {
     });
   }
 
-  async shareTarget() {
-    navigator.serviceWorker.addEventListener("message", (event) => {
+  async shareTarget(name: string) {
+    /*navigator.serviceWorker.addEventListener("message", (event) => {
       console.log("file event", event);
       console.log("file event data", event.data);
       const imageBlob = event.data.file;
@@ -668,7 +672,18 @@ export class AppNew extends LitElement {
       if (imageBlob) {
         this.attachments = [imageBlob, ...this.attachments];
       }
-    });
+    });*/
+    const cache = await caches.open("shareTarget");
+    const result = [];
+
+    for (const request of await cache.keys()) {
+      // If the request URL matches, add the response to the result
+      if (request.url.endsWith('.png')) {
+        result.push(await cache.match(name));
+      }
+    }
+
+    console.log(result);
   }
 
   async fileHandler() {
