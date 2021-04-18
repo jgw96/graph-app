@@ -620,6 +620,7 @@ export class AppNew extends LitElement {
     }
 
     const name = search.get("name");
+    console.log("name", name);
 
     if (name) {
       await this.shareTarget(name);
