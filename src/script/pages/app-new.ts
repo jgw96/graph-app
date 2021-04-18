@@ -680,16 +680,16 @@ export class AppNew extends LitElement {
 
     for (const request of await cache.keys()) {
       // If the request URL matches, add the response to the result
-      if (request.url.endsWith('.png') || request.url.endsWith(".jpg")) {
+      if (request.url.endsWith('.png') && request.url.includes(name) || request.url.endsWith(".jpg")) {
         result.push(await cache.match(name));
       }
     }
 
     console.log('share taget result', result);
-    const imageBlob = result[0]?.blob;
+    const imageBlob = await result[0]?.blob;
 
       if (imageBlob) {
-        this.attachments = [imageBlob, ...this.attachments];
+        this.attachments = [imageBlob];
       }
   }
 
