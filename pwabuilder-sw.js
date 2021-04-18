@@ -44,7 +44,7 @@ const syncContent = async () => {
             actions: [
               { action: "open", title: "Open" },
               { action: "close", title: "Close" },
-            ]
+            ],
           };
           await registration.showNotification("New mail available", options);
         }
@@ -95,7 +95,7 @@ const unsubBgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
   {
     maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
   }
-)
+);
 
 workbox.routing.registerRoute(
   ({ url }) => url.href.includes("me/sendEmail"),
@@ -118,7 +118,7 @@ workbox.routing.registerRoute(
     plugins: [unsubBgSyncPlugin],
   }),
   "POST"
-)
+);
 
 self.addEventListener("notificationclick", (event) => {
   const notification = event.notification;
@@ -127,7 +127,9 @@ self.addEventListener("notificationclick", (event) => {
   if (action === "close") {
     notification.close();
   } else {
-    clients.openWindow(notification.body.substring(notification.body.indexOf("https")));
+    clients.openWindow(
+      notification.body.substring(notification.body.indexOf("https"))
+    );
     notification.close();
   }
 });
@@ -139,10 +141,9 @@ self.addEventListener("periodicsync", (event) => {
 });
 
 async function shareTargetHandler({ event }) {
-  event.respondWith(Response.redirect("/newEmail"));
+  // event.respondWith(Response.redirect("/newEmail"));
 
-  event.waitUntil(
-    (async function () {
+  /*(async function () {
       const data = await event.request.formData();
       console.log("data", data);
       const client = await self.clients.get(
@@ -153,6 +154,16 @@ async function shareTargetHandler({ event }) {
 
       console.log("file", file);
       client.postMessage({ file, action: "load-image" });
+    })()*/
+
+  event.respondWith(
+    (async () => {
+      const formData = await event.request.formData();
+      const file = formData.get("file");
+
+      client.postMessage({ file, action: "load-image" });
+
+      return Response.redirect("/newEmail", 303);
     })()
   );
 }
