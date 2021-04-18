@@ -686,7 +686,7 @@ export class AppNew extends LitElement {
     }
 
     console.log('share taget result', result);
-    const imageBlob = result[0];
+    const imageBlob = result[0]?.blob;
 
       if (imageBlob) {
         this.attachments = [imageBlob, ...this.attachments];
