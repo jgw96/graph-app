@@ -686,6 +686,11 @@ export class AppNew extends LitElement {
     }
 
     console.log('share taget result', result);
+    const imageBlob = result[0];
+
+      if (imageBlob) {
+        this.attachments = [imageBlob, ...this.attachments];
+      }
   }
 
   async fileHandler() {
