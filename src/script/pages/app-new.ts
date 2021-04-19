@@ -665,16 +665,6 @@ export class AppNew extends LitElement {
   }
 
   async shareTarget(name: string) {
-    /*navigator.serviceWorker.addEventListener("message", (event) => {
-      console.log("file event", event);
-      console.log("file event data", event.data);
-      const imageBlob = event.data.file;
-
-      if (imageBlob) {
-        this.attachments = [imageBlob, ...this.attachments];
-      }
-    });*/
-    console.log('in share target function');
     const cache = await caches.open("shareTarget");
     const result = [];
 
