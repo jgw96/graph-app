@@ -35,6 +35,7 @@ export default {
         { src: 'manifest.json', dest: 'dist/'},
         { src: 'routes.json', dest: 'dist/' },
         { src: '.well-known/assetlinks.json', dest: 'dist/.well-known/'},
+        { src: '.well-known/microsoft-identity-association.json', dest: 'dist/.well-known/'},
         { src: 'workers/*', dest: "dist/workers/"}
       ]
     }),
