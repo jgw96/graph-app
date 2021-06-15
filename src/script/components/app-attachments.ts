@@ -165,7 +165,6 @@ export class AppAttachments extends LitElement {
       const blob = await downloadAttach(this.mail, attachment);
 
       if (blob) {
-        console.log(attachment);
         await fileSave(blob, {
           fileName: attachment.name,
           extensions: [`.${attachment.contentType}`],
