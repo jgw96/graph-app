@@ -628,20 +628,12 @@ export class AppNew extends LitElement {
 
     await this.fileHandler();
 
-    (window as any).requestIdleCallback(
-      () => {
-        const underlying2 = new Worker("/workers/text.js");
-
-        this.textWorker = Comlink.wrap(underlying2);
-      },
-      {
-        timeout: 500,
-      }
-    );
+    const underlying2 = new Worker("./workers/text.js");
+    this.textWorker = Comlink.wrap(underlying2);
 
     (window as any).requestIdleCallback(
       async () => {
-        const underlying = new Worker("/workers/ai.js");
+        const underlying = new Worker("./workers/ai.js");
 
         this.worker = Comlink.wrap(underlying);
         await this.worker?.load();
