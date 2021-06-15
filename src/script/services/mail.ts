@@ -181,7 +181,7 @@ const processAttachments = async (attachments: any[]) => {
 
     console.log('attachment', attachment);
 
-    if (attachment && attachment.handle || !attachment.sourceUrl) {
+    if (attachment && attachment.handle || attachment && !attachment.sourceUrl) {
       console.log('in here');
       const reader = new FileReader();
 

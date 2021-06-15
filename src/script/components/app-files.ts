@@ -41,15 +41,6 @@ export class AppFiles extends LitElement {
 
       fast-dialog::part(overlay) {
         backdrop-filter: blur(10px);
-        width: 50vw;
-        left: initial;
-        right: 0;
-      }
-
-      fast-dialog::part(positioning-region) {
-        width: 48vw;
-        left: initial;
-        right: 0;
       }
 
       fast-menu-item::part(content) {
