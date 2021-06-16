@@ -54,27 +54,8 @@
       "icons": [{ "src": "assets/icons/mail-outline.png", "sizes": "48x48" }]
     }
   ],
-  "file_handlers": [
-    {
-      "action": "/newEmail",
-      "accept": {
-        "image/*": [
-          ".png",
-          ".jpg"
-        ],
-        "text/*": [
-          ".txt"
-        ]
-      }
-    }
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+mailgo",
-      "url": "/newEmail?url=%s"
-    }
-  ],
-  "share_target": {
+  "share_target": [
+  {
     "action": "/attach/file/",
     "method": "POST",
     "enctype": "multipart/form-data",
@@ -94,4 +75,25 @@
       ]
     }
   }
+],
+  "file_handlers": [
+    {
+      "action": "/newEmail",
+      "accept": {
+        "image/*": [
+          ".png",
+          ".jpg"
+        ],
+        "text/*": [
+          ".txt"
+        ]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+mailgo",
+      "url": "/newEmail?url=%s"
+    }
+  ]
 }

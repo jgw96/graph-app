@@ -114,10 +114,10 @@ export class EmailCard extends LitElement {
         height: 156px;
       }
 
-      @media (min-width: 1200px) {
+      @media (min-width: 600px) {
         li {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
         }
 
         li #nameBlock {

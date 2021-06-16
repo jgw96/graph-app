@@ -6,8 +6,14 @@
 :root {
   --app-color-primary: #686bd2;
   --app-color-secondary: #ff0076;
-  --font-family: system-ui, sans-serif;
   --theme: circles;
+}
+@font-face {
+  font-family: 'SegUIVar';
+  src: url('c:/Windows/Fonts/SegUIVar.ttf') format('TrueType');
+}
+.variable {
+--font-family: 'SegUIVar';
 }
 
 html,
