@@ -70,7 +70,7 @@
   ],
   "protocol_handlers": [
     {
-      "protocol": "web+mailgo",
+      "protocol": "mailto:",
       "url": "/newEmail?url=%s"
     }
   ],
@@ -93,5 +93,14 @@
         }
       ]
     }
-  }
+  },
+  "capture_links": "existing_client_event",
+  "url_handlers": [
+    {
+      "origin": "memosapp.app"
+    },
+    {
+      "origin": "*.memosapp.app"
+    }
+  ]
 }

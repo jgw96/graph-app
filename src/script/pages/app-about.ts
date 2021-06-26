@@ -14,8 +14,6 @@ import {
   unsub,
 } from "../services/mail";
 
-import { classMap } from "lit-html/directives/class-map";
-
 import "../components/app-attachments";
 
 import { Router } from "@vaadin/router";
@@ -705,20 +703,9 @@ export class AppAbout extends LitElement {
 
         <div id="content">
           <iframe
-            class=${classMap({ loading: !this.emailLoaded })}
             sandbox="allow-popups"
             .srcdoc="${this.email?.body.content}"
           ></iframe>
-
-          <fast-skeleton
-            class=${classMap({ loading: this.emailLoaded })}
-            style="
-                width: 100%;
-                height: 100%;
-            "
-            shape="rect"
-            shimmer
-          ></fast-skeleton>
         </div>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

@@ -816,6 +816,8 @@ export class AppNew extends LitElement {
 
         this.loading = false;
 
+        Router.go("/");
+
         await del("shareTargetAttachment");
       } else {
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
@@ -826,7 +828,7 @@ export class AppNew extends LitElement {
 
         this.loading = false;
       }
-      // Router.go("/");
+      // 
     } catch (err) {
       console.error(err);
 

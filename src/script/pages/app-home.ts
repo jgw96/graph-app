@@ -622,8 +622,6 @@ export class AppHome extends LitElement {
 
       this.initLoad = false;
 
-      console.log("this.mail", this.mail);
-
       sessionStorage.setItem("latestMail", JSON.stringify(this.mail));
     }
   }
@@ -636,6 +634,15 @@ export class AppHome extends LitElement {
 
     if (oldMail && newMail) {
       this.mail = [...oldMail, ...newMail];
+
+      (window as any).requestIdleCallback(
+        () => {
+          sessionStorage.setItem("latestMail", JSON.stringify(this.mail));
+        },
+        {
+          timeout: 300,
+        }
+      );
     }
 
     this.loading = false;

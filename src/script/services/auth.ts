@@ -6,7 +6,8 @@ const scopes = ['user.read', 'people.read', "Mail.ReadWrite", 'mail.send', "file
 const msalConfig = {
   auth: {
     clientId: '2d508361-d68e-4da6-8ef1-e36bd3404d57',
-    scopes
+    scopes,
+    redirect_uri: "https://memosapp.app"
   },
   cache: {
     cacheLocation: "localStorage",
