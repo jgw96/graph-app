@@ -14,6 +14,7 @@ export class AppIndex extends LitElement {
     return css`
       main {
         padding: 16px;
+        margin-top: 33px;
       }
 
       #routerOutlet app-home, #routerOutlet app-about, #routerOutlet app-index, #routerOutlet app-new {
@@ -39,8 +40,6 @@ export class AppIndex extends LitElement {
 
           --voronoi-cell-colors: #686bd2, #ff0076;
           --voronoi-number-of-cells: 25;
-
-          background-image: paint(var(--theme));
 
           height: 88vh;
         }

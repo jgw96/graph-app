@@ -432,7 +432,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 78vh;
+          height: 84vh;
         }
 
         #homeToolbar {
@@ -450,7 +450,7 @@ export class AppHome extends LitElement {
           margin-right: 10px;
 
           justify-content: space-between;
-          height: 89vh;
+          height: 93vh;
         }
 
         #desktopNew {
@@ -472,7 +472,7 @@ export class AppHome extends LitElement {
         }
 
         ul {
-          height: 82vh;
+          height: 84vh;
         }
       }
 

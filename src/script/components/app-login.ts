@@ -10,12 +10,22 @@ export class AppLogin extends LitElement {
 
   static get styles() {
     return css`
-      #logoutButton {
+      :host {
+        color: white;
+        height: 36px;
+      }
+
+      #logoutButton, #loginButton {
         background-color: transparent;
-        border: solid 1px;
-        border-color: var(--app-color-primary);
-        color: var(--app-color-primary);
-        width: 100px;
+        width: initial;
+
+        color: white;
+        height: 22px;
+        margin: 0;
+        padding: 0;
+
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
       }
 
       #logoutButton::part(content) {
@@ -30,8 +40,7 @@ export class AppLogin extends LitElement {
 
       #logoutButton img, #logoutButton fast-skeleton {
         border-radius: 50%;
-        height: 2em;
-        width: 2em;
+        width: 22px;
         margin-left: 8px;
       }
 

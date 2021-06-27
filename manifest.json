@@ -3,7 +3,7 @@
   "display": "standalone",
   "start_url": "/",
   "short_name": "Mail GO",
-  "theme_color": "#686bd2",
+  "theme_color": "#212121",
   "description": "Access your latest outlook messages offline!",
   "orientation": "any",
   "background_color": "#686bd2",
@@ -45,6 +45,9 @@
   "categories": [
     "productivity"
   ],
+  "display_override": [ 
+    "window-controls-overlay" 
+  ],
   "shortcuts": [
     {
       "name": "New Email",
@@ -70,7 +73,7 @@
   ],
   "protocol_handlers": [
     {
-      "protocol": "mailto:",
+      "protocol": "mailto",
       "url": "/newEmail?url=%s"
     }
   ],

@@ -1,17 +1,32 @@
-import { clear, get, set } from 'idb-keyval';
-import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
+import { clear, get, set } from "idb-keyval";
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from "lit-element";
 
-import '../components/app-login';
+import { classMap } from 'lit-html/directives/class-map.js';
+
+import "../components/app-login";
+
 
 const themes = [
-  { name: "circles", url: "https://unpkg.com/css-houdini-circles/dist/circles.js" },
-  { name: "voronoi", url: "https://unpkg.com/css-houdini-voronoi@1.1.2/dist/worklet.js" }
-]
+  {
+    name: "circles",
+    url: "https://unpkg.com/css-houdini-circles/dist/circles.js",
+  },
+  {
+    name: "voronoi",
+    url: "https://unpkg.com/css-houdini-voronoi@1.1.2/dist/worklet.js",
+  },
+];
 
-@customElement('app-header')
+@customElement("app-header")
 export class AppHeader extends LitElement {
-
-  @property({ type: String }) title: string = 'PWA Starter';
+  @property({ type: String }) title: string = "PWA Starter";
   @property({ type: Object }) user: any = null;
 
   @internalProperty() authed: boolean = false;
@@ -22,10 +37,35 @@ export class AppHeader extends LitElement {
 
   static get styles() {
     return css`
+      :host {
+        position: fixed;
+        left: calc(env(titlebar-area-x, 0) - 6px);
+        top: env(titlebar-area-y, 0);
+        width: env(titlebar-area-width, 100%);
+        height: env(titlebar-area-height, 33px);
+        -webkit-app-region: drag;
+      }
+
       #headerActions {
         display: flex;
         align-items: center;
+
+        position: fixed;
+        top: 0;
+        z-index: 9999;
+
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        height: env(titlebar-area-height, 33px);
+
+        right: 10px;
       }
+
+      .inapp {
+        right: 14.4em !important;
+      }
+
 
       fast-label {
         margin-top: 12px;
@@ -36,28 +76,31 @@ export class AppHeader extends LitElement {
       #themes {
         margin-bottom: 12px;
       }
-      
+
       header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding-left: 16px;
-        padding-right: 16px;
-        height: 3.6em;
+        height: env(titlebar-area-height, 33px);
 
         position: sticky;
         top: 0;
-        background: rgba(255, 255, 255, 0.41);
-        backdrop-filter: blur(10px);
         z-index: 1;
+
+        background: #212121;
+        padding-right: 0px;
+        width: env(titlebar-area-width, 100%);
       }
 
       header h1 {
         margin-top: 0;
         margin-bottom: 0;
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--app-color-primary);
+        color: white;
+
+        font-size: 14px;
+        margin-left: 10px;
+        font-weight: normal;
       }
 
       #settingsContainer {
@@ -90,7 +133,7 @@ export class AppHeader extends LitElement {
         padding: 1em 2em;
       }
 
-      @media(screen-spanning: single-fold-vertical) {
+      @media (screen-spanning: single-fold-vertical) {
         #settingsContainer {
           width: 49vw;
           right: 0;
@@ -102,7 +145,7 @@ export class AppHeader extends LitElement {
         }
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         #settingsContainer {
           background: #ffffffbf;
           backdrop-filter: blur(10px);
@@ -141,14 +184,24 @@ export class AppHeader extends LitElement {
       }
 
       #settingsButton {
-        margin-right: 1em;
+        color: white;
+        height: env(titlebar-area-height, 33px);
+        margin-right: 0;
+
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
       }
 
       #settingsButton ion-icon {
         font-size: 2em;
+
+        padding-top: 4px;
+        height: 19px;
+        width: 19px;
       }
 
-      pwa-auth::part(signInButton), #authName {
+      pwa-auth::part(signInButton),
+      #authName {
         background: var(--app-color-primary);
         color: white;
         border: none;
@@ -176,11 +229,7 @@ export class AppHeader extends LitElement {
         padding-right: 16px;
       }
 
-      @media(prefers-color-scheme: dark) {
-        header {
-          background: rgba(41, 41, 41, 0.61);
-        }
-
+      @media (prefers-color-scheme: dark) {
         header h1 {
           color: white;
         }
@@ -190,15 +239,15 @@ export class AppHeader extends LitElement {
         }
       }
 
-      @media(max-width: 800px) {
+      @media (max-width: 800px) {
         #settingsBlock {
           inset: 0;
         }
       }
 
-      @media(max-width: 340px) {
+      @media (max-width: 340px) {
         #settingsButton {
-          display: none
+          display: none;
         }
       }
 
@@ -206,7 +255,7 @@ export class AppHeader extends LitElement {
         from {
           opacity: 0.2;
         }
-        
+
         to {
           opacity: 1;
         }
@@ -222,9 +271,9 @@ export class AppHeader extends LitElement {
     console.log(this.checked);
 
     const themeCheck = await get("themed");
-    console.log('themeCheck', themeCheck);
+    console.log("themeCheck", themeCheck);
 
-    await set('themed', true);
+    await set("themed", true);
 
     if (themeCheck && themeCheck === true) {
       this.themeChecked = true;
@@ -233,17 +282,18 @@ export class AppHeader extends LitElement {
       this.chosenTheme = theme;
 
       let root = document.documentElement;
-      root.style.setProperty('--theme', (theme as any).name);
+      root.style.setProperty("--theme", (theme as any).name);
 
       (window as any).requestIdleCallback(async () => {
-        (CSS as any).paintWorklet.addModule((theme as any).url || 'https://unpkg.com/css-houdini-circles/dist/circles.js');
-      })
-    }
-    else if (themeCheck && themeCheck === false) {
-      console.log('setting it false');
+        (CSS as any).paintWorklet.addModule(
+          (theme as any).url ||
+            "https://unpkg.com/css-houdini-circles/dist/circles.js"
+        );
+      });
+    } else if (themeCheck && themeCheck === false) {
+      console.log("setting it false");
       this.themeChecked = false;
-    }
-    else {
+    } else {
       // on by default
       this.themeChecked = true;
 
@@ -251,21 +301,23 @@ export class AppHeader extends LitElement {
       this.chosenTheme = theme;
 
       let root = document.documentElement;
-      root.style.setProperty('--theme', (theme as any).name);
+      root.style.setProperty("--theme", (theme as any).name);
 
       (window as any).requestIdleCallback(async () => {
-        (CSS as any).paintWorklet.addModule((theme as any).url || 'https://unpkg.com/css-houdini-circles/dist/circles.js');
-      })
+        (CSS as any).paintWorklet.addModule(
+          (theme as any).url ||
+            "https://unpkg.com/css-houdini-circles/dist/circles.js"
+        );
+      });
     }
 
     const registration = await navigator.serviceWorker.getRegistration();
-    if (registration && 'periodicSync' in registration) {
+    if (registration && "periodicSync" in registration) {
       const tags = await (registration as any).periodicSync.getTags();
       // Only update content if sync isn't set up.
-      if (!tags.includes('mail-sync')) {
+      if (!tags.includes("mail-sync")) {
         this.checked = false;
-      }
-      else {
+      } else {
         this.checked = true;
       }
     } else {
@@ -281,7 +333,7 @@ export class AppHeader extends LitElement {
     await this.updateComplete;
 
     const themeSelect = this.shadowRoot?.querySelector("#themes");
-    console.log('themeSelect', themeSelect);
+    console.log("themeSelect", themeSelect);
     (themeSelect as HTMLSelectElement).value = this.chosenTheme;
   }
 
@@ -293,21 +345,22 @@ export class AppHeader extends LitElement {
     const status = await (navigator as any).permissions.query({
       name: "periodic-background-sync",
     });
-  
+
     if (status.state === "granted") {
       // Periodic background sync can be used.
-      const registration: ServiceWorkerRegistration | undefined = await navigator.serviceWorker.getRegistration();
-  
+      const registration: ServiceWorkerRegistration | undefined =
+        await navigator.serviceWorker.getRegistration();
+
       if (registration && "periodicSync" in registration) {
         try {
           await (registration as any).periodicSync.register("mail-sync", {
             // An interval of one day.
             minInterval: 24 * 60 * 60 * 1000,
           });
-  
+
           Notification.requestPermission(async (status) => {
             console.log("Notification permission status:", status);
-  
+
             if (status === "granted") {
               const options = {
                 body: "We will notify you when new email is recieved in the background",
@@ -316,13 +369,16 @@ export class AppHeader extends LitElement {
                 data: {
                   dateOfArrival: Date.now(),
                 },
-                actions: [
-                  { action: "close", title: "Close" },
-                ],
+                actions: [{ action: "close", title: "Close" }],
               };
 
               if (registration) {
-                await (registration as ServiceWorkerRegistration).showNotification("Email will sync in the background", options);
+                await (
+                  registration as ServiceWorkerRegistration
+                ).showNotification(
+                  "Email will sync in the background",
+                  options
+                );
               }
             }
           });
@@ -344,17 +400,16 @@ export class AppHeader extends LitElement {
   async updateMail(value: boolean) {
     if (value === true) {
       await this.checkPeriodic();
-    }
-    else {
+    } else {
       const registration = await navigator.serviceWorker.getRegistration();
-      if (registration && 'periodicSync' in registration) {
-        await (registration as any).periodicSync.unregister('mail-sync');
+      if (registration && "periodicSync" in registration) {
+        await (registration as any).periodicSync.unregister("mail-sync");
       }
     }
   }
 
   userAuthed(authed: boolean) {
-    console.log('user authed', authed);
+    console.log("user authed", authed);
 
     let event = new CustomEvent("user-authed", {
       detail: {
@@ -374,8 +429,7 @@ export class AppHeader extends LitElement {
       (CSS as any).paintWorklet.addModule(this.chosenTheme);
 
       await set("themed", true);
-    }
-    else {
+    } else {
       await set("themed", false);
       location.reload();
     }
@@ -385,7 +439,7 @@ export class AppHeader extends LitElement {
     this.chosenTheme = theme;
 
     let root = document.documentElement;
-    root.style.setProperty('--theme', theme.name);
+    root.style.setProperty("--theme", theme.name);
 
     await set("chosenTheme", this.chosenTheme);
 
@@ -397,53 +451,71 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Mail GO</h1>
 
-        ${this.openSettings ? html`<div id="settingsContainer">
-          <div id="settingsBlock">
-            <div id="settingsHeader">
-              <h3>Settings</h3>
+        ${this.openSettings
+          ? html`<div id="settingsContainer">
+              <div id="settingsBlock">
+                <div id="settingsHeader">
+                  <h3>Settings</h3>
 
-              <fast-button @click="${() => this.close()}">
-                <ion-icon name="close-outline"></ion-icon>
-              </fast-button>
-            </div>
+                  <fast-button @click="${() => this.close()}">
+                    <ion-icon name="close-outline"></ion-icon>
+                  </fast-button>
+                </div>
 
-            <div id="settingsActions">
-              <fast-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
-                Update Mail in the Background
-                <span slot="checked-message">On</span>
-                <span slot="unchecked-message">Off</span>
-              </fast-switch>
+                <div id="settingsActions">
+                  <fast-switch
+                    checked="${this.checked}"
+                    @change="${(ev: any) => this.updateMail(ev.target.checked)}"
+                  >
+                    Update Mail in the Background
+                    <span slot="checked-message">On</span>
+                    <span slot="unchecked-message">Off</span>
+                  </fast-switch>
 
-              <fast-switch checked="${this.themeChecked}" @change="${(ev: any) => this.doTheme(ev.target.checked)}">
-                Use Background Theme
-                <span slot="checked-message">Yes</span>
-                <span slot="unchecked-message">No</span>
-              </fast-switch>
+                  <!--<fast-switch
+                    checked="${this.themeChecked}"
+                    @change="${(ev: any) => this.doTheme(ev.target.checked)}"
+                  >
+                    Use Background Theme
+                    <span slot="checked-message">Yes</span>
+                    <span slot="unchecked-message">No</span>
+                  </fast-switch>
 
-              <fast-label for="themes">Available Themes</fast-label>
-              <fast-select @change="${(ev: any) => this.selectTheme(ev.target.value)}" id="themes">
-                ${
-                  themes.map((theme) => {
-                    return html`
-                      <fast-option .value="${{name: theme.name, url: theme.url}}">${theme.name}</fast-option>
-                    `
-                  })
-                }
-              </fast-select>
+                  <fast-label for="themes">Available Themes</fast-label>
+                  <fast-select
+                    @change="${(ev: any) => this.selectTheme(ev.target.value)}"
+                    id="themes"
+                  >
+                    ${themes.map((theme) => {
+                      return html`
+                        <fast-option
+                          .value="${{ name: theme.name, url: theme.url }}"
+                          >${theme.name}</fast-option
+                        >
+                      `;
+                    })}
+                  </fast-select>-->
 
-              <fast-button @click="${() => this.clearStorage()}">
-                Clear Storage
-              </fast-button>
-            </div>
-          </div>
-        </div>` : null}
+                  <fast-button @click="${() => this.clearStorage()}">
+                    Clear Storage
+                  </fast-button>
+                </div>
+              </div>
+            </div>`
+          : null}
 
-        <div id="headerActions">
-          <fast-button @click="${() => this.openSettingsModal()}" id="settingsButton" appearance="lightweight">
+        <div id="headerActions" class=${classMap({inapp: (navigator as any).windowControlsOverlay.visible === true})} >
+          <!--<fast-button
+            @click="${() => this.openSettingsModal()}"
+            id="settingsButton"
+            appearance="lightweight"
+          >
             <ion-icon name="settings-outline"></ion-icon>
-          </fast-button>
+          </fast-button>-->
 
-          <app-login @authed="${(event: any) => this.userAuthed(event.target.value)}"></app-login>
+          <app-login
+            @authed="${(event: any) => this.userAuthed(event.target.value)}"
+          ></app-login>
         </div>
       </header>
     `;
