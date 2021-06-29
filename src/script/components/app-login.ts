@@ -127,7 +127,7 @@ export class AppLogin extends LitElement {
             ></fast-skeleton>`}</fast-button>
             </div>
             `
-        : html` <fast-button @click="${() => this.login()}" id="loginButton"
+        : html` <fast-button part="loginButton" @click="${() => this.login()}" id="loginButton"
             >Login with Microsoft</fast-button
           >`}
     `;

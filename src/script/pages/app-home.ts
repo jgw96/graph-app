@@ -88,6 +88,10 @@ export class AppHome extends LitElement {
         white-space: nowrap;
         scroll-snap-type: x mandatory;
         margin-top: 1em;
+
+        animation-name: slidein;
+        animation-duration: 300ms;
+        animation-fill-mode: forwards;
       }
 
       #advBlock::-webkit-scrollbar {
@@ -277,6 +281,10 @@ export class AppHome extends LitElement {
         align-items: center;
         justify-content: space-between;
         backdrop-filter: blur(10px);
+
+        animation-name: slidein;
+        animation-duration: 300ms;
+        animation-fill-mode: forwards;
       }
 
       #introBlock h2 {
@@ -286,6 +294,10 @@ export class AppHome extends LitElement {
 
       #introBlock app-login {
         margin-top: 1em;
+      }
+
+      #introBlock app-login::part(loginButton) {
+        height: 32px;
       }
 
       #introBlock img {

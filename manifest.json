@@ -100,10 +100,7 @@
   "capture_links": "existing_client_event",
   "url_handlers": [
     {
-      "origin": "memosapp.app"
-    },
-    {
-      "origin": "*.memosapp.app"
+      "origin": "https://www.memosapp.app"
     }
   ]
 }
