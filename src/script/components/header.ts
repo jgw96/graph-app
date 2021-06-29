@@ -63,7 +63,7 @@ export class AppHeader extends LitElement {
       }
 
       .inapp {
-        right: 14.4em !important;
+        right: 17.4em !important;
       }
 
 
