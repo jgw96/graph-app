@@ -31,6 +31,7 @@ fast-design-system-provider {
   --accent-foreground-hover: #474ad2;
   --accent-fill-rest: var(--app-color-primary);
   --accent-fill-hover: #474ad2;
+  --accent-fill-active: var(--app-color-primary);
   --body-font: var(--font-family);
 }
 

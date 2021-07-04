@@ -15,6 +15,7 @@ import { Router } from "@vaadin/router";
 
 import "../components/email-card";
 import "../components/app-loading";
+import "../components/mail-folders";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -30,6 +31,7 @@ export class AppHome extends LitElement {
   @property({ type: Boolean }) initLoad: boolean = false;
 
   @internalProperty() listMode: string = "grid";
+  @internalProperty() enable_next: boolean = true;
 
   worker: any | null = null;
 
@@ -241,6 +243,14 @@ export class AppHome extends LitElement {
         margin-bottom: 8px;
       }
 
+      fast-menu-item:active {
+        background: var(--accent-fill-active);
+      }
+
+      fast-menu-item:hover {
+        background: var(--accent-fill-active);
+      }
+
       @media (prefers-color-scheme: light) {
         fast-menu-item {
           background: white;
@@ -444,7 +454,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 84vh;
+          max-height: 84vh;
         }
 
         #homeToolbar {
@@ -484,7 +494,7 @@ export class AppHome extends LitElement {
         }
 
         ul {
-          height: 84vh;
+          max-height: 84vh;
         }
       }
 
@@ -617,6 +627,8 @@ export class AppHome extends LitElement {
       this.loading = true;
     }
 
+    this.enable_next = true;
+
     const mailCheck = sessionStorage.getItem("latestMail");
 
     if (mailCheck) {
@@ -702,6 +714,7 @@ export class AppHome extends LitElement {
 
   async refresh() {
     this.loading = true;
+    this.enable_next = true;
 
     const newMail = await getMail(true);
 
@@ -764,6 +777,18 @@ export class AppHome extends LitElement {
     }
   }
 
+  mailFolder(ev: CustomEvent) {
+    this.loading = true;
+
+    this.enable_next = false;
+
+    if (ev.detail.mail && ev.detail.mail.length > 0) {
+      this.mail = [...ev.detail.mail];
+    }
+
+    this.loading = false;
+  }
+
   render() {
     return html`
       <div>
@@ -783,6 +808,12 @@ export class AppHome extends LitElement {
                     <fast-menu-item @click="${() => this.setCat("other")}"
                       >Other</fast-menu-item
                     >
+                  </div>
+
+                  <div id="mailFolders">
+                    <mail-folders
+                      @folder-mail="${(ev: CustomEvent) => this.mailFolder(ev)}"
+                    ></mail-folders>
                   </div>
 
                   <div id="menuActions">
@@ -838,16 +869,12 @@ export class AppHome extends LitElement {
                   <ul>
                     ${this.mail.length > 0
                       ? this.mail?.map((email) => {
-                          if (email.isDraft === false) {
-                            return html`
-                              <email-card
-                                @flag-email="${() => this.bookmark()}"
-                                .email="${email}"
-                              ></email-card>
-                            `;
-                          } else {
-                            return null;
-                          }
+                          return html`
+                            <email-card
+                              @flag-email="${() => this.bookmark()}"
+                              .email="${email}"
+                            ></email-card>
+                          `;
                         })
                       : html`
                           <email-card></email-card>
@@ -860,7 +887,7 @@ export class AppHome extends LitElement {
                           <email-card></email-card>
                         `}
 
-                    <div id="pagerButtons">
+                    ${this.enable_next ? html`<div id="pagerButtons">
                       <fast-button
                         appearance="stealth"
                         @click="${() => this.loadMore()}"
@@ -869,7 +896,7 @@ export class AppHome extends LitElement {
 
                         <ion-icon name="chevron-forward-outline"></ion-icon>
                       </fast-button>
-                    </div>
+                    </div>` : null}
                   </ul>
                 </div>
               </section>

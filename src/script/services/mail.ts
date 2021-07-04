@@ -53,6 +53,8 @@ export async function getMail(initLoad?: boolean) {
 
   if (initLoad) {
     const data = await doMailFetch();
+    nextMail = data["@odata.nextLink"];
+
     return data.value;
   } else {
     const token = await getToken();
@@ -72,8 +74,9 @@ export async function getMail(initLoad?: boolean) {
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
 
-    // nextMail = data.  + '.@' + odata.nextLink;
     nextMail = data["@odata.nextLink"];
+
+    // nextMail = data.  + '.@' + odata.nextLink;
 
     return data.value;
   }
@@ -179,10 +182,13 @@ const processAttachments = async (attachments: any[]) => {
 
     const attachment = attachments[0];
 
-    console.log('attachment', attachment);
+    console.log("attachment", attachment);
 
-    if (attachment && attachment.handle || attachment && !attachment.sourceUrl) {
-      console.log('in here');
+    if (
+      (attachment && attachment.handle) ||
+      (attachment && !attachment.sourceUrl)
+    ) {
+      console.log("in here");
       const reader = new FileReader();
 
       reader.readAsDataURL(attachments[0]);
@@ -199,7 +205,7 @@ const processAttachments = async (attachments: any[]) => {
           contentBytes: base64String,
         };
 
-        console.log('attachFile', attachFile);
+        console.log("attachFile", attachFile);
 
         attachToSend.push(attachFile);
 
@@ -474,4 +480,40 @@ export async function downloadAttach(mail: any, attachment: any) {
   } else {
     return null;
   }
+}
+
+export async function getMailFolders() {
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "GET",
+    headers: headers,
+  };
+  const graphEndpoint = "https://graph.microsoft.com/beta/me/mailFolders";
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  return data.value;
+}
+
+export async function getMailFolder(id: string) {
+  const token = await getToken();
+
+  const headers = new Headers();
+  const bearer = "Bearer " + token;
+  headers.append("Authorization", bearer);
+  const options = {
+    method: "GET",
+    headers: headers,
+  };
+  const graphEndpoint = `https://graph.microsoft.com/beta/me/mailFolders/${id}/messages`;
+
+  const response = await fetch(graphEndpoint, options);
+  const data = await response.json();
+
+  return data.value;
 }

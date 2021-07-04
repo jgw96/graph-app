@@ -45,6 +45,10 @@ export class AppAbout extends LitElement {
         margin-left: 4px;
       }
 
+      #actual-email {
+        border: solid 1px var(--app-color-primary);
+      }
+
       #openWindow ion-icon {
         color: var(--app-color-primary);
         font-size: 18px;
@@ -702,10 +706,14 @@ export class AppAbout extends LitElement {
         </section>
 
         <div id="content">
-          <iframe
-            sandbox="allow-popups"
+          <!--<iframe
+            sandbox="allow-top-navigation"
             .srcdoc="${this.email?.body.content}"
-          ></iframe>
+          >
+            <a target="_blank"></a>
+          </iframe>-->
+          <div id="actual-email" .innerHTML="${this.email?.body.content}">
+          </div>
         </div>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

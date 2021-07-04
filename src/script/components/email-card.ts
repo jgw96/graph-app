@@ -35,6 +35,8 @@ export class EmailCard extends LitElement {
 
         box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132),
           0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
+
+        height: 10em;
       }
 
       li:hover {
@@ -191,7 +193,7 @@ export class EmailCard extends LitElement {
         <li>
           <div>
             <div class="emailHeader">
-              <h3>${this.email.subject}</h3>
+              <h3>${this.email.subject || "No Subject"}</h3>
               ${this.email.flag.flagStatus === "flagged"
                 ? html`<fast-badge
                     @click="${() => this.read(this.email.id)}"
@@ -202,7 +204,7 @@ export class EmailCard extends LitElement {
                 : null}
             </div>
 
-            <p class="preview">${this.email.bodyPreview}</p>
+            <p class="preview">${this.email.bodyPreview || "Preview not available"}</p>
           </div>
 
           <div id="actions">
