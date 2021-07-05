@@ -592,10 +592,6 @@ export class AppHome extends LitElement {
 
     (window as any).requestIdleCallback(() => {
       this.offline = isOffline();
-      
-      if (this.offline === true) {
-        this.enable_next = false;
-      }
     })
   }
 
