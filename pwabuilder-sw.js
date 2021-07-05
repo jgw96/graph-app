@@ -191,4 +191,9 @@ workbox.routing.registerRoute(
   new workbox.strategies.StaleWhileRevalidate()
 );
 
+workbox.routing.registerRoute(
+  ({ url }) => url.href.includes("/mailFolders"),
+  new workbox.strategies.StaleWhileRevalidate()
+);
+
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);

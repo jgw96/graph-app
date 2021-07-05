@@ -15,9 +15,11 @@ import { Router } from "@vaadin/router";
 
 import "../components/email-card";
 import "../components/app-loading";
+import "../components/mail-folders";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
+import { isOffline } from "../utils/network";
 
 @customElement("app-home")
 export class AppHome extends LitElement {
@@ -30,6 +32,8 @@ export class AppHome extends LitElement {
   @property({ type: Boolean }) initLoad: boolean = false;
 
   @internalProperty() listMode: string = "grid";
+  @internalProperty() enable_next: boolean = true;
+  @internalProperty() offline: boolean = false;
 
   worker: any | null = null;
 
@@ -39,6 +43,10 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      #mailFolders {
+        margin-top: 2em;
       }
 
       ion-fab {
@@ -239,6 +247,14 @@ export class AppHome extends LitElement {
       fast-menu-item {
         background: #222222;
         margin-bottom: 8px;
+      }
+
+      fast-menu-item:active {
+        background: var(--accent-fill-active);
+      }
+
+      fast-menu-item:hover {
+        background: var(--accent-fill-active);
       }
 
       @media (prefers-color-scheme: light) {
@@ -444,7 +460,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          height: 84vh;
+          max-height: 84vh;
         }
 
         #homeToolbar {
@@ -484,7 +500,7 @@ export class AppHome extends LitElement {
         }
 
         ul {
-          height: 84vh;
+          max-height: 84vh;
         }
       }
 
@@ -573,6 +589,10 @@ export class AppHome extends LitElement {
         this.setupInfinite();
       }
     });
+
+    (window as any).requestIdleCallback(() => {
+      this.offline = isOffline();
+    })
   }
 
   async setupInfinite() {
@@ -617,6 +637,8 @@ export class AppHome extends LitElement {
       this.loading = true;
     }
 
+    this.enable_next = true;
+
     const mailCheck = sessionStorage.getItem("latestMail");
 
     if (mailCheck) {
@@ -639,6 +661,11 @@ export class AppHome extends LitElement {
   }
 
   async loadMore() {
+    const test = this.handleOffline();
+    if (test === true) {
+      return;
+    }
+
     this.loading = true;
 
     const newMail = await getMail();
@@ -700,8 +727,27 @@ export class AppHome extends LitElement {
     Router.go("/newEmail");
   }
 
+  handleOffline() {
+    const offlineTest = isOffline();
+
+    if (this.offline === true || offlineTest === true) {
+      let toastElement: any = this.shadowRoot?.getElementById("myToast");
+      toastElement?.open("This action cannot be completed offline...", "error");
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   async refresh() {
+    const test = this.handleOffline();
+    if (test === true) {
+      return;
+    }
+
     this.loading = true;
+    this.enable_next = true;
 
     const newMail = await getMail(true);
 
@@ -726,6 +772,11 @@ export class AppHome extends LitElement {
   }
 
   async bookmark() {
+    const test = this.handleOffline();
+    if (test === true) {
+      return;
+    }
+
     try {
       let toastElement: any = this.shadowRoot?.getElementById("myToast");
       toastElement?.open("Email Flagged", "success");
@@ -764,6 +815,18 @@ export class AppHome extends LitElement {
     }
   }
 
+  mailFolder(ev: CustomEvent) {
+    this.enable_next = false;
+
+    this.loading = true;
+
+    if (ev.detail.mail && ev.detail.mail.length > 0) {
+      this.mail = [...ev.detail.mail];
+    }
+
+    this.loading = false;
+  }
+
   render() {
     return html`
       <div>
@@ -773,16 +836,25 @@ export class AppHome extends LitElement {
               <section id="mainSection">
                 <div id="filterActions">
                   <div>
-                    <h3>Filters</h3>
-                    <fast-menu-item @click="${() => this.setCat("all")}"
-                      >All</fast-menu-item
-                    >
-                    <fast-menu-item @click="${() => this.setCat("focused")}"
-                      >Focused</fast-menu-item
-                    >
-                    <fast-menu-item @click="${() => this.setCat("other")}"
-                      >Other</fast-menu-item
-                    >
+                    <div>
+                      <h3>Filters</h3>
+                      <fast-menu-item @click="${() => this.setCat("all")}"
+                        >All</fast-menu-item
+                      >
+                      <fast-menu-item @click="${() => this.setCat("focused")}"
+                        >Focused</fast-menu-item
+                      >
+                      <fast-menu-item @click="${() => this.setCat("other")}"
+                        >Other</fast-menu-item
+                      >
+                    </div>
+
+                    <div id="mailFolders">
+                      <mail-folders
+                        @folder-mail="${(ev: CustomEvent) =>
+                          this.mailFolder(ev)}"
+                      ></mail-folders>
+                    </div>
                   </div>
 
                   <div id="menuActions">
@@ -838,16 +910,12 @@ export class AppHome extends LitElement {
                   <ul>
                     ${this.mail.length > 0
                       ? this.mail?.map((email) => {
-                          if (email.isDraft === false) {
-                            return html`
-                              <email-card
-                                @flag-email="${() => this.bookmark()}"
-                                .email="${email}"
-                              ></email-card>
-                            `;
-                          } else {
-                            return null;
-                          }
+                          return html`
+                            <email-card
+                              @flag-email="${() => this.bookmark()}"
+                              .email="${email}"
+                            ></email-card>
+                          `;
                         })
                       : html`
                           <email-card></email-card>
@@ -859,17 +927,18 @@ export class AppHome extends LitElement {
                           <email-card></email-card>
                           <email-card></email-card>
                         `}
+                    ${this.enable_next
+                      ? html`<div id="pagerButtons">
+                          <fast-button
+                            appearance="stealth"
+                            @click="${() => this.loadMore()}"
+                          >
+                            More
 
-                    <div id="pagerButtons">
-                      <fast-button
-                        appearance="stealth"
-                        @click="${() => this.loadMore()}"
-                      >
-                        More
-
-                        <ion-icon name="chevron-forward-outline"></ion-icon>
-                      </fast-button>
-                    </div>
+                            <ion-icon name="chevron-forward-outline"></ion-icon>
+                          </fast-button>
+                        </div>`
+                      : null}
                   </ul>
                 </div>
               </section>

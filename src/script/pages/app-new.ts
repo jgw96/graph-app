@@ -95,6 +95,13 @@ export class AppNew extends LitElement {
         justify-content: space-evenly;
       }
 
+      #previewTextButton {
+        margin-top: 10px;
+        border-radius: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
       @media (prefers-color-scheme: light) {
         fast-text-area::part(control),
         fast-text-field::part(control) {
@@ -107,8 +114,10 @@ export class AppNew extends LitElement {
         border: solid 1px var(--app-color-secondary);
         margin-left: 2em;
         padding: 0px 1em 1em;
-        height: 57.5vh;
         margin-top: 4px;
+
+        height: 58.2vh;
+        border-radius: 2px;
 
         animation-name: slideinright;
         animation-duration: 300ms;
@@ -1362,7 +1371,6 @@ export class AppNew extends LitElement {
 
           <fast-button
             id="previewTextButton"
-            appearance="lightweight"
             @click="${() => this.openTextPreview()}"
             >HTML Preview
           </fast-button>
