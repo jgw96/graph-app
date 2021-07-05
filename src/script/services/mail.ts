@@ -1,6 +1,7 @@
 import { getToken } from "../services/auth";
 
 let nextMail: any = null;
+let folders: any[] | undefined = undefined;
 
 export async function unsub(id: number) {
   if (id) {
@@ -94,12 +95,17 @@ export async function getAnEmail(id: string) {
   };
   const graphEndpoint = `https://graph.microsoft.com/beta/me/messages/${id}`;
 
-  const response = await fetch(graphEndpoint, options);
-  const data = await response.json();
-
-  console.log(data);
-
-  return data;
+  try {
+    const response = await fetch(graphEndpoint, options);
+    const data = await response.json();
+  
+    console.log(data);
+  
+    return data;
+  }
+  catch (err) {
+    throw new Error(`Could not load this email: ${err}`)
+  }
 }
 
 export async function flagEmail(email: any) {
@@ -483,6 +489,10 @@ export async function downloadAttach(mail: any, attachment: any) {
 }
 
 export async function getMailFolders() {
+  if (folders) {
+    return folders;
+  }
+
   const token = await getToken();
 
   const headers = new Headers();
@@ -496,6 +506,8 @@ export async function getMailFolders() {
 
   const response = await fetch(graphEndpoint, options);
   const data = await response.json();
+
+  folders = data.value;
 
   return data.value;
 }

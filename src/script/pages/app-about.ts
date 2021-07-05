@@ -29,7 +29,7 @@ export class AppAbout extends LitElement {
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
   @property({ type: Boolean }) emailLoaded: boolean = false;
-  @property() attachments: any[] | null = null;
+  @property({ type: Array }) attachments: any[] | null = null;
 
   @internalProperty() openAttachments: boolean = false;
 
@@ -47,6 +47,19 @@ export class AppAbout extends LitElement {
 
       #actual-email {
         border: solid 1px var(--app-color-primary);
+        margin-top: 1em;
+        min-height: 70vh;
+
+        animation-name: fadeIn;
+        animation-duration: 280ms;
+      }
+
+      #mail-loader {
+        height: 70vh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       #openWindow ion-icon {
@@ -71,6 +84,7 @@ export class AppAbout extends LitElement {
       }
 
       #detailAction h2 {
+        margin-top: 1em;
         margin-right: 4em;
         color: white !important;
       }
@@ -210,6 +224,16 @@ export class AppAbout extends LitElement {
           120px 40px, 120px 80px, 120px 120px;
 
         animation: shine 1s infinite;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0.2;
+        }
+
+        to {
+          opacity: 1;
+        }
       }
 
       @keyframes shine {
@@ -401,19 +425,18 @@ export class AppAbout extends LitElement {
     const id = search.get("id");
 
     if (id) {
-      const email = await getAnEmail(id);
-      console.log(email);
-      this.email = email;
-
-      const iframeEl = this.shadowRoot?.querySelector("iframe");
-      console.log("iframeEl", iframeEl);
-      iframeEl?.addEventListener("load", () => {
-        console.log("loaded");
-        this.emailLoaded = true;
-      });
-
-      this.attachments = await listAttach(id);
-      console.log(this.attachments);
+      try {
+        const email = await getAnEmail(id);
+        console.log(email);
+        this.email = email;
+  
+        this.attachments = await listAttach(id);
+        console.log(this.attachments);
+      }
+      catch (err) {
+        let toastElement: any = this.shadowRoot?.getElementById("myToast");
+        toastElement?.open("We could not load this email, try again later...", "error");
+      }
     }
   }
 
@@ -578,7 +601,7 @@ export class AppAbout extends LitElement {
       console.log("failure");
 
       let toastElement: any = this.shadowRoot?.getElementById("myToast");
-      toastElement?.open("Could not unsubscribe...", "failure");
+      toastElement?.open("Could not unsubscribe...", "error");
     }
   }
 
@@ -619,9 +642,9 @@ export class AppAbout extends LitElement {
             ? html`<h2>${this.email?.subject}</h2>`
             : html`<fast-skeleton
                 style="
-                margin-top: 2em;
+                margin-top: 1em;
                 width: 300px;
-                height: 54px;
+                height: 32px;
             "
                 shape="rect"
                 shimmer
@@ -712,7 +735,11 @@ export class AppAbout extends LitElement {
           >
             <a target="_blank"></a>
           </iframe>-->
-          <div id="actual-email" .innerHTML="${this.email?.body.content}">
+          ${this.email ? html`<div id="actual-email" .innerHTML="${this.email?.body.content}">` : 
+            html`<div id="mail-loader">
+              <fast-progress-ring></fast-progress-ring>
+            </div>`
+          }
           </div>
         </div>
 

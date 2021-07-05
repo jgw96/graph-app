@@ -13,15 +13,24 @@ export class MailFolders extends LitElement {
 
   static get styles() {
     return css`
-      :host {
-        max-height: 57vh;
+      #folder-list {
+        max-height: 50vh;
         display: block;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
-      
+
+      #folder-list::-webkit-scrollbar {
+        width: 8px;
+        background: #222222;
+        border-radius: 4px;
+      }
+
       fast-menu-item {
         background: rgb(34, 34, 34);
         margin-bottom: 8px;
+
+        animation-name: slidein;
+        animation-duration: 280ms;
       }
 
       fast-menu-item:active {
@@ -34,6 +43,23 @@ export class MailFolders extends LitElement {
 
       h3 {
         margin-top: 0;
+      }
+
+      #loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @keyframes slidein {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
     `;
   }
@@ -68,17 +94,22 @@ export class MailFolders extends LitElement {
   render() {
     return html`
       <h3>Folders</h3>
-      ${this.folders && this.folders.length > 0
-        ? html`
-            ${this.folders.map((folder) => {
-              return html`
-                <fast-menu-item @click="${() => this.openFolder(folder.id)}">
-                  ${folder.displayName}
-                </fast-menu-item>
-              `;
-            })}
-          `
-        : null}
+
+      <div id="folder-list">
+        ${this.folders && this.folders.length > 0
+          ? html`
+              ${this.folders.map((folder) => {
+                return html`
+                  <fast-menu-item @click="${() => this.openFolder(folder.id)}">
+                    ${folder.displayName}
+                  </fast-menu-item>
+                `;
+              })}
+            `
+          : html`<div id="loader">
+            <fast-progress-ring></fast-progress-ring>
+          </div>`}
+      </div>
     `;
   }
 }

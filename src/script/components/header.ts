@@ -81,7 +81,7 @@ export class AppHeader extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-left: 16px;
+        padding-left: 5px;
         height: env(titlebar-area-height, 33px);
 
         position: sticky;
