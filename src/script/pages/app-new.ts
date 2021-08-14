@@ -650,7 +650,7 @@ export class AppNew extends LitElement {
       {
         timeout: 1000
       }
-    )
+    );
   }
 
   async handleIdle() {

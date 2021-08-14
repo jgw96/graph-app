@@ -438,6 +438,46 @@ export class AppAbout extends LitElement {
         toastElement?.open("We could not load this email, try again later...", "error");
       }
     }
+
+    this.headerScroller();
+
+    console.log('hello world');
+  }
+
+  async headerScroller() {
+    console.log('animationWorklet' in CSS);
+    if('animationWorklet' in CSS) {
+      // AnimationWorklet is supported!
+      await (CSS as any).animationWorklet.addModule("/workers/scroller.js");
+
+      const triggerEl = this.shadowRoot?.querySelector('#detailActions');
+
+      if (triggerEl) {
+        new (window as any).WorkletAnimation(
+          'passthrough',
+          new KeyframeEffect(
+            triggerEl,
+            [
+              {
+                transform: 'translateY(0)'
+              },
+              {
+                transform: 'translateY(500px)'
+              }
+            ],
+            {
+              duration: 2000,
+              fill: "both"
+            }
+          ),
+          new (window as any).ScrollTimeline({
+            scrollSource: this.shadowRoot?.querySelector('#detailBlock'),
+            orientation: "vertical", // "horizontal" or "vertical".
+            timeRange: 2000
+          })
+        ).play();
+      }
+    }
   }
 
   back() {
