@@ -102,5 +102,5 @@
       "origin": "https://www.memosapp.app"
     }
   ],
-  "capture_links": "existing_client_event",
+  "capture_links": "existing_client_event"
 }
