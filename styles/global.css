@@ -59,6 +59,7 @@ fast-design-system-provider {
   html,
   body {
     --ion-background-color: #edebe9;
+    color: black;
   }
 
   html::-webkit-scrollbar,
@@ -83,6 +84,7 @@ fast-design-system-provider {
 @media (prefers-color-scheme: dark) {
   html {
     background-color: #181818;
+    color: white;
   }
 
   :root {

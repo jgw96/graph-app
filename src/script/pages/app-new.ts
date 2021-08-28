@@ -10,6 +10,7 @@ import {
 import { classMap } from "lit-html/directives/class-map.js";
 
 import "@dile/dile-toast/dile-toast";
+import "font-select";
 
 import { getAnEmail, sendMail, reply, saveDraft } from "../services/mail";
 import { Router } from "@vaadin/router";
@@ -65,6 +66,28 @@ export class AppNew extends LitElement {
 
       fast-button ion-icon {
         margin-left: 4px;
+      }
+
+      #text-editor-controls {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      #text-editor-controls label {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 8px;
+      }
+
+      #text-editor-controls fast-select, #text-editor-controls fast-number-field {
+        min-width: 6em;
+        width: 6em;
+      }
+
+      #font-select {
+        margin-top: 3px;
       }
 
       #replyingHeader {
@@ -801,6 +824,14 @@ export class AppNew extends LitElement {
     const htmlBody = await this.textWorker.runMarkdown(this.body);
     console.log(htmlBody);
 
+    const fontFamily = (this.shadowRoot?.querySelector("#font-select") as HTMLSelectElement)?.value;
+    const fontSize = (this.shadowRoot?.querySelector("#font-size") as any).control.value;
+
+    console.log('font-styles', fontFamily, fontSize);
+
+    const email_style = `<style> * { font-family: ${fontFamily || "sans-serif"}; font-size: ${fontSize || 12}; } </style>`;
+    console.log(email_style);
+
     try {
       if (
         this.subject &&
@@ -823,7 +854,7 @@ export class AppNew extends LitElement {
             }
           });
         } else {
-          await sendMail(this.subject, htmlBody, recip, this.attachments);
+          await sendMail(this.subject, email_style + htmlBody, recip, this.attachments);
         }
 
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
@@ -1244,6 +1275,28 @@ export class AppNew extends LitElement {
     this.pickFiles = true;
   }
 
+  handleFontSelect(event: any) {
+    console.log(event);
+    const textarea: HTMLTextAreaElement | null | undefined = this.shadowRoot?.querySelector("fast-text-area");
+
+    if (textarea) {
+      textarea.style.fontFamily = event.detail.value;
+    }
+  }
+
+  handleNumberSelect(event: any) {
+    console.log(event);
+    const textarea: HTMLTextAreaElement | null | undefined = (this.shadowRoot?.querySelector("fast-text-area") as any).control;
+
+    // hack for this component
+    const numberField = (this.shadowRoot?.querySelector("fast-number-field") as any).control;
+    console.log((numberField as any)?.value);
+
+    if (textarea && numberField) {
+      textarea.style.fontSize = `${(numberField as any).value}px`;
+    }
+  }
+
   async disconnectedCallback() {
     super.disconnectedCallback();
 
@@ -1346,7 +1399,28 @@ export class AppNew extends LitElement {
             </div>`
           : null}
         ${this.drawing === false
-          ? html`<section id="textAreaSection">
+          ? html`
+
+          <div id="text-editor-controls">
+            <label for="font-select">
+              Font
+              <fast-select @change="${(event: InputEvent) => this.handleFontSelect(event)}" id="font-select" name="font-select">
+                <fast-option value="Arial">Arial</fast-option>
+                <fast-option value="cursive">Cursive</fast-option>
+                <fast-option value="Georgia">Georgia</fast-option>
+                <fast-option value="Verdana">Verdana</fast-option>
+                <fast-option value="Courier New">Courier</fast-option>
+              </fast-select>
+            </label>
+
+            <label for="font-size">
+              Font size
+              <fast-number-field @change="${(event: InputEvent) => this.handleNumberSelect(event)}" id="font-size" name="font-size" value="12" min="11" max="100">
+              </fast-number-field>
+            </label>
+          </div>
+
+          <section id="textAreaSection">
               <fast-text-area
                 id="contentTextArea"
                 @input="${(event: any) => this.updatePreview(event)}"

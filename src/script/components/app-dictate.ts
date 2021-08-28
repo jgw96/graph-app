@@ -16,7 +16,15 @@ export class AppDictate extends LitElement {
   @internalProperty() wakeLock: any | null = null;
 
   static get styles() {
-    return css``;
+    return css`
+      #dictate {
+        background: var(--app-color-primary);
+      }
+
+      #stop {
+        background: red;
+      }
+    `;
   }
 
   constructor() {
@@ -150,13 +158,13 @@ export class AppDictate extends LitElement {
   render() {
     return html`
       ${this.started === false
-        ? html`<fast-button @click="${() => this.dictate()}">
+        ? html`<fast-button id="dictate" @click="${() => this.dictate()}">
             Dictate
 
             <ion-icon name="mic-outline"></ion-icon>
           </fast-button>`
         : html`
-            <fast-button @click="${() => this.stop()}">
+            <fast-button id="stop" @click="${() => this.stop()}">
               Stop
 
               <ion-icon name="mic-outline"></ion-icon>

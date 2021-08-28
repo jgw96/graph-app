@@ -4,7 +4,7 @@
   "start_url": "/",
   "short_name": "Mail GO",
   "theme_color": "#212121",
-  "description": "Access your latest outlook messages offline!",
+  "description": "Mail GO is your mail made simple ad fast! Quickly triage your latest email with simple features and the ability to work offline and on slow networks.",
   "orientation": "any",
   "background_color": "#686bd2",
   "related_applications": [],
@@ -97,10 +97,10 @@
       ]
     }
   },
-  "capture_links": "existing_client_event",
   "url_handlers": [
     {
       "origin": "https://www.memosapp.app"
     }
-  ]
+  ],
+  "capture_links": "existing_client_event",
 }
