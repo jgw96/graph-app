@@ -7,6 +7,8 @@ import {
   internalProperty,
 } from "lit-element";
 
+import { classMap } from "lit-html/directives/class-map.js";
+
 import "@dile/dile-toast/dile-toast";
 
 import { getAnEmail, sendMail, reply, saveDraft } from "../services/mail";
@@ -100,6 +102,10 @@ export class AppNew extends LitElement {
         border-radius: 20px;
         padding-left: 10px;
         padding-right: 10px;
+      }
+
+      #previewTextButton.active {
+        background-color: var(--app-color-secondary);
       }
 
       @media (prefers-color-scheme: light) {
@@ -1370,6 +1376,7 @@ export class AppNew extends LitElement {
           <span id="markdownSpan">Supports Markdown</span>
 
           <fast-button
+            class="${classMap({ active: this.textPreview})}"
             id="previewTextButton"
             @click="${() => this.openTextPreview()}"
             >HTML Preview
