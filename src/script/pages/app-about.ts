@@ -96,6 +96,28 @@ export class AppAbout extends LitElement {
         animation-duration: 380ms;
       }
 
+      #scrolledDetailActions {
+        display: none;
+        justify-content: space-between;
+        animation-name: slidedown;
+        animation-duration: 380ms;
+
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(33, 33, 33, 0.79);
+        backdrop-filter: blur(10px);
+        padding: 10px;
+        border-radius: 8px;
+        position: fixed;
+        left: 2em;
+        width: 8em;
+        top: 3em;
+      }
+
+      #scrolledDetailActions.scrolled {
+        display: flex;
+      }
+
       #detailMoreActions {
         display: flex;
         justify-content: flex-end;
@@ -255,6 +277,17 @@ export class AppAbout extends LitElement {
         }
       }
 
+      @keyframes slidedown {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
       #detailBlock {
         height: 88.8vh;
       }
@@ -317,7 +350,7 @@ export class AppAbout extends LitElement {
         }
       }
 
-      @media (max-width: 800px) {
+      @media (max-width: 840px) {
         #detailActions {
           position: fixed;
           bottom: -3px;
@@ -328,6 +361,13 @@ export class AppAbout extends LitElement {
           display: flex;
           justify-content: space-between;
           background: #ffffff69;
+        }
+
+        #scrolledDetailActions {
+          display: none;
+        }
+        #scrolledDetailActions.scrolled {
+          display: none;
         }
 
         #reminderInitButton {
@@ -429,14 +469,33 @@ export class AppAbout extends LitElement {
         const email = await getAnEmail(id);
         console.log(email);
         this.email = email;
-  
+
         this.attachments = await listAttach(id);
         console.log(this.attachments);
-      }
-      catch (err) {
+      } catch (err) {
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
-        toastElement?.open("We could not load this email, try again later...", "error");
+        toastElement?.open(
+          "We could not load this email, try again later...",
+          "error"
+        );
       }
+    }
+
+    const watchedElement = this.shadowRoot?.querySelector("#subject");
+    const scrollerBar = this.shadowRoot?.querySelector("#scrolledDetailActions");
+
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      // If intersectionRatio is 0, the target is out of view
+      // and we do not need to do anything.
+      if (entries[0].intersectionRatio <= 0) {
+        scrollerBar?.classList.add("scrolled");
+      } else {
+        scrollerBar?.classList.remove("scrolled");
+      }
+    });
+
+    if (watchedElement) {
+      intersectionObserver.observe(watchedElement);
     }
   }
 
@@ -558,7 +617,11 @@ export class AppAbout extends LitElement {
         },
       ],
     };
-    (window as any).ImmersiveReader.launchAsync("7c1759c1b0094400a2ef50a582dbaecf", "mailgo-reader", content);
+    (window as any).ImmersiveReader.launchAsync(
+      "7c1759c1b0094400a2ef50a582dbaecf",
+      "mailgo-reader",
+      content
+    );
   }
 
   cancel() {
@@ -638,50 +701,79 @@ export class AppAbout extends LitElement {
             </fast-button>
           </div>
 
-          ${this.email
-            ? html`<h2>${this.email?.subject}</h2>`
-            : html`<fast-skeleton
-                style="
+          <div id="scrolledDetailActions">
+          <fast-button
+              @click="${() => this.back()}"
+              class="back"
+              aria-label="back button"
+            >
+              Back
+
+              <ion-icon name="chevron-back-outline"></ion-icon>
+            </fast-button>
+
+            <fast-button
+              appearance="outline"
+              id="openWindow"
+              appearance="stealth"
+              @click="${() => this.openInNew()}"
+            >
+              <ion-icon name="open"></ion-icon>
+            </fast-button>
+          </div>
+
+          ${
+            this.email
+              ? html`<h2 id="subject">${this.email?.subject}</h2>`
+              : html`<fast-skeleton
+                  style="
                 margin-top: 1em;
                 width: 300px;
                 height: 32px;
             "
-                shape="rect"
-                shimmer
-              ></fast-skeleton>`}
-          ${this.openAttachments &&
-          this.attachments &&
-          this.attachments.length > 0
-            ? html`<app-attachments
-                @close="${() => this.closeAttach()}"
-                .attachments=${this.attachments}
-                .mail="${this.email}"
-              ></app-attachments>`
-            : null}
+                  shape="rect"
+                  shimmer
+                ></fast-skeleton>`
+          }
+          ${
+            this.openAttachments &&
+            this.attachments &&
+            this.attachments.length > 0
+              ? html`<app-attachments
+                  @close="${() => this.closeAttach()}"
+                  .attachments=${this.attachments}
+                  .mail="${this.email}"
+                ></app-attachments>`
+              : null
+          }
 
           <div id="detailMoreActions">
-            ${this.email?.flag.flagStatus !== "flagged"
-              ? html`<fast-button
-                  id="flagButtonAbout"
-                  class="detailActionButton"
-                  @click="${() => this.bookmark(this.email)}"
-                >
-                  Flag
+            ${
+              this.email?.flag.flagStatus !== "flagged"
+                ? html`<fast-button
+                    id="flagButtonAbout"
+                    class="detailActionButton"
+                    @click="${() => this.bookmark(this.email)}"
+                  >
+                    Flag
 
-                  <ion-icon name="flag-outline"></ion-icon>
-                </fast-button>`
-              : null}
-            ${"showTrigger" in Notification.prototype
-              ? html`<fast-button
-                  class="detailActionButton"
-                  id="reminderInitButton"
-                  @click="${() => this.setupReminder()}"
-                >
-                  Reminder
+                    <ion-icon name="flag-outline"></ion-icon>
+                  </fast-button>`
+                : null
+            }
+            ${
+              "showTrigger" in Notification.prototype
+                ? html`<fast-button
+                    class="detailActionButton"
+                    id="reminderInitButton"
+                    @click="${() => this.setupReminder()}"
+                  >
+                    Reminder
 
-                  <ion-icon name="notifications-circle-outline"></ion-icon>
-                </fast-button>`
-              : null}
+                    <ion-icon name="notifications-circle-outline"></ion-icon>
+                  </fast-button>`
+                : null
+            }
 
             <fast-button
               @click="${() => this.share()}"
@@ -697,28 +789,32 @@ export class AppAbout extends LitElement {
               Reader View
             </fast-button>-->
 
-            ${this.email?.unsubscribeEnabled
-              ? html`<fast-button
-                  id="unsubButton"
-                  @click="${() => this.unsubscribe(this.email.id)}"
-                >
-                  Unsubscribe
-
-                  <ion-icon name="close-outline"></ion-icon>
-                </fast-button>`
-              : null}
-            ${this.attachments && this.attachments.length > 0
-              ? html`
-                  <fast-button
+            ${
+              this.email?.unsubscribeEnabled
+                ? html`<fast-button
                     id="unsubButton"
-                    @click="${() => this.openAttach()}"
+                    @click="${() => this.unsubscribe(this.email.id)}"
                   >
-                    Attachments
+                    Unsubscribe
 
-                    <ion-icon name="folder-outline"></ion-icon>
-                  </fast-button>
-                `
-              : null}
+                    <ion-icon name="close-outline"></ion-icon>
+                  </fast-button>`
+                : null
+            }
+            ${
+              this.attachments && this.attachments.length > 0
+                ? html`
+                    <fast-button
+                      id="unsubButton"
+                      @click="${() => this.openAttach()}"
+                    >
+                      Attachments
+
+                      <ion-icon name="folder-outline"></ion-icon>
+                    </fast-button>
+                  `
+                : null
+            }
 
             <fast-button id="replyButton" @click="${() => this.reply()}">
               Reply
@@ -735,10 +831,15 @@ export class AppAbout extends LitElement {
           >
             <a target="_blank"></a>
           </iframe>-->
-          ${this.email ? html`<div id="actual-email" .innerHTML="${this.email?.body.content}">` : 
-            html`<div id="mail-loader">
-              <fast-progress-ring></fast-progress-ring>
-            </div>`
+          ${
+            this.email
+              ? html`<div
+                  id="actual-email"
+                  .innerHTML="${this.email?.body.content}"
+                ></div>`
+              : html`<div id="mail-loader">
+                  <fast-progress-ring></fast-progress-ring>
+                </div>`
           }
           </div>
         </div>

@@ -243,6 +243,10 @@ export class AppHeader extends LitElement {
         #settingsBlock {
           inset: 0;
         }
+
+        :host {
+          z-index: 9999;
+        }
       }
 
       @media (max-width: 340px) {
