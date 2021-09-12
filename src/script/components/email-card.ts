@@ -129,7 +129,7 @@ export class EmailCard extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         li {
-          background: #212121;
+          background: rgb(34, 34, 49);
           color: white;
         }
 
@@ -140,11 +140,15 @@ export class EmailCard extends LitElement {
         fast-skeleton {
           --skeleton-fill-default: #131212;
         }
+
+        .flagButton {
+          background: rgba(75, 75, 75, 0.47);
+        }
       }
 
       @media (min-width: 1000px) and (prefers-color-scheme: dark) {
         li {
-          background: rgb(34 34 34);
+          background: rgb(34, 34, 49);
 
           content-visibility: auto;
           contain-intrinsic-size: 156px;

@@ -14,7 +14,7 @@ export class MailFolders extends LitElement {
   static get styles() {
     return css`
       #folder-list {
-        max-height: 50vh;
+        max-height: 47vh;
         display: block;
         overflow-y: auto;
       }
@@ -49,6 +49,19 @@ export class MailFolders extends LitElement {
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      @media(prefers-color-scheme: dark) {
+        fast-menu-item {
+          background: rgba(75, 75, 75, 0.47);
+        }
+      }
+
+      @media(prefers-color-scheme: light) {
+        fast-menu-item {
+          background: rgb(254 254 254);
+          color: black;
+        }
       }
 
       @keyframes slidein {

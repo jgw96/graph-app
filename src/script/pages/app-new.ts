@@ -306,7 +306,7 @@ export class AppNew extends LitElement {
 
       #newEmailActions {
         position: fixed;
-        bottom: 0;
+        bottom: env(keyboard-inset-height, 0);
         backdrop-filter: blur(10px);
         left: 0;
         right: 0;

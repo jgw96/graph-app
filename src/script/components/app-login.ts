@@ -48,6 +48,12 @@ export class AppLogin extends LitElement {
         background-color: var(--app-color-primary);
       }
 
+      @media(prefers-color-scheme: light) {
+        #logoutButton, #loginButton {
+          background: var(--app-color-primary);
+        }
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0.2;

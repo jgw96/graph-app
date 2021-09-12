@@ -8,6 +8,9 @@
   --app-color-secondary: #ff0076;
   --font-family: system-ui, sans-serif;
   --theme: circles;
+
+  --gradient-color: #1A1B3E;
+  --theme-color: radial-gradient(circle, var(--gradient-color) 0%, rgba(0,1,27,1) 100%);
 }
 
 html,
@@ -84,7 +87,12 @@ fast-design-system-provider {
 @media (prefers-color-scheme: dark) {
   html {
     background-color: #181818;
+    background: var(--theme-color) !important;
     color: white;
+  }
+
+  body {
+    background: var(--theme-color) !important;
   }
 
   :root {

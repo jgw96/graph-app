@@ -1,14 +1,17 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import { LitElement, internalProperty, css, html, customElement } from 'lit-element';
 
 import './app-home';
 
 import { Router } from '@vaadin/router';
 
 import '../components/header';
+import '../components/app-settings';
 
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
+
+  @internalProperty() doSettings: boolean = false;
 
   static get styles() {
     return css`
@@ -98,16 +101,28 @@ export class AppIndex extends LitElement {
         ]
       }
     ]);
+
+    if ('virtualKeyboard' in navigator) {
+      // The VirtualKeyboard API is supported!
+      console.log('virtualKeyboard API supported');
+      (navigator as any).virtualKeyboard.overlaysContent = true;
+    }
   }
 
   authed() {
     (this.shadowRoot?.querySelector("#routerOutlet app-home") as any || null)?.getSavedAndUpdate(true);
   }
 
+  openSettings() {
+    this.doSettings = !this.doSettings;
+  }
+
   render() {
     return html`
       <div>
-        <app-header @user-authed="${() => this.authed()}"></app-header>
+        <app-header @open-settings="${() => this.openSettings()}" @user-authed="${() => this.authed()}"></app-header>
+
+        <app-settings ?openSettings="${this.doSettings}"></app-settings>
 
         <main>
           <div id="routerOutlet"></div>

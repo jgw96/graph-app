@@ -116,8 +116,8 @@ export class AppHome extends LitElement {
       }
 
       #advBlock .advInner {
-        background: rgba(29, 29, 29, 0.78);
-        backdrop-filter: blur(10px);
+        background: rgb(34, 34, 49);
+        color: white;
         padding: 1em;
         display: flex;
         flex-direction: column;
@@ -137,6 +137,7 @@ export class AppHome extends LitElement {
       @media (prefers-color-scheme: light) {
         #advBlock .advInner {
           background: white;
+          color: black;
         }
       }
 
@@ -241,7 +242,7 @@ export class AppHome extends LitElement {
         font-weight: normal;
         font-size: 12px;
         margin-top: 8px;
-        color: #6d6d6d;
+        color: white;
       }
 
       fast-menu-item {
@@ -261,6 +262,14 @@ export class AppHome extends LitElement {
         fast-menu-item {
           background: white;
           color: black;
+        }
+
+        #introSpan {
+          color: black;
+        }
+
+        #mainListHeader {
+          background: transparent !important;
         }
 
         fast-text-field::part(label) {
@@ -291,7 +300,7 @@ export class AppHome extends LitElement {
         background: white;
         border-radius: 6px;
         padding: 2em;
-        background: rgba(29, 29, 29, 0.78);
+        background: rgb(34, 34, 49);
         flex-direction: column;
         display: flex;
         align-items: center;
@@ -339,6 +348,9 @@ export class AppHome extends LitElement {
         animation-name: slidein;
         animation-duration: 300ms;
         animation-fill-mode: forwards;
+
+        position: relative;
+        bottom: env(keyboard-inset-height, 0);
       }
 
       #filterActions button {
@@ -364,6 +376,7 @@ export class AppHome extends LitElement {
 
       #filterActions h3 {
         text-transform: uppercase;
+        margin-top: 0;
       }
 
       #mainListHeader {
@@ -433,6 +446,14 @@ export class AppHome extends LitElement {
 
         #homeToolbar {
           background: rgb(29 29 29 / 78%);
+        }
+
+        #mainListHeader {
+          background: rgb(34, 34, 49);
+        }
+
+        fast-menu-item {
+          background: rgb(40 41 57);
         }
       }
 
@@ -1012,8 +1033,6 @@ export class AppHome extends LitElement {
               </div>
             `
           : null}
-
-        <pwa-install>Install Mail GO</pwa-install>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>
