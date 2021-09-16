@@ -1,0 +1,106 @@
+{
+  "name": "Mail GO",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "Mail GO",
+  "theme_color": "#212121",
+  "description": "Mail GO is your mail made simple ad fast! Quickly triage your latest email with simple features and the ability to work offline and on slow networks.",
+  "orientation": "any",
+  "background_color": "#686bd2",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "iarc_rating": "abcd",
+  "icons": [
+    {
+      "src": "assets/icons/maskable_icon.png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon_256.png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "assets/icons/icon_48.png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "assets/icons/icon_24.png",
+      "sizes": "24x24"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/offline_screen.png"
+    },
+    {
+      "src": "assets/screenshots/offline_screen_mobile.png"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "categories": [
+    "productivity"
+  ],
+  "display_override": [ 
+    "window-controls-overlay" 
+  ],
+  "shortcuts": [
+    {
+      "name": "New Email",
+      "short_name": "New Email",
+      "description": "Send a new email",
+      "url": "/newEmail",
+      "icons": [{ "src": "assets/icons/mail-outline.png", "sizes": "48x48" }]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/newEmail",
+      "accept": {
+        "image/*": [
+          ".png",
+          ".jpg"
+        ],
+        "text/*": [
+          ".txt"
+        ]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "mailto",
+      "url": "/newEmail?url=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/attach/file/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/jpeg",
+            ".png",
+            ".jpg",
+            ".txt"
+          ]
+        }
+      ]
+    }
+  },
+  "url_handlers": [
+    {
+      "origin": "https://www.memosapp.app"
+    }
+  ],
+  "capture_links": "existing_client_event"
+}
