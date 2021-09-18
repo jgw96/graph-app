@@ -377,6 +377,10 @@ export class AppHome extends LitElement {
         background: #222222;
         border-radius: 6px;
         padding: 10px;
+
+        position: sticky;
+        top: 2em;
+        z-index: 2;
       }
 
       #mainListRefresh ion-icon {

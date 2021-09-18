@@ -14,7 +14,7 @@ export class InstallButton extends LitElement {
   @internalProperty() installed: boolean = false;
 
   // to-do: special handling for Windows
-  @internalProperty() isWindows: boolean = true;
+  @internalProperty() isWindows: boolean = false;
 
   @internalProperty() openInstallModal: boolean = false;
 
@@ -28,6 +28,17 @@ export class InstallButton extends LitElement {
         position: absolute;
         z-index: 9999;
         left: -9em;
+      }
+
+      #install-info a {
+        text-decoration: none;
+        color: white;
+
+        font-size: 14px;
+        padding-left: 1.1em;
+        padding-bottom: 6px;
+
+        display: block;
       }
 
       #install-button {
@@ -61,6 +72,17 @@ export class InstallButton extends LitElement {
       console.log("event", event);
       this.handleInstallPromptEvent(event);
     });
+
+    this.checkPlatform();
+  }
+
+  checkPlatform() {
+    console.log('checking platform');
+    if (navigator.userAgent.includes("Windows")) {
+      this.isWindows = true;
+    } else {
+      this.isWindows = false;
+    }
   }
 
   handleInstallPromptEvent(event: Event) {
@@ -122,8 +144,7 @@ export class InstallButton extends LitElement {
       ${this.openInstallModal
         ? html`<div id="install-info">
             <fast-menu>
-              <fast-menu-item>Install from the Microsoft Store</fast-menu-item>
-              <fast-divider></fast-divider>
+              <a href="https://www.microsoft.com/store/productId/9N33F2BF60H5" target="_blank" rel="noreferrer">Install from the Microsoft Store</a>
               <fast-menu-item @click="${() => this.browserInstall()}">Install from your Browser</fast-menu-item>
               <fast-divider></fast-divider>
               <fast-menu-item @click="${() => this.cancel()}">Cancel</fast-menu-item>

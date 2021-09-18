@@ -155,7 +155,7 @@ export class AppHeader extends LitElement {
         }
       }
 
-      @media (max-width: 800px) {
+      @media (max-width: 960px) {
         #settingsBlock {
           inset: 0;
         }

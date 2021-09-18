@@ -64,6 +64,10 @@ export class AppNew extends LitElement {
         justify-content: space-between;
       }
 
+      app-dictate {
+        margin-right: 10px;
+      }
+
       fast-button ion-icon {
         margin-left: 4px;
       }
@@ -164,8 +168,12 @@ export class AppNew extends LitElement {
       }
 
       @media (max-width: 800px) {
-        #aiCheck {
+        .aiCheck {
           display: none;
+        }
+
+        app-dictate {
+          margin-right: 4px;
         }
 
         #moreActionsMobile {
@@ -347,7 +355,7 @@ export class AppNew extends LitElement {
       }
 
       #attachButton,
-      #aiCheck {
+      .aiCheck {
         margin-right: 12px;
       }
 
@@ -1492,30 +1500,10 @@ export class AppNew extends LitElement {
           </fast-button>
 
           <div id="newEmailSubActions">
-            <fast-button id="aiCheck" @click="${() => this.saveToDraft()}">
+            <fast-button class="aiCheck" @click="${() => this.saveToDraft()}">
               Save as Draft
 
               <ion-icon name="save-outline"></ion-icon>
-            </fast-button>
-
-            <app-dictate
-              @got-text="${(ev: CustomEvent) => this.handleDictate(ev)}"
-              @done-text="${() => this.doneDictate()}"
-              id="aiCheck"
-              @start-text="${() => this.startDictate()}"
-            ></app-dictate>
-
-            <fast-button id="aiCheck" @click="${() => this.doAiCheck()}">
-              AI Toxicity Check
-
-              <ion-icon name="happy-outline"></ion-icon>
-            </fast-button>
-
-            <fast-button
-              id="drawing-button"
-              @click="${() => (this.drawing = !this.drawing)}"
-              >Draw
-              <ion-icon name="brush-outline"></ion-icon>
             </fast-button>
 
             <fast-button
@@ -1525,6 +1513,26 @@ export class AppNew extends LitElement {
               More Actions
 
               <ion-icon name="caret-up-outline"></ion-icon>
+            </fast-button>
+
+            <app-dictate
+              @got-text="${(ev: CustomEvent) => this.handleDictate(ev)}"
+              @done-text="${() => this.doneDictate()}"
+              @start-text="${() => this.startDictate()}"
+            ></app-dictate>
+
+            <fast-button class="aiCheck" @click="${() => this.doAiCheck()}">
+              AI Toxicity Check
+
+              <ion-icon name="happy-outline"></ion-icon>
+            </fast-button>
+
+            <fast-button
+              id="drawing-button"
+              class="aiCheck"
+              @click="${() => (this.drawing = !this.drawing)}"
+              >Draw
+              <ion-icon name="brush-outline"></ion-icon>
             </fast-button>
 
             ${this.attachments.length === 0
