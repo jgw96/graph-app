@@ -95,7 +95,7 @@ export class EmailCard extends LitElement {
       }
 
       #actionsButtons {
-        max-width: 7em;
+        max-width: 8em;
         display: flex;
       }
 
@@ -222,6 +222,7 @@ export class EmailCard extends LitElement {
                     class="flagButton"
                     @click="${() => this.bookmark(this.email)}"
                   >
+                    Flag
                     <ion-icon name="flag-outline"></ion-icon>
                   </fast-button>`
                 : null}
