@@ -1,14 +1,14 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  internalProperty,
-} from "lit-element";
+  html
+} from 'lit';
+
+import { customElement, state } from 'lit/decorators';
 
 @customElement("app-loading")
 export class AppLoading extends LitElement {
-  @internalProperty() fallbackLoading: boolean = false;
+  @state() fallbackLoading: boolean = false;
 
   static get styles() {
     return css`

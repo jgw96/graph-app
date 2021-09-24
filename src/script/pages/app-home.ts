@@ -1,11 +1,9 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from "lit-element";
+  html
+} from 'lit';
+import { customElement, state } from 'lit/decorators';
 
 import "@dile/dile-toast/dile-toast";
 import { getMail } from "../services/mail";
@@ -21,17 +19,14 @@ import { isOffline } from "../utils/network";
 
 @customElement("app-home")
 export class AppHome extends LitElement {
-  @property({ type: Array }) mail: any[] = [];
-  @property({ type: Array }) mailCopy: any[] | null = [];
-
-  @property({ type: String }) activeCat: string = "all";
-  @property({ type: Boolean }) loading: boolean = false;
-
-  @property({ type: Boolean }) initLoad: boolean = false;
-
-  @internalProperty() listMode: string = "grid";
-  @internalProperty() enable_next: boolean = true;
-  @internalProperty() offline: boolean = false;
+  @state() mail: any[] = [];
+  @state() mailCopy: any[] | null = [];
+  @state() activeCat: string = "all";
+  @state() loading: boolean = false;
+  @state() initLoad: boolean = false;
+  @state() listMode: string = "grid";
+  @state() enable_next: boolean = true;
+  @state() offline: boolean = false;
 
   worker: any | null = null;
 
@@ -381,6 +376,8 @@ export class AppHome extends LitElement {
         position: sticky;
         top: 2em;
         z-index: 2;
+
+        max-height: 4em;
       }
 
       #mainListRefresh ion-icon {
@@ -573,6 +570,10 @@ export class AppHome extends LitElement {
 
         #advBlock {
           display: none;
+        }
+
+        #menuActions {
+          margin-bottom: 1em;
         }
       }
     `;

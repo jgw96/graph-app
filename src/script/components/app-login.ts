@@ -1,4 +1,6 @@
-import { LitElement, css, html, customElement, property, internalProperty } from "lit-element";
+import { LitElement, css, html } from 'lit';
+
+import { customElement, state, property } from 'lit/decorators';
 
 import { login, logout, getAccount, getPhoto } from "../services/auth";
 
@@ -6,7 +8,7 @@ import { login, logout, getAccount, getPhoto } from "../services/auth";
 export class AppLogin extends LitElement {
   @property() userAccount: any = null;
 
-  @internalProperty() imageBlob: string | null = null;
+  @state() imageBlob: string | null = null;
 
   static get styles() {
     return css`

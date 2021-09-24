@@ -1,4 +1,5 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators';
 
 import { classMap } from 'lit-html/directives/class-map';
 
@@ -13,11 +14,11 @@ import '../components/app-contacts';
 @customElement('dual-new')
 export class dualNew extends LitElement {
 
-  @property({ type: String }) subject: string = '';
-  @property({ type: String }) body: string = '';
-  @property({ type: String }) address: string = '';
+  @state() subject: string = '';
+  @state() body: string = '';
+  @state() address: string = '';
 
-  @property({}) attachment: any = null;
+  @state() attachment: any = null;
 
   static get styles() {
     return css`

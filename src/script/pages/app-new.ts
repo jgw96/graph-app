@@ -2,10 +2,8 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  property,
-  internalProperty,
-} from "lit-element";
+} from 'lit';
+import { customElement, state } from 'lit/decorators';
 
 import { classMap } from "lit-html/directives/class-map.js";
 
@@ -29,25 +27,25 @@ import { initIdle } from "../utils/idle";
 
 @customElement("app-new")
 export class AppNew extends LitElement {
-  @property({ type: String }) subject: string = "";
-  @property({ type: String }) body: string = "";
-  @property({ type: String }) address: string = "";
+  @state() subject: string = "";
+  @state() body: string = "";
+  @state() address: string = "";
 
-  @property({ type: Array }) attachments: any = [];
-  @property({ type: Boolean }) loading: boolean = false;
+  @state() attachments: any = [];
+  @state() loading: boolean = false;
 
-  @property() preview: any = null;
-  @property() previewContent: any = null;
-  @property({ type: Boolean }) textPreview: boolean = false;
-  @property() textPreviewContent: string | null = null;
+  @state() preview: any = null;
+  @state() previewContent: any = null;
+  @state() textPreview: boolean = false;
+  @state() textPreviewContent: string | null = null;
 
-  @property() aiData: any | null = null;
+  @state() aiData: any | null = null;
 
-  @property({ type: Boolean }) replying: boolean = false;
-  @property() emailReplyTo: any | null = null;
+  @state() replying: boolean = false;
+  @state() emailReplyTo: any | null = null;
 
-  @internalProperty() pickFiles: boolean = false;
-  @internalProperty() drawing: boolean = false;
+  @state() pickFiles: boolean = false;
+  @state() drawing: boolean = false;
 
   worker: any | null = null;
   textWorker: any | null = null;

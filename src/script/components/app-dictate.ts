@@ -1,19 +1,19 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  internalProperty,
-} from "lit-element";
+  html
+} from 'lit';
+
+import { customElement, state } from 'lit/decorators';
 
 declare var webkitSpeechRecognition: any;
 
 @customElement("app-dictate")
 export class AppDictate extends LitElement {
-  @internalProperty() recog: any | null = null;
-  @internalProperty() lines: string[] = [];
-  @internalProperty() started: boolean = false;
-  @internalProperty() wakeLock: any | null = null;
+  @state() recog: any | null = null;
+  @state() lines: string[] = [];
+  @state() started: boolean = false;
+  @state() wakeLock: any | null = null;
 
   static get styles() {
     return css`
@@ -150,7 +150,7 @@ export class AppDictate extends LitElement {
 
         return wakeLock;
       } catch (err) {
-        console.error(`${err.name}, ${err.message}`);
+        console.error(`${(err as any).name}, ${(err as any).message}`);
       }
     }
   };

@@ -1,10 +1,12 @@
-import { LitElement, css, html, customElement, internalProperty } from 'lit-element';
+import { LitElement, css, html } from 'lit';
 import { getContacts } from '../services/contacts';
+
+import { customElement, state } from 'lit/decorators';
 
 @customElement('app-contacts')
 export class AppContacts extends LitElement {
 
-  @internalProperty() graphContacts: any[] | null = null;
+  @state() graphContacts: any[] | null = null;
 
   static get styles() {
     return css`

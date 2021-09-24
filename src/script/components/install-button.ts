@@ -1,22 +1,21 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  internalProperty,
-} from "lit-element";
+  html
+} from 'lit';
+import { customElement, state } from 'lit/decorators';
 
 @customElement("install-button")
 export class InstallButton extends LitElement {
-  @internalProperty() caughtPrompt: boolean = false;
-  @internalProperty() caughtEvent: Event | undefined;
-  @internalProperty() supportingBrowser: boolean = false;
-  @internalProperty() installed: boolean = false;
+  @state() caughtPrompt: boolean = false;
+  @state() caughtEvent: Event | undefined;
+  @state() supportingBrowser: boolean = false;
+  @state() installed: boolean = false;
 
   // to-do: special handling for Windows
-  @internalProperty() isWindows: boolean = false;
+  @state() isWindows: boolean = false;
 
-  @internalProperty() openInstallModal: boolean = false;
+  @state() openInstallModal: boolean = false;
 
   static get styles() {
     return css`

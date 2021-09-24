@@ -1,15 +1,15 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  internalProperty,
-} from "lit-element";
+  html
+} from 'lit';
+import { customElement, state } from 'lit/decorators';
+
 import { getMailFolder, getMailFolders } from "../services/mail";
 
 @customElement("mail-folders")
 export class MailFolders extends LitElement {
-  @internalProperty() folders: any[] | undefined;
+  @state() folders: any[] | undefined;
 
   static get styles() {
     return css`

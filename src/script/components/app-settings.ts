@@ -1,11 +1,10 @@
 import {
   LitElement,
-  property,
-  internalProperty,
   css,
   html,
-  customElement,
-} from "lit-element";
+} from 'lit';
+
+import { customElement, state, property } from 'lit/decorators';
 
 import { clear, set, get } from "idb-keyval";
 
@@ -13,10 +12,10 @@ import { clear, set, get } from "idb-keyval";
 export class AppSettings extends LitElement {
   @property({ type: Boolean }) openSettings: boolean = false;
 
-  @internalProperty() checked: boolean | null = false;
-  @internalProperty() themeChecked: boolean | null = false;
-  @internalProperty() chosenTheme: any | undefined;
-  @internalProperty() themeColor: string = "#1A1B3E";
+  @state() checked: boolean | null = false;
+  @state() themeChecked: boolean | null = false;
+  @state() chosenTheme: any | undefined;
+  @state() themeColor: string = "#1A1B3E";
 
   static get styles() {
     return css`

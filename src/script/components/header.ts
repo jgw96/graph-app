@@ -2,10 +2,8 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  property,
-  internalProperty,
-} from "lit-element";
+} from 'lit';
+import { customElement, state, property } from 'lit/decorators';
 
 import { classMap } from 'lit-html/directives/class-map.js';
 
@@ -17,8 +15,8 @@ export class AppHeader extends LitElement {
   @property({ type: String }) title: string = "PWA Starter";
   @property({ type: Object }) user: any = null;
 
-  @internalProperty() authed: boolean = false;
-  @internalProperty() openSettings: boolean = false;
+  @state() authed: boolean = false;
+  @state() openSettings: boolean = false;
 
   static get styles() {
     return css`

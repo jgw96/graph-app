@@ -1,11 +1,10 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from "lit-element";
+  html
+} from 'lit';
+import { customElement, state } from 'lit/decorators';
+
 import {
   getAnEmail,
   flagEmail,
@@ -25,13 +24,12 @@ declare var TimestampTrigger: any;
 
 @customElement("app-about")
 export class AppAbout extends LitElement {
-  @property() email: any = null;
-  @property({ type: String }) reminderTime: string = "";
-  @property({ type: Boolean }) showReminder: boolean = false;
-  @property({ type: Boolean }) emailLoaded: boolean = false;
-  @property({ type: Array }) attachments: any[] | null = null;
-
-  @internalProperty() openAttachments: boolean = false;
+  @state() email: any = null;
+  @state() reminderTime: string = "";
+  @state() showReminder: boolean = false;
+  @state() emailLoaded: boolean = false;
+  @state() attachments: any[] | null = null;
+  @state() openAttachments: boolean = false;
 
   static get styles() {
     return css`
@@ -423,7 +421,8 @@ export class AppAbout extends LitElement {
 
         #replyButton,
         #share-button,
-        .detailActionButton {
+        .detailActionButton,
+        #unsubButton {
           margin-top: 10px;
           margin-right: 0;
           margin-left: 0;

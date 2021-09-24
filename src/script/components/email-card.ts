@@ -3,17 +3,16 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  property,
-  internalProperty,
-} from "lit-element";
+} from 'lit';
+import { customElement, state, property } from 'lit/decorators';
+
 import { flagEmail } from "../services/mail";
 
 @customElement("email-card")
 export class EmailCard extends LitElement {
   @property({ type: Object }) email: any = null;
 
-  @internalProperty() authed: boolean = false;
+  @state() authed: boolean = false;
 
   static get styles() {
     return css`

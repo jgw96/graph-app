@@ -3,17 +3,15 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-  property,
-} from "lit-element";
+} from 'lit';
 
+import { customElement, property, state } from 'lit/decorators';
 import { downloadAttach } from "../services/mail";
 
 @customElement("app-attachments")
 export class AppAttachments extends LitElement {
-  @internalProperty() attachments: any[] | null = null;
-  @internalProperty() loading: boolean = false;
+  @state() attachments: any[] | null = null;
+  @state() loading: boolean = false;
 
   @property() mail: any | null;
 

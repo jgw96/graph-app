@@ -1,10 +1,11 @@
-import { LitElement, css, html, customElement, internalProperty } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators';
 
 @customElement('app-camera')
 export class AppCamera extends LitElement {
 
-    @internalProperty() mediaStream: MediaStream | null = null;
-    @internalProperty() imageCapture: any | null = null;
+    @state() mediaStream: MediaStream | null = null;
+    @state() imageCapture: any | null = null;
 
     static get styles() {
         return css`

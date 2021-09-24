@@ -1,4 +1,6 @@
-import { LitElement, internalProperty, css, html, customElement } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+
+import { customElement, state } from 'lit/decorators';
 
 import './app-home';
 
@@ -11,7 +13,7 @@ import '../components/app-settings';
 @customElement('app-index')
 export class AppIndex extends LitElement {
 
-  @internalProperty() doSettings: boolean = false;
+  @state() doSettings: boolean = false;
 
   static get styles() {
     return css`
