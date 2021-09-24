@@ -1,9 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
 import "@dile/dile-toast/dile-toast";
 import { getMail } from "../services/mail";
@@ -12,7 +8,7 @@ import { Router } from "@vaadin/router";
 import "../components/email-card";
 import "../components/app-loading";
 import "../components/mail-folders";
-import '../components/home-info';
+import "../components/home-info";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -266,7 +262,6 @@ export class AppHome extends LitElement {
       }
 
       @media (prefers-color-scheme: dark) {
-
         #homeToolbar {
           background: rgb(29 29 29 / 78%);
         }
@@ -285,7 +280,6 @@ export class AppHome extends LitElement {
       }
 
       @media (min-width: 1000px) {
-
         #mainListBlock {
           display: grid;
         }
@@ -356,7 +350,6 @@ export class AppHome extends LitElement {
       }
 
       @media (prefers-color-scheme: light) {
-
         ul::-webkit-scrollbar {
           background: #ffffff;
         }
@@ -378,7 +371,7 @@ export class AppHome extends LitElement {
           grid-template-columns: minmax(47vw, 22%) 1fr;
           grid-gap: 47px;
         }
-        
+
         #menuActions {
           margin-bottom: 1em;
         }
@@ -419,7 +412,7 @@ export class AppHome extends LitElement {
 
     (window as any).requestIdleCallback(() => {
       this.offline = isOffline();
-    })
+    });
   }
 
   async setupInfinite() {
@@ -561,8 +554,7 @@ export class AppHome extends LitElement {
       let toastElement: any = this.shadowRoot?.getElementById("myToast");
       toastElement?.open("This action cannot be completed offline...", "error");
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -794,9 +786,7 @@ export class AppHome extends LitElement {
               </div>
             `
           : this.initLoad && this.mail && this.mail.length <= 0
-          ? html`
-            <home-info></home-info>
-          `
+          ? html` <home-info></home-info> `
           : null}
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

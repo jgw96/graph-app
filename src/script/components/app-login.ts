@@ -1,6 +1,6 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, state, property } from 'lit/decorators';
+import { customElement, state, property } from "lit/decorators";
 
 import { login, logout, getAccount, getPhoto } from "../services/auth";
 
@@ -17,7 +17,8 @@ export class AppLogin extends LitElement {
         height: 36px;
       }
 
-      #logoutButton, #loginButton {
+      #logoutButton,
+      #loginButton {
         background-color: transparent;
         width: initial;
 
@@ -40,7 +41,8 @@ export class AppLogin extends LitElement {
         animation-duration: 280ms;
       }
 
-      #logoutButton img, #logoutButton fast-skeleton {
+      #logoutButton img,
+      #logoutButton fast-skeleton {
         border-radius: 50%;
         width: 22px;
         margin-left: 8px;
@@ -50,8 +52,9 @@ export class AppLogin extends LitElement {
         background-color: var(--app-color-primary);
       }
 
-      @media(prefers-color-scheme: light) {
-        #logoutButton, #loginButton {
+      @media (prefers-color-scheme: light) {
+        #logoutButton,
+        #loginButton {
           background: var(--app-color-primary);
         }
       }
@@ -60,7 +63,7 @@ export class AppLogin extends LitElement {
         from {
           opacity: 0.2;
         }
-        
+
         to {
           opacity: 1;
         }
@@ -130,12 +133,18 @@ export class AppLogin extends LitElement {
       ${this.userAccount
         ? html`<div>
             <fast-button @click="${() => this.logout()}" id="logoutButton"
-            >Logout ${this.imageBlob ? html`<img .src="${this.imageBlob}" alt="profile photo">` : html`<fast-skeleton
-                shape="circle"
-            ></fast-skeleton>`}</fast-button>
-            </div>
-            `
-        : html` <fast-button part="loginButton" @click="${() => this.login()}" id="loginButton"
+              >Logout
+              ${this.imageBlob
+                ? html`<img .src="${this.imageBlob}" alt="profile photo" />`
+                : html`<fast-skeleton
+                    shape="circle"
+                  ></fast-skeleton>`}</fast-button
+            >
+          </div> `
+        : html` <fast-button
+            part="loginButton"
+            @click="${() => this.login()}"
+            id="loginButton"
             >Login with Microsoft</fast-button
           >`}
     `;

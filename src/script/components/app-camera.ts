@@ -1,14 +1,13 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
-@customElement('app-camera')
+@customElement("app-camera")
 export class AppCamera extends LitElement {
+  @state() mediaStream: MediaStream | null = null;
+  @state() imageCapture: any | null = null;
 
-    @state() mediaStream: MediaStream | null = null;
-    @state() imageCapture: any | null = null;
-
-    static get styles() {
-        return css`
+  static get styles() {
+    return css`
       #camera {
         background: #0b0b0b;
         position: fixed;
@@ -25,9 +24,9 @@ export class AppCamera extends LitElement {
         border-radius: 4px;
         min-height: 300px;
       }
-      #camera #cameraActions, #camera #cameraActions fast-button {
+      #camera #cameraActions,
+      #camera #cameraActions fast-button {
         width: 100%;
-
       }
       #closeBlock {
         width: 100%;
@@ -38,89 +37,92 @@ export class AppCamera extends LitElement {
         font-size: 2em;
         color: white;
       }
-      @media(screen-spanning: single-fold-vertical) {
+      @media (screen-spanning: single-fold-vertical) {
         #camera {
           right: calc(env(fold-left) + 33px);
         }
       }
-      @media(min-width: 1000px) {
+      @media (min-width: 1000px) {
         #camera #cameraActions {
           display: flex;
           justify-content: center;
         }
-        
+
         #camera #cameraActions fast-button {
-         width: 28%;
-         height: 2.4em;
+          width: 28%;
+          height: 2.4em;
         }
       }
-    `
+    `;
+  }
+
+  constructor() {
+    super();
+  }
+
+  async firstUpdated() {
+    this.mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "environment",
+      },
+      audio: false,
+    });
+    const videoEl = this.shadowRoot?.querySelector("video");
+
+    if (videoEl) {
+      videoEl.srcObject = this.mediaStream;
+
+      this.setupCamera();
     }
+  }
 
-    constructor() {
-        super();
-    }
+  setupCamera() {
+    const track = this.mediaStream?.getTracks()[0];
+    this.imageCapture = new (window as any).ImageCapture(track);
+  }
 
-    async firstUpdated() {
-        this.mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: "environment"
-            }, audio: false
-        });
-        const videoEl = this.shadowRoot?.querySelector("video");
+  async takePicture() {
+    const blob = await this.imageCapture.takePhoto();
+    console.log(blob);
 
-        if (videoEl) {
-            videoEl.srcObject = this.mediaStream;
+    const tracks = this.mediaStream?.getTracks();
 
-            this.setupCamera();
-        }
-    }
+    tracks?.forEach((track) => {
+      track.stop();
+    });
 
-    setupCamera() {
-        const track = this.mediaStream?.getTracks()[0];
-        this.imageCapture = new (window as any).ImageCapture(track);
-    }
+    const modalElement: any = document.querySelector("ion-modal");
+    modalElement.dismiss({
+      data: blob,
+    });
+  }
 
-    async takePicture() {
-        const blob = await this.imageCapture.takePhoto();
-        console.log(blob);
+  close() {
+    const modalElement: any = document.querySelector("ion-modal");
+    modalElement.dismiss();
+  }
 
-        const tracks = this.mediaStream?.getTracks();
+  render() {
+    return html`
+      <fast-design-system-provider>
+        <div id="camera">
+          <div id="closeBlock">
+            <fast-button
+              @click="${() => this.close()}"
+              appearance="lightweight"
+            >
+              <ion-icon name="close-outline"></ion-icon>
+            </fast-button>
+          </div>
+          <video autoplay></video>
 
-        tracks?.forEach((track) => {
-            track.stop();
-        })
-
-        const modalElement: any = document.querySelector('ion-modal');
-        modalElement.dismiss({
-            data: blob
-        });
-    }
-
-    close() {
-        const modalElement: any = document.querySelector('ion-modal');
-        modalElement.dismiss();
-    }
-
-    render() {
-        return html`
-        <fast-design-system-provider>
-            <div id="camera">
-                <div id="closeBlock">
-                    <fast-button @click="${() => this.close()}" appearance="lightweight">
-                        <ion-icon name="close-outline"></ion-icon>
-                    </fast-button>
-                </div>
-                <video autoplay></video>
-        
-                <div id="cameraActions">
-                    <fast-button @click="${() => this.takePicture()}">
-                        Take Picture
-                    </fast-button>
-                </div>
-            </div>
-        </fast-design-system-provider>
-    `
-    }
-
+          <div id="cameraActions">
+            <fast-button @click="${() => this.takePicture()}">
+              Take Picture
+            </fast-button>
+          </div>
+        </div>
+      </fast-design-system-provider>
+    `;
+  }
 }

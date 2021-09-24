@@ -1,9 +1,5 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
 import { classMap } from "lit-html/directives/class-map.js";
 
@@ -83,7 +79,8 @@ export class AppNew extends LitElement {
         margin-left: 8px;
       }
 
-      #text-editor-controls fast-select, #text-editor-controls fast-number-field {
+      #text-editor-controls fast-select,
+      #text-editor-controls fast-number-field {
         min-width: 6em;
         width: 6em;
       }
@@ -524,7 +521,7 @@ export class AppNew extends LitElement {
         margin-right: 12px;
       }
 
-      @media(max-width: 800px) {
+      @media (max-width: 800px) {
         inking-canvas::part(canvas) {
           height: 66vh !important;
           width: 94vw !important;
@@ -683,9 +680,9 @@ export class AppNew extends LitElement {
         await this.worker?.load();
       },
       {
-        timeout: 1000
+        timeout: 1000,
       }
-    )
+    );
   }
 
   async handleIdle() {
@@ -713,12 +710,15 @@ export class AppNew extends LitElement {
 
     for (const request of await cache.keys()) {
       // If the request URL matches, add the response to the result
-      if (request.url.endsWith('.png') && request.url.includes(name) || request.url.endsWith(".jpg")) {
+      if (
+        (request.url.endsWith(".png") && request.url.includes(name)) ||
+        request.url.endsWith(".jpg")
+      ) {
         result.push(await cache.match(name));
       }
     }
 
-    console.log('share taget result', result);
+    console.log("share taget result", result);
     if (result[0]) {
       let imageBlob = await result[0].blob();
 
@@ -830,12 +830,17 @@ export class AppNew extends LitElement {
     const htmlBody = await this.textWorker.runMarkdown(this.body);
     console.log(htmlBody);
 
-    const fontFamily = (this.shadowRoot?.querySelector("#font-select") as HTMLSelectElement)?.value;
-    const fontSize = (this.shadowRoot?.querySelector("#font-size") as any).control.value;
+    const fontFamily = (
+      this.shadowRoot?.querySelector("#font-select") as HTMLSelectElement
+    )?.value;
+    const fontSize = (this.shadowRoot?.querySelector("#font-size") as any)
+      .control.value;
 
-    console.log('font-styles', fontFamily, fontSize);
+    console.log("font-styles", fontFamily, fontSize);
 
-    const email_style = `<style> * { font-family: ${fontFamily || "sans-serif"}; font-size: ${fontSize || 12}; } </style>`;
+    const email_style = `<style> * { font-family: ${
+      fontFamily || "sans-serif"
+    }; font-size: ${fontSize || 12}; } </style>`;
     console.log(email_style);
 
     try {
@@ -847,20 +852,26 @@ export class AppNew extends LitElement {
       ) {
         // im drawing an email
         if (this.drawing === true) {
-          const canvasComp: any = this.shadowRoot?.querySelector(
-            "inking-canvas"
-          );
+          const canvasComp: any =
+            this.shadowRoot?.querySelector("inking-canvas");
           const canvas: HTMLCanvasElement = canvasComp.getCanvas();
 
           canvas.toBlob(async (blob) => {
             if (blob) {
-              await sendMail(this.subject, htmlBody, recip, [new File([blob], "email", {
-                type: "image/png"
-              })]);
+              await sendMail(this.subject, htmlBody, recip, [
+                new File([blob], "email", {
+                  type: "image/png",
+                }),
+              ]);
             }
           });
         } else {
-          await sendMail(this.subject, email_style + htmlBody, recip, this.attachments);
+          await sendMail(
+            this.subject,
+            email_style + htmlBody,
+            recip,
+            this.attachments
+          );
         }
 
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
@@ -880,7 +891,7 @@ export class AppNew extends LitElement {
 
         this.loading = false;
       }
-      // 
+      //
     } catch (err) {
       console.error(err);
 
@@ -1167,9 +1178,9 @@ export class AppNew extends LitElement {
     this.body = completeText;
     console.log(this.body);
 
-    (this.shadowRoot?.querySelector(
-      "#contentTextArea"
-    ) as HTMLInputElement).value = this.body;
+    (
+      this.shadowRoot?.querySelector("#contentTextArea") as HTMLInputElement
+    ).value = this.body;
   }
 
   doneDictate() {
@@ -1283,7 +1294,8 @@ export class AppNew extends LitElement {
 
   handleFontSelect(event: any) {
     console.log(event);
-    const textarea: HTMLTextAreaElement | null | undefined = this.shadowRoot?.querySelector("fast-text-area");
+    const textarea: HTMLTextAreaElement | null | undefined =
+      this.shadowRoot?.querySelector("fast-text-area");
 
     if (textarea) {
       textarea.style.fontFamily = event.detail.value;
@@ -1292,10 +1304,14 @@ export class AppNew extends LitElement {
 
   handleNumberSelect(event: any) {
     console.log(event);
-    const textarea: HTMLTextAreaElement | null | undefined = (this.shadowRoot?.querySelector("fast-text-area") as any).control;
+    const textarea: HTMLTextAreaElement | null | undefined = (
+      this.shadowRoot?.querySelector("fast-text-area") as any
+    ).control;
 
     // hack for this component
-    const numberField = (this.shadowRoot?.querySelector("fast-number-field") as any).control;
+    const numberField = (
+      this.shadowRoot?.querySelector("fast-number-field") as any
+    ).control;
     console.log((numberField as any)?.value);
 
     if (textarea && numberField) {
@@ -1405,45 +1421,56 @@ export class AppNew extends LitElement {
             </div>`
           : null}
         ${this.drawing === false
-          ? html`
+          ? html` <div id="text-editor-controls">
+                <label for="font-select">
+                  Font
+                  <fast-select
+                    @change="${(event: InputEvent) =>
+                      this.handleFontSelect(event)}"
+                    id="font-select"
+                    name="font-select"
+                  >
+                    <fast-option value="Arial">Arial</fast-option>
+                    <fast-option value="cursive">Cursive</fast-option>
+                    <fast-option value="Georgia">Georgia</fast-option>
+                    <fast-option value="Verdana">Verdana</fast-option>
+                    <fast-option value="Courier New">Courier</fast-option>
+                  </fast-select>
+                </label>
 
-          <div id="text-editor-controls">
-            <label for="font-select">
-              Font
-              <fast-select @change="${(event: InputEvent) => this.handleFontSelect(event)}" id="font-select" name="font-select">
-                <fast-option value="Arial">Arial</fast-option>
-                <fast-option value="cursive">Cursive</fast-option>
-                <fast-option value="Georgia">Georgia</fast-option>
-                <fast-option value="Verdana">Verdana</fast-option>
-                <fast-option value="Courier New">Courier</fast-option>
-              </fast-select>
-            </label>
+                <label for="font-size">
+                  Font size
+                  <fast-number-field
+                    @change="${(event: InputEvent) =>
+                      this.handleNumberSelect(event)}"
+                    id="font-size"
+                    name="font-size"
+                    value="12"
+                    min="11"
+                    max="100"
+                  >
+                  </fast-number-field>
+                </label>
+              </div>
 
-            <label for="font-size">
-              Font size
-              <fast-number-field @change="${(event: InputEvent) => this.handleNumberSelect(event)}" id="font-size" name="font-size" value="12" min="11" max="100">
-              </fast-number-field>
-            </label>
-          </div>
+              <section id="textAreaSection">
+                <fast-text-area
+                  id="contentTextArea"
+                  @input="${(event: any) => this.updatePreview(event)}"
+                  @change="${(event: any) => this.updateBody(event)}"
+                  placeholder="Content of email..."
+                >
+                </fast-text-area>
 
-          <section id="textAreaSection">
-              <fast-text-area
-                id="contentTextArea"
-                @input="${(event: any) => this.updatePreview(event)}"
-                @change="${(event: any) => this.updateBody(event)}"
-                placeholder="Content of email..."
-              >
-              </fast-text-area>
-
-              ${this.textPreview
-                ? html`<div
-                    id="textPreview"
-                    .innerHTML="${this.textPreviewContent
-                      ? this.textPreviewContent
-                      : null}"
-                  ></div>`
-                : null}
-            </section>`
+                ${this.textPreview
+                  ? html`<div
+                      id="textPreview"
+                      .innerHTML="${this.textPreviewContent
+                        ? this.textPreviewContent
+                        : null}"
+                    ></div>`
+                  : null}
+              </section>`
           : html`<inking-canvas name="myInkingCanvas">
               <inking-toolbar canvas="myInkingCanvas">
                 <inking-toolbar-highlighter></inking-toolbar-highlighter>
@@ -1456,7 +1483,7 @@ export class AppNew extends LitElement {
           <span id="markdownSpan">Supports Markdown</span>
 
           <fast-button
-            class="${classMap({ active: this.textPreview})}"
+            class="${classMap({ active: this.textPreview })}"
             id="previewTextButton"
             @click="${() => this.openTextPreview()}"
             >HTML Preview

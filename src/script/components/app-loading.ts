@@ -1,10 +1,6 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, state } from 'lit/decorators';
+import { customElement, state } from "lit/decorators";
 
 @customElement("app-loading")
 export class AppLoading extends LitElement {
@@ -70,16 +66,15 @@ export class AppLoading extends LitElement {
         ).play();
       }
     } else {
-        this.fallbackLoading = true;
+      this.fallbackLoading = true;
     }
   }
 
   render() {
     if (this.fallbackLoading) {
-        return html`<fast-progress></fast-progress>`
-    }
-    else {
-        return html`<div id="loadingContainer"></div> `;
+      return html`<fast-progress></fast-progress>`;
+    } else {
+      return html`<div id="loadingContainer"></div> `;
     }
   }
 }

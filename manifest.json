@@ -37,17 +37,9 @@
       "src": "assets/screenshots/offline_screen_mobile.png"
     }
   ],
-  "features": [
-    "Cross Platform",
-    "fast",
-    "simple"
-  ],
-  "categories": [
-    "productivity"
-  ],
-  "display_override": [ 
-    "window-controls-overlay" 
-  ],
+  "features": ["Cross Platform", "fast", "simple"],
+  "categories": ["productivity"],
+  "display_override": ["window-controls-overlay"],
   "shortcuts": [
     {
       "name": "New Email",
@@ -61,13 +53,8 @@
     {
       "action": "/newEmail",
       "accept": {
-        "image/*": [
-          ".png",
-          ".jpg"
-        ],
-        "text/*": [
-          ".txt"
-        ]
+        "image/*": [".png", ".jpg"],
+        "text/*": [".txt"]
       }
     }
   ],
@@ -87,12 +74,7 @@
       "files": [
         {
           "name": "file",
-          "accept": [
-            "image/jpeg",
-            ".png",
-            ".jpg",
-            ".txt"
-          ]
+          "accept": ["image/jpeg", ".png", ".jpg", ".txt"]
         }
       ]
     }

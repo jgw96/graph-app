@@ -4,15 +4,14 @@ importScripts("https://cdn.jsdelivr.net/npm/@tensorflow-models/qna");
 
 let model = null;
 
-tf.setBackend('cpu');
+tf.setBackend("cpu");
 
 const test = {
   async load() {
     try {
       model = await qna.load();
-      console.log('test', model);
-    }
-    catch (err) {
+      console.log("test", model);
+    } catch (err) {
       console.error(err);
     }
   },
@@ -32,15 +31,13 @@ const test = {
         })
         return readyToReturn;*/
         return answers;
-      }
-      else {
+      } else {
         return null;
       }
-    }
-    else {
+    } else {
       return null;
     }
-  }
-}
+  },
+};
 
 Comlink.expose(test);

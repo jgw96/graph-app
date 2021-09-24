@@ -1,10 +1,6 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, state } from 'lit/decorators';
+import { customElement, state } from "lit/decorators";
 
 declare var webkitSpeechRecognition: any;
 
@@ -38,8 +34,12 @@ export class AppDictate extends LitElement {
         //@ts-ignore
         await (import("/workers/speech.js") as any);
 
-        const audioConfig = (window as any).SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
-        const speechConfig = (window as any).SpeechSDK.SpeechConfig.fromSubscription(
+        const audioConfig = (
+          window as any
+        ).SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+        const speechConfig = (
+          window as any
+        ).SpeechSDK.SpeechConfig.fromSubscription(
           "94691c9f125a497b917e0c60eeec9197",
           "westus"
         );

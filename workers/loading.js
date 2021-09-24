@@ -1,5 +1,8 @@
-registerAnimator('loading', class {
+registerAnimator(
+  "loading",
+  class {
     animate(currentTime, effect) {
       effect.localTime = currentTime;
     }
-  });
+  }
+);

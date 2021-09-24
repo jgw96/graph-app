@@ -1,16 +1,15 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement } from 'lit/decorators';
+import { customElement } from "lit/decorators";
 
-import '@pwabuilder/pwa-inking';
+import "@pwabuilder/pwa-inking";
 
-@customElement('app-drawing')
+@customElement("app-drawing")
 export class AppDrawing extends LitElement {
-    static get styles() {
-        return css`
-
-          #drawingToolbar {
-            display: flex;
+  static get styles() {
+    return css`
+      #drawingToolbar {
+        display: flex;
         justify-content: space-between;
         align-items: center;
         padding-left: 16px;
@@ -22,104 +21,101 @@ export class AppDrawing extends LitElement {
         background: #ffffff57;
         backdrop-filter: blur(10px);
         z-index: 1;
-          }
+      }
 
-        #drawingToolbar button {
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          background-color: var(--app-color-secondary);
+      #drawingToolbar button {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: var(--app-color-secondary);
+        color: white;
+        border: none;
+        font-weight: bold;
+        font-size: 1em;
+        padding: 6px;
+        border-radius: 6px;
+        /* min-width: 5em; */
+        cursor: pointer;
+      }
+
+      #drawingButton {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        background: var(--app-color-primary);
+        color: white;
+        color: white;
+        font-weight: bold;
+        font-size: 1em;
+        min-width: 5em;
+        cursor: pointer;
+        border-width: initial;
+        border-style: none;
+        border-color: initial;
+        border-image: initial;
+        padding: 6px;
+        border-radius: 6px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        #drawingToolbar {
+          background: rgba(41, 41, 41, 0.61);
           color: white;
-          border: none;
-          font-weight: bold;
-          font-size: 1em;
-          padding: 6px;
-          border-radius: 6px;
-          /* min-width: 5em; */
-          cursor: pointer;
         }
 
-        #drawingButton {
-          position: absolute;
-            bottom: 16px;
-            right: 16px;
-            background: var(--app-color-primary);
-            color: white;
-            color: white;
-            font-weight: bold;
-            font-size: 1em;
-            min-width: 5em;
-            cursor: pointer;
-            border-width: initial;
-            border-style: none;
-            border-color: initial;
-            border-image: initial;
-            padding: 6px;
-            border-radius: 6px;
+        :host {
+          background-color: #292929;
         }
-
-          @media(prefers-color-scheme: dark) {
-            #drawingToolbar {
-              background: rgba(41, 41, 41, 0.61);
-              color: white;
-            }
-
-            :host {
-              background-color: #292929;
-            }
-    
-          }
-        `
-    }
-
-    constructor() {
-        super();
       }
+    `;
+  }
 
-      close() {
-        const modalElement: any = document.querySelector('ion-modal');
-        modalElement.dismiss();
-      }
+  constructor() {
+    super();
+  }
 
-      add() {
-        const canvasComp: any = this.shadowRoot?.querySelector('inking-canvas');
-        const canvas: HTMLCanvasElement = canvasComp.getCanvas();
+  close() {
+    const modalElement: any = document.querySelector("ion-modal");
+    modalElement.dismiss();
+  }
 
-        canvas.toBlob((blob) => {
-          const modalElement: any = document.querySelector('ion-modal');
-          modalElement.dismiss({
-            data: blob
-          });
+  add() {
+    const canvasComp: any = this.shadowRoot?.querySelector("inking-canvas");
+    const canvas: HTMLCanvasElement = canvasComp.getCanvas();
 
-          console.log(canvas);
-        })
-      }
+    canvas.toBlob((blob) => {
+      const modalElement: any = document.querySelector("ion-modal");
+      modalElement.dismiss({
+        data: blob,
+      });
 
-      render() {
-        return html`
-          <div>
-            <div id="drawingToolbar">
-              <h3>Add Drawing</h3>
+      console.log(canvas);
+    });
+  }
 
-              <fast-button @click="${() => this.close()}">
-                Close
-              </fast-button>
-            </div>
+  render() {
+    return html`
+      <div>
+        <div id="drawingToolbar">
+          <h3>Add Drawing</h3>
 
-            <inking-canvas name="myInkingCanvas">
-              <inking-toolbar canvas="myInkingCanvas">
-                <inking-toolbar-highlighter></inking-toolbar-highlighter>
-                <inking-toolbar-pen></inking-toolbar-pen>
-                <inking-toolbar-eraser></inking-toolbar-eraser>
-              </inking-toolbar>
-            </inking-canvas>
+          <fast-button @click="${() => this.close()}"> Close </fast-button>
+        </div>
 
-            <fast-button id="drawingButton" @click="${() => this.add()}">
-              Add
+        <inking-canvas name="myInkingCanvas">
+          <inking-toolbar canvas="myInkingCanvas">
+            <inking-toolbar-highlighter></inking-toolbar-highlighter>
+            <inking-toolbar-pen></inking-toolbar-pen>
+            <inking-toolbar-eraser></inking-toolbar-eraser>
+          </inking-toolbar>
+        </inking-canvas>
 
-              <ion-icon name="add-outline"></ion-icon>
-            </fast-button>
-          </div>
-        `;
-      }
+        <fast-button id="drawingButton" @click="${() => this.add()}">
+          Add
+
+          <ion-icon name="add-outline"></ion-icon>
+        </fast-button>
+      </div>
+    `;
+  }
 }

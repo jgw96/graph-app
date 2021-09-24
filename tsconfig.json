@@ -3,12 +3,7 @@
     "target": "es2017",
     "module": "es2020",
     "moduleResolution": "node",
-    "lib": [
-      "esnext.array",
-      "esnext",
-      "es2017",
-      "dom"
-    ],
+    "lib": ["esnext.array", "esnext", "es2017", "dom"],
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -48,8 +43,5 @@
       }
     ]
   },
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

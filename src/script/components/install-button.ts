@@ -1,9 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
 @customElement("install-button")
 export class InstallButton extends LitElement {
@@ -76,7 +72,7 @@ export class InstallButton extends LitElement {
   }
 
   checkPlatform() {
-    console.log('checking platform');
+    console.log("checking platform");
     if (navigator.userAgent.includes("Windows")) {
       this.isWindows = true;
     } else {
@@ -94,7 +90,7 @@ export class InstallButton extends LitElement {
 
   public async install() {
     if (this.isWindows) {
-      if (this.caughtPrompt && this.caughtEvent){
+      if (this.caughtPrompt && this.caughtEvent) {
         this.openInstallModal = true;
       }
     } else if (this.caughtPrompt && this.caughtEvent) {
@@ -143,10 +139,19 @@ export class InstallButton extends LitElement {
       ${this.openInstallModal
         ? html`<div id="install-info">
             <fast-menu>
-              <a href="https://www.microsoft.com/store/productId/9N33F2BF60H5" target="_blank" rel="noreferrer">Install from the Microsoft Store</a>
-              <fast-menu-item @click="${() => this.browserInstall()}">Install from your Browser</fast-menu-item>
+              <a
+                href="https://www.microsoft.com/store/productId/9N33F2BF60H5"
+                target="_blank"
+                rel="noreferrer"
+                >Install from the Microsoft Store</a
+              >
+              <fast-menu-item @click="${() => this.browserInstall()}"
+                >Install from your Browser</fast-menu-item
+              >
               <fast-divider></fast-divider>
-              <fast-menu-item @click="${() => this.cancel()}">Cancel</fast-menu-item>
+              <fast-menu-item @click="${() => this.cancel()}"
+                >Cancel</fast-menu-item
+              >
             </fast-menu>
           </div>`
         : null}

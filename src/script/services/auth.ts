@@ -1,46 +1,54 @@
 import * as msal from "@azure/msal-browser";
 import { set } from "idb-keyval";
 
-const scopes = ['user.read', 'people.read', "Mail.ReadWrite", 'mail.send', "files.read"]
+const scopes = [
+  "user.read",
+  "people.read",
+  "Mail.ReadWrite",
+  "mail.send",
+  "files.read",
+];
 
 const msalConfig = {
   auth: {
-    clientId: '2d508361-d68e-4da6-8ef1-e36bd3404d57',
+    clientId: "2d508361-d68e-4da6-8ef1-e36bd3404d57",
     scopes,
-    redirect_uri: "https://memosapp.app"
+    redirect_uri: "https://memosapp.app",
   },
   cache: {
     cacheLocation: "localStorage",
-    storeAuthStateInCookie: false
+    storeAuthStateInCookie: false,
   },
 };
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 (window as any).msalInstance = msalInstance;
 
-msalInstance.handleRedirectPromise().then(async (tokenResponse: any) => {
-  // Check if the tokenResponse is null
-  // If the tokenResponse !== null, then you are coming back from a successful authentication redirect. 
-  // If the tokenResponse === null, you are not coming back from an auth redirect.
+msalInstance
+  .handleRedirectPromise()
+  .then(async (tokenResponse: any) => {
+    // Check if the tokenResponse is null
+    // If the tokenResponse !== null, then you are coming back from a successful authentication redirect.
+    // If the tokenResponse === null, you are not coming back from an auth redirect.
 
-  if (tokenResponse !== null) {
-    console.log('redirect promise handled', tokenResponse);
+    if (tokenResponse !== null) {
+      console.log("redirect promise handled", tokenResponse);
 
-    await set('graphToken', tokenResponse.accessToken);
-    localStorage.setItem('graphToken', tokenResponse.accessToken);
-  }
-}).catch((error: Error) => {
-  // handle error, either in the library or coming back from the server
-  console.error(error);
-});
+      await set("graphToken", tokenResponse.accessToken);
+      localStorage.setItem("graphToken", tokenResponse.accessToken);
+    }
+  })
+  .catch((error: Error) => {
+    // handle error, either in the library or coming back from the server
+    console.error(error);
+  });
 
 export function getAccount() {
   const myAccounts = msalInstance.getAllAccounts();
 
   if (myAccounts && myAccounts[0]) {
     return myAccounts[0];
-  }
-  else {
+  } else {
     return null;
   }
 }
@@ -53,17 +61,16 @@ export async function login() {
       const silentRequest: any = {
         scopes,
         loginHint: username,
-        forceRefresh: false
+        forceRefresh: false,
       };
 
-      console.log('init silent auth');
+      console.log("init silent auth");
 
       await msalInstance.ssoSilent(silentRequest);
-    }
-    else {
-      console.log("init login redirect")
+    } else {
+      console.log("init login redirect");
       await msalInstance.loginRedirect({
-        scopes
+        scopes,
       });
     }
   } catch (err) {
@@ -75,8 +82,7 @@ export async function login() {
 export async function logout() {
   try {
     await msalInstance.logout();
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
   }
 }
@@ -87,11 +93,11 @@ export async function getToken() {
 
     if (username) {
       const currentAccount = msalInstance.getAccountByUsername(username);
-      console.log('current', currentAccount);
+      console.log("current", currentAccount);
       const silentRequest: any = {
         scopes,
         account: currentAccount,
-        forceRefresh: false
+        forceRefresh: false,
       };
 
       let request: any = null;
@@ -104,20 +110,24 @@ export async function getToken() {
       }
 
       if (silentRequest) {
-        msalInstance.acquireTokenSilent(silentRequest).then((tokenResponse: any) => {
-          console.log('did the silent request');
-          // Do something with the tokenResponse
-          console.log(tokenResponse);
-          resolve(tokenResponse.accessToken);
-        }).catch(async (error: any) => {
-          console.error(error);
-          console.log('could not do silent request');
-          const tokenResponse: any = await msalInstance.acquireTokenRedirect(request)
-          resolve(tokenResponse.accessToken);
-        });
+        msalInstance
+          .acquireTokenSilent(silentRequest)
+          .then((tokenResponse: any) => {
+            console.log("did the silent request");
+            // Do something with the tokenResponse
+            console.log(tokenResponse);
+            resolve(tokenResponse.accessToken);
+          })
+          .catch(async (error: any) => {
+            console.error(error);
+            console.log("could not do silent request");
+            const tokenResponse: any = await msalInstance.acquireTokenRedirect(
+              request
+            );
+            resolve(tokenResponse.accessToken);
+          });
       }
     }
-
   });
 }
 

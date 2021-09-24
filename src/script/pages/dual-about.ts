@@ -1,15 +1,12 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, property } from "lit/decorators";
 
-import { getAnEmail } from '../services/mail';
-
+import { getAnEmail } from "../services/mail";
 
 declare var TimestampTrigger: any;
 
-
-@customElement('dual-about')
+@customElement("dual-about")
 export class DualAbout extends LitElement {
-
   @property() email: any = null;
   @property({ type: String }) reminderTime: string = "";
   @property({ type: Boolean }) showReminder: boolean = false;
@@ -35,21 +32,21 @@ export class DualAbout extends LitElement {
         animation-name: slidein;
         animation-duration: 380ms;
         position: fixed;
-              bottom: 0;
-              backdrop-filter: blur(10px);
-              left: 0;
-              right: 0;
-              padding: 12px;
-              display: flex;
-              justify-content: flex-end;
-              background: #ffffff69;
+        bottom: 0;
+        backdrop-filter: blur(10px);
+        left: 0;
+        right: 0;
+        padding: 12px;
+        display: flex;
+        justify-content: flex-end;
+        background: #ffffff69;
       }
 
-      @media(prefers-color-scheme: dark) {
+      @media (prefers-color-scheme: dark) {
         #detailActions {
           background: #181818;
         }
-    }
+      }
 
       #detailActions div {
         display: flex;
@@ -136,44 +133,38 @@ export class DualAbout extends LitElement {
         margin: auto;
         width: 90&;
         height: 500px; /* change height to see repeat-y behavior */
-        
-        background-image:
-          radial-gradient( circle 50px at 50px 50px, lightgray 99%, transparent 0 ),
-          linear-gradient( 100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 80% ),
-          linear-gradient( lightgray 20px, transparent 0 ),
-          linear-gradient( lightgray 20px, transparent 0 ),
-          linear-gradient( lightgray 20px, transparent 0 ),
-          linear-gradient( lightgray 20px, transparent 0 );
-    
+
+        background-image: radial-gradient(
+            circle 50px at 50px 50px,
+            lightgray 99%,
+            transparent 0
+          ),
+          linear-gradient(
+            100deg,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0) 80%
+          ),
+          linear-gradient(lightgray 20px, transparent 0),
+          linear-gradient(lightgray 20px, transparent 0),
+          linear-gradient(lightgray 20px, transparent 0),
+          linear-gradient(lightgray 20px, transparent 0);
+
         background-repeat: repeat-y;
-    
-        background-size:
-          100px 200px, /* circle */
-          50px 200px, /* highlight */
-          150px 200px,
-          350px 200px,
-          300px 200px,
-          250px 200px;
-    
-        background-position:
-          0 0, /* circle */
-          0 0, /* highlight */
-          120px 0,
-          120px 40px,
-          120px 80px,
-          120px 120px;
-    
+
+        background-size: 100px 200px, /* circle */ 50px 200px,
+          /* highlight */ 150px 200px, 350px 200px, 300px 200px, 250px 200px;
+
+        background-position: 0 0, /* circle */ 0 0, /* highlight */ 120px 0,
+          120px 40px, 120px 80px, 120px 120px;
+
         animation: shine 1s infinite;
       }
-    
+
       @keyframes shine {
         to {
-          background-position:
-            0 0,
-            100% 0, /* move highlight to right */
-            120px 0,
-            120px 40px,
-            120px 80px,
+          background-position: 0 0, 100% 0,
+            /* move highlight to right */ 120px 0, 120px 40px, 120px 80px,
             120px 120px;
         }
       }
@@ -189,18 +180,17 @@ export class DualAbout extends LitElement {
         }
       }
 
-
       @media (max-width: 800px) {
         #detailActions {
           position: fixed;
-              bottom: 0;
-              backdrop-filter: blur(10px);
-              left: 0;
-              right: 0;
-              padding: 12px;
-              display: flex;
-              justify-content: flex-end;
-              background: #ffffff69;
+          bottom: 0;
+          backdrop-filter: blur(10px);
+          left: 0;
+          right: 0;
+          padding: 12px;
+          display: flex;
+          justify-content: flex-end;
+          background: #ffffff69;
         }
 
         #detailActions div {
@@ -216,7 +206,6 @@ export class DualAbout extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         #detailBlock {
-
           color: white;
         }
 
@@ -234,9 +223,9 @@ export class DualAbout extends LitElement {
   }
 
   async firstUpdated() {
-    const id = sessionStorage.getItem('mailId');
+    const id = sessionStorage.getItem("mailId");
 
-    console.log('id', id);
+    console.log("id", id);
     if (id) {
       const email = await getAnEmail(id);
       console.log(email);
@@ -245,17 +234,17 @@ export class DualAbout extends LitElement {
   }
 
   back() {
-    const modalElement: any = document.querySelector('ion-modal');
+    const modalElement: any = document.querySelector("ion-modal");
     modalElement.dismiss();
   }
 
   async share() {
     if ((navigator as any).share) {
       await (navigator as any).share({
-        title: 'Shared Email',
-        text: 'Check out this email',
+        title: "Shared Email",
+        text: "Check out this email",
         url: location.href,
-      })
+      });
     }
   }
 
@@ -266,19 +255,20 @@ export class DualAbout extends LitElement {
 
   askPermission() {
     return new Promise(function (resolve, reject) {
-      const permissionResult = Notification.requestPermission(function (result) {
+      const permissionResult = Notification.requestPermission(function (
+        result
+      ) {
         resolve(result);
       });
 
       if (permissionResult) {
         permissionResult.then(resolve, reject);
       }
-    })
-      .then(function (permissionResult) {
-        if (permissionResult !== 'granted') {
-          throw new Error('We weren\'t granted permission.');
-        }
-      });
+    }).then(function (permissionResult) {
+      if (permissionResult !== "granted") {
+        throw new Error("We weren't granted permission.");
+      }
+    });
   }
 
   async setReminder() {
@@ -292,15 +282,15 @@ export class DualAbout extends LitElement {
         r.showNotification("Mail Reminder", {
           tag: Math.random(),
           body: `Your reminder from Mail: ${location.href}`,
-          showTrigger: new TimestampTrigger(Date.now() + (new Date(this.reminderTime).getTime() - Date.now())),
-          icon: "/assets/icons/icon_512.png"
+          showTrigger: new TimestampTrigger(
+            Date.now() + (new Date(this.reminderTime).getTime() - Date.now())
+          ),
+          icon: "/assets/icons/icon_512.png",
         });
-
-      };
+      }
 
       this.showReminder = false;
-    }
-    catch {
+    } catch {
       console.log("couldnt set reminder");
       this.showReminder = false;
     }
@@ -317,18 +307,23 @@ export class DualAbout extends LitElement {
   render() {
     return html`
       <div id="detailBlock">
-
         <section id="detailAction">
           <div id="detailActions">
-            <button @click="${() => this.back()}" class="back" aria-label="back button">
+            <button
+              @click="${() => this.back()}"
+              class="back"
+              aria-label="back button"
+            >
               Back
 
               <ion-icon name="chevron-back-outline"></ion-icon>
             </button>
 
             <div>
-
-              <button @click="${() => this.setupReminder()}" aria-label="alarm button">
+              <button
+                @click="${() => this.setupReminder()}"
+                aria-label="alarm button"
+              >
                 Reminder
 
                 <ion-icon name="alarm-outline"></ion-icon>
@@ -345,18 +340,27 @@ export class DualAbout extends LitElement {
           <h2>${this.email?.subject}</h2>
         </section>
 
-        ${this.email ? html`<div id="content">
-          <iframe .srcdoc="${this.email?.body.content}"></iframe>
-      </div>` : html`<div id="loading"></div>`}
-
-        ${this.showReminder ? html`<div id="reminder">
-            <label for="reminder-time">Set a Reminder:</label>
-            <input type="datetime-local" id="reminder-time"
-                  name="reminder-time" @change="${this.handleDate}" .value="${this.reminderTime}">
-                  <button @click="${() => this.setReminder()}">Set</button>
-                  <button id="cancelButton" @click="${() => this.cancel()}">Cancel</button>
-        </div>` : null}
-
+        ${this.email
+          ? html`<div id="content">
+              <iframe .srcdoc="${this.email?.body.content}"></iframe>
+            </div>`
+          : html`<div id="loading"></div>`}
+        ${this.showReminder
+          ? html`<div id="reminder">
+              <label for="reminder-time">Set a Reminder:</label>
+              <input
+                type="datetime-local"
+                id="reminder-time"
+                name="reminder-time"
+                @change="${this.handleDate}"
+                .value="${this.reminderTime}"
+              />
+              <button @click="${() => this.setReminder()}">Set</button>
+              <button id="cancelButton" @click="${() => this.cancel()}">
+                Cancel
+              </button>
+            </div>`
+          : null}
       </div>
     `;
   }
