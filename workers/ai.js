@@ -4,15 +4,14 @@ importScripts("https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity");
 
 let model = null;
 
-tf.setBackend('cpu');
+tf.setBackend("cpu");
 
 const test = {
   async load() {
     try {
       model = await toxicity.load(0.9);
-      console.log('test');
-    }
-    catch (err) {
+      console.log("test");
+    } catch (err) {
       console.error(err);
     }
   },
@@ -26,20 +25,18 @@ const test = {
         preds.forEach((pred) => {
           if (pred.results[0].match === true) {
             readyToReturn.push({
-              label: pred.label
-            })
+              label: pred.label,
+            });
           }
-        })
+        });
         return readyToReturn;
-      }
-      else {
+      } else {
         return null;
       }
-    }
-    else {
+    } else {
       return null;
     }
-  }
-}
+  },
+};
 
 Comlink.expose(test);

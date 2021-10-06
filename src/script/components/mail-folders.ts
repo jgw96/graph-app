@@ -1,9 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
 import { getMailFolder, getMailFolders } from "../services/mail";
 
@@ -51,13 +47,13 @@ export class MailFolders extends LitElement {
         justify-content: center;
       }
 
-      @media(prefers-color-scheme: dark) {
+      @media (prefers-color-scheme: dark) {
         fast-menu-item {
           background: rgba(75, 75, 75, 0.47);
         }
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         fast-menu-item {
           background: rgb(254 254 254);
           color: black;
@@ -120,8 +116,8 @@ export class MailFolders extends LitElement {
               })}
             `
           : html`<div id="loader">
-            <fast-progress-ring></fast-progress-ring>
-          </div>`}
+              <fast-progress-ring></fast-progress-ring>
+            </div>`}
       </div>
     `;
   }

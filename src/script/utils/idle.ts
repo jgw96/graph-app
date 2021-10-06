@@ -1,13 +1,12 @@
 export const initIdle = async () => {
-  if ('IdleDetector' in window) {
+  if ("IdleDetector" in window) {
     // Idle Detector API supported
 
     const state = await (window as any).IdleDetector.requestPermission();
-    if (state !== 'granted') {
+    if (state !== "granted") {
       // Need to request permission first.
-      return console.log('Idle detection permission not granted.');
-    }
-    else {
+      return console.log("Idle detection permission not granted.");
+    } else {
       try {
         const controller = new AbortController();
         const signal = controller.signal;
@@ -18,7 +17,7 @@ export const initIdle = async () => {
           threshold: 60000,
           signal,
         });
-        console.log('IdleDetector is active.');
+        console.log("IdleDetector is active.");
 
         return idleDetector;
       } catch (err) {
@@ -28,4 +27,4 @@ export const initIdle = async () => {
       }
     }
   }
-}
+};

@@ -1,10 +1,6 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, state, property } from 'lit/decorators';
+import { customElement, state, property } from "lit/decorators";
 
 import { clear, set, get } from "idb-keyval";
 
@@ -113,7 +109,7 @@ export class AppSettings extends LitElement {
         margin-top: 8px;
       }
 
-      @media(max-width: 800px) {
+      @media (max-width: 800px) {
         #settingsBlock {
           inset: 0em;
         }
@@ -286,7 +282,7 @@ export class AppSettings extends LitElement {
                     <span slot="unchecked-message">Off</span>
                   </fast-switch>
                 </fast-label>
-      
+
                 <fast-button @click="${() => this.clearStorage()}">
                   Clear Storage
                 </fast-button>

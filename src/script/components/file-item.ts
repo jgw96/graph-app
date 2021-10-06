@@ -1,6 +1,6 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, property } from 'lit/decorators';
+import { customElement, property } from "lit/decorators";
 
 import { downloadFile } from "../services/files";
 
@@ -76,11 +76,16 @@ export class FileItem extends LitElement {
     return html`
       <div>
         <div id="fileInfo">
-          <fast-anchor target="_blank" rel="noopener noreferrer" href="${this.file.webUrl}" appearance="hypertext">${this.file.name}</fast-anchor>
+          <fast-anchor
+            target="_blank"
+            rel="noopener noreferrer"
+            href="${this.file.webUrl}"
+            appearance="hypertext"
+            >${this.file.name}</fast-anchor
+          >
         </div>
 
-        <fast-button
-          @click="${() => this.download(this.file.id)}"
+        <fast-button @click="${() => this.download(this.file.id)}"
           >Attach</fast-button
         >
       </div>

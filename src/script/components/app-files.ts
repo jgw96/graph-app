@@ -1,10 +1,6 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, state } from 'lit/decorators';
+import { customElement, state } from "lit/decorators";
 
 import { getRecentFiles } from "../services/files";
 
@@ -12,7 +8,6 @@ import "./file-item";
 
 @customElement("app-files")
 export class AppFiles extends LitElement {
-
   @state() recents: any | null = null;
 
   static get styles() {

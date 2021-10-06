@@ -98,13 +98,12 @@ export async function getAnEmail(id: string) {
   try {
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
-  
+
     console.log(data);
-  
+
     return data;
-  }
-  catch (err) {
-    throw new Error(`Could not load this email: ${err}`)
+  } catch (err) {
+    throw new Error(`Could not load this email: ${err}`);
   }
 }
 

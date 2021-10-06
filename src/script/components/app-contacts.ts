@@ -1,16 +1,14 @@
-import { LitElement, css, html } from 'lit';
-import { getContacts } from '../services/contacts';
+import { LitElement, css, html } from "lit";
+import { getContacts } from "../services/contacts";
 
-import { customElement, state } from 'lit/decorators';
+import { customElement, state } from "lit/decorators";
 
-@customElement('app-contacts')
+@customElement("app-contacts")
 export class AppContacts extends LitElement {
-
   @state() graphContacts: any[] | null = null;
 
   static get styles() {
     return css`
-
       .contactInfo {
         display: flex;
         flex-direction: column;
@@ -54,7 +52,7 @@ export class AppContacts extends LitElement {
       }
 
       #contactsList {
-        background: #303030;;
+        background: #303030;
         position: absolute;
         top: 8em;
         z-index: 9999;
@@ -82,11 +80,11 @@ export class AppContacts extends LitElement {
         border-radius: 4px;
       }
 
-      @media(prefers-color-scheme: light) {
-            #contactsList ul::-webkit-scrollbar {
-              background: #ffffff;
-            }
-          }
+      @media (prefers-color-scheme: light) {
+        #contactsList ul::-webkit-scrollbar {
+          background: #ffffff;
+        }
+      }
 
       #contactsList fast-menu-item {
         margin-top: 10px;
@@ -113,7 +111,7 @@ export class AppContacts extends LitElement {
         background: var(--app-color-primary);
       }
 
-      @media(screen-spanning: single-fold-vertical) {
+      @media (screen-spanning: single-fold-vertical) {
         #contactsBlock {
           width: 50vw;
           left: initial;
@@ -130,7 +128,7 @@ export class AppContacts extends LitElement {
         }
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         #contactsBlock {
           background: #ffffff4d;
         }
@@ -152,7 +150,7 @@ export class AppContacts extends LitElement {
         from {
           opacity: 0.2;
         }
-        
+
         to {
           opacity: 1;
         }
@@ -165,10 +163,10 @@ export class AppContacts extends LitElement {
   }
 
   async selectContacts() {
-    const supported = ('contacts' in navigator && 'ContactsManager' in window);
+    const supported = "contacts" in navigator && "ContactsManager" in window;
 
     if (supported) {
-      const props = ['name', 'email'];
+      const props = ["name", "email"];
       const opts = { multiple: false };
 
       try {
@@ -179,8 +177,7 @@ export class AppContacts extends LitElement {
 
         console.error(err);
       }
-    }
-    else {
+    } else {
       this.graphContacts = await getContacts();
     }
   }
@@ -189,20 +186,22 @@ export class AppContacts extends LitElement {
     let addresses: any[] = [];
 
     contacts.forEach((contact) => {
-      if ((contact.email && contact.email[0]) || (contact.emailAddresses && contact.emailAddresses[0].address)) {
+      if (
+        (contact.email && contact.email[0]) ||
+        (contact.emailAddresses && contact.emailAddresses[0].address)
+      ) {
         if (contact.email && contact.email[0]) {
           addresses.push(contact.email[0]);
-        }
-        else {
+        } else {
           addresses.push(contact.emailAddresses[0].address);
         }
       }
     });
 
-    let event = new CustomEvent('got-contacts', {
+    let event = new CustomEvent("got-contacts", {
       detail: {
-        data: addresses
-      }
+        data: addresses,
+      },
     });
     this.dispatchEvent(event);
 
@@ -217,35 +216,42 @@ export class AppContacts extends LitElement {
 
   render() {
     return html`
-        <fast-button id="contactsButton" @click="${() => this.selectContacts()}">
-          <ion-icon name="person-outline"></ion-icon>
-        </fast-button>
+      <fast-button id="contactsButton" @click="${() => this.selectContacts()}">
+        <ion-icon name="person-outline"></ion-icon>
+      </fast-button>
 
-        ${this.graphContacts ? html`<div id="contactsBlock"><div id="contactsList">
-          <div id="contactsHeader">
-            <h3>Frequent Contacts</h3>
+      ${this.graphContacts
+        ? html`<div id="contactsBlock">
+            <div id="contactsList">
+              <div id="contactsHeader">
+                <h3>Frequent Contacts</h3>
 
-            <fast-button @click="${() => this.close()}">
-              <ion-icon name="close-outline"></ion-icon>
-            </fast-button>
-          </div>
-            <ul>
-              ${this.graphContacts.map((contact) => {
-      return html`
+                <fast-button @click="${() => this.close()}">
+                  <ion-icon name="close-outline"></ion-icon>
+                </fast-button>
+              </div>
+              <ul>
+                ${this.graphContacts.map((contact) => {
+                  return html`
                     <fast-menu-item>
                       <div class="contactInfo">
                         <span class="displayName">${contact.displayName}</span>
-                        <span class="displayEmail">Address: ${contact.emailAddresses[0].address}</span>
+                        <span class="displayEmail"
+                          >Address: ${contact.emailAddresses[0].address}</span
+                        >
                       </div>
 
-                      <fast-button @click="${() => this.handleResults([contact])}">Select</fast-button>
+                      <fast-button
+                        @click="${() => this.handleResults([contact])}"
+                        >Select</fast-button
+                      >
                     </fast-menu-item>
-                  `
-    })
-        }
-            </ul>
-          </div></div>` : null
-      }
-      `;
+                  `;
+                })}
+              </ul>
+            </div>
+          </div>`
+        : null}
+    `;
   }
 }

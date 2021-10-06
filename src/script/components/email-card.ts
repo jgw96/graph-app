@@ -1,10 +1,6 @@
 import { Router } from "@vaadin/router";
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
-import { customElement, state, property } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state, property } from "lit/decorators";
 
 import { flagEmail } from "../services/mail";
 
@@ -99,7 +95,7 @@ export class EmailCard extends LitElement {
       }
 
       #actionsButtons {
-        max-width: 7em;
+        max-width: 8em;
         display: flex;
       }
 
@@ -207,7 +203,9 @@ export class EmailCard extends LitElement {
                 : null}
             </div>
 
-            <p class="preview">${this.email.bodyPreview || "Preview not available"}</p>
+            <p class="preview">
+              ${this.email.bodyPreview || "Preview not available"}
+            </p>
           </div>
 
           <div id="actions">
@@ -224,6 +222,7 @@ export class EmailCard extends LitElement {
                     class="flagButton"
                     @click="${() => this.bookmark(this.email)}"
                   >
+                    Flag
                     <ion-icon name="flag-outline"></ion-icon>
                   </fast-button>`
                 : null}
@@ -253,7 +252,10 @@ export class EmailCard extends LitElement {
           </div>
 
           <div id="actions">
-            <fast-skeleton style="height: 12px; width: 100px;" shape="rect"></fast-skeleton>
+            <fast-skeleton
+              style="height: 12px; width: 100px;"
+              shape="rect"
+            ></fast-skeleton>
 
             <div id="actionsButtons">
               <fast-skeleton

@@ -1,11 +1,7 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
-import { customElement, state, property } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state, property } from "lit/decorators";
 
-import { classMap } from 'lit-html/directives/class-map.js';
+import { classMap } from "lit-html/directives/class-map.js";
 
 import "../components/app-login";
 import "../components/install-button";
@@ -124,7 +120,7 @@ export class AppHeader extends LitElement {
       }
 
       /*keeping seperate for the future */
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         header {
           background: transparent;
           color: black;
@@ -137,7 +133,6 @@ export class AppHeader extends LitElement {
         #settingsButton ion-icon {
           color: black;
         }
-
       }
 
       @media (prefers-color-scheme: dark) {
@@ -199,10 +194,10 @@ export class AppHeader extends LitElement {
   async openSettingsModal() {
     this.openSettings = true;
 
-    let event = new CustomEvent('open-settings', {
+    let event = new CustomEvent("open-settings", {
       detail: {
-        message: true
-      }
+        message: true,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -223,9 +218,14 @@ export class AppHeader extends LitElement {
       <header>
         <h1>Mail GO</h1>
 
-        <div id="headerActions" class=${classMap({inapp: (navigator as any).windowControlsOverlay.visible === true})} >
+        <div
+          id="headerActions"
+          class=${classMap({
+            inapp: (navigator as any).windowControlsOverlay.visible === true,
+          })}
+        >
           <install-button></install-button>
-          
+
           <fast-button
             @click="${() => this.openSettingsModal()}"
             id="settingsButton"

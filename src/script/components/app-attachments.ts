@@ -1,11 +1,7 @@
 import { fileSave } from "browser-nativefs";
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from "lit";
 
-import { customElement, property, state } from 'lit/decorators';
+import { customElement, property, state } from "lit/decorators";
 import { downloadAttach } from "../services/mail";
 
 @customElement("app-attachments")

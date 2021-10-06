@@ -1,9 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
 import "@dile/dile-toast/dile-toast";
 import { getMail } from "../services/mail";
@@ -12,6 +8,7 @@ import { Router } from "@vaadin/router";
 import "../components/email-card";
 import "../components/app-loading";
 import "../components/mail-folders";
+import "../components/home-info";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -51,13 +48,6 @@ export class AppHome extends LitElement {
         --background: var(--app-color-primary);
       }
 
-      #intro-actions {
-        display: flex;
-        width: 100%;
-        justify-content: flex-end;
-        margin-bottom: -1em;
-      }
-
       .listModeButton {
         display: inline-flex;
         width: 108px;
@@ -83,79 +73,6 @@ export class AppHome extends LitElement {
         color: var(--app-color-primary);
       }
 
-      #advBlock {
-        overflow: scroll hidden;
-        height: 100%;
-        white-space: nowrap;
-        scroll-snap-type: x mandatory;
-        margin-top: 1em;
-
-        animation-name: slidein;
-        animation-duration: 300ms;
-        animation-fill-mode: forwards;
-      }
-
-      #advBlock::-webkit-scrollbar {
-        display: none;
-      }
-
-      #advBlock .advOuter {
-        flex-direction: column;
-        align-items: center;
-        display: inline-flex;
-        scroll-snap-align: start;
-        width: 96.5%;
-        padding: 1.4em;
-      }
-
-      #advBlock .advInner {
-        background: rgb(34, 34, 49);
-        color: white;
-        padding: 1em;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border-radius: 4px;
-        width: 50em;
-      }
-
-      #advBlock .advInner li {
-        font-weight: bold;
-      }
-
-      #advBlock .advInner img {
-        content-visibility: auto;
-      }
-
-      @media (prefers-color-scheme: light) {
-        #advBlock .advInner {
-          background: white;
-          color: black;
-        }
-      }
-
-      #advBlock .advInner#firstBlock {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #advBlock .advInner#firstBlock img {
-        width: 20em;
-        margin-right: 4vw;
-      }
-
-      #advBlock .advInner#firstBlock ul {
-        height: initial;
-        overflow: initial;
-      }
-
-      #advBlock div img {
-        object-fit: contain;
-        height: 22em;
-      }
-
       #homeToolbar {
         display: flex;
       }
@@ -165,48 +82,12 @@ export class AppHome extends LitElement {
       }
 
       @media (max-width: 800px) {
-        #advBlock {
-          white-space: initial;
-        }
-
-        #intro-actions {
-          justify-content: center;
-        }
-
         .listModeButton {
           display: none;
         }
 
         #searchInput {
           width: 100%;
-        }
-
-        #advBlock div img {
-          height: 8em;
-          margin-right: 0;
-        }
-
-        #advBlock .advInner {
-          text-align: center;
-          width: initial;
-        }
-
-        #advBlock .advOuter {
-          display: initial;
-          width: initial;
-        }
-
-        #advBlock .advInner#firstBlock {
-          flex-direction: column;
-        }
-
-        #advBlock .advInner#firstBlock ul {
-          margin-bottom: 0;
-        }
-
-        #advBlock .advInner#firstBlock ul li {
-          margin-bottom: 0;
-          font-weight: bold;
         }
 
         #homeToolbar {
@@ -218,10 +99,6 @@ export class AppHome extends LitElement {
         }
       }
 
-      #advBlock div p {
-        font-weight: bold;
-      }
-
       fast-progress {
         position: absolute;
         width: 100%;
@@ -229,13 +106,6 @@ export class AppHome extends LitElement {
         left: 0;
         right: 0;
         z-index: 99;
-      }
-
-      #introSpan {
-        font-weight: normal;
-        font-size: 12px;
-        margin-top: 8px;
-        color: white;
       }
 
       fast-menu-item {
@@ -257,10 +127,6 @@ export class AppHome extends LitElement {
           color: black;
         }
 
-        #introSpan {
-          color: black;
-        }
-
         #mainListHeader {
           background: transparent !important;
         }
@@ -277,41 +143,6 @@ export class AppHome extends LitElement {
         fast-text-field::part(root) {
           background: white;
         }
-      }
-
-      #introBlock {
-        font-weight: bold;
-        text-align: center;
-        background: white;
-        border-radius: 6px;
-        padding: 2em;
-        background: rgb(34, 34, 49);
-        flex-direction: column;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        backdrop-filter: blur(10px);
-
-        animation-name: slidein;
-        animation-duration: 300ms;
-        animation-fill-mode: forwards;
-      }
-
-      #introBlock h2 {
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-
-      #introBlock app-login {
-        margin-top: 1em;
-      }
-
-      #introBlock app-login::part(loginButton) {
-        height: 32px;
-      }
-
-      #introBlock img {
-        height: 24em;
       }
 
       ul {
@@ -431,10 +262,6 @@ export class AppHome extends LitElement {
       }
 
       @media (prefers-color-scheme: dark) {
-        #introBlock {
-          color: white;
-        }
-
         #homeToolbar {
           background: rgb(29 29 29 / 78%);
         }
@@ -453,13 +280,6 @@ export class AppHome extends LitElement {
       }
 
       @media (min-width: 1000px) {
-        #introBlock {
-          margin-left: 5em;
-          margin-right: 5em;
-          align-items: flex-start;
-          text-align: start;
-        }
-
         #mainListBlock {
           display: grid;
         }
@@ -503,13 +323,6 @@ export class AppHome extends LitElement {
         }
       }
 
-      @media (min-width: 1200px) {
-        #introBlock {
-          margin-left: 13em;
-          margin-right: 13em;
-        }
-      }
-
       @media (min-width: 1300px) {
         #mainSection {
           grid-template-columns: minmax(240px, 18%) 1fr;
@@ -537,10 +350,6 @@ export class AppHome extends LitElement {
       }
 
       @media (prefers-color-scheme: light) {
-        #introBlock {
-          background: white;
-        }
-
         ul::-webkit-scrollbar {
           background: #ffffff;
         }
@@ -561,15 +370,6 @@ export class AppHome extends LitElement {
         #mainSection {
           grid-template-columns: minmax(47vw, 22%) 1fr;
           grid-gap: 47px;
-        }
-
-        #introBlock {
-          margin-right: 0em;
-          margin-left: calc(env(fold-left) + 2em);
-        }
-
-        #advBlock {
-          display: none;
         }
 
         #menuActions {
@@ -612,7 +412,7 @@ export class AppHome extends LitElement {
 
     (window as any).requestIdleCallback(() => {
       this.offline = isOffline();
-    })
+    });
   }
 
   async setupInfinite() {
@@ -754,8 +554,7 @@ export class AppHome extends LitElement {
       let toastElement: any = this.shadowRoot?.getElementById("myToast");
       toastElement?.open("This action cannot be completed offline...", "error");
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -986,47 +785,8 @@ export class AppHome extends LitElement {
                 </ion-fab>
               </div>
             `
-          : this.initLoad
-          ? html`<div id="introBlock">
-              <h2>
-                Sign in to quickly access your latest email and save them for
-                offline use!
-              </h2>
-
-              <span id="introSpan">Powered by the Microsoft Graph.</span>
-
-              <div id="intro-actions">
-                <app-login></app-login>
-              </div>
-            </div>`
-          : null}
-        ${this.initLoad && this.mail && this.mail.length <= 0
-          ? html`
-              <div id="advBlock">
-                <div class="advOuter">
-                  <div class="advInner" id="firstBlock">
-                    <img src="/assets/icons/mailbox.svg" alt="app icon" />
-
-                    <ul>
-                      <li>Easily access your mail, even when offline!</li>
-                      <li>
-                        Set reminders for your mail that also work offline!
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="advOuter">
-                  <div class="advInner">
-                    <img src="/assets/screenshots/offline_screen_mobile.webp" />
-                    <p>
-                      Even send mail while offline and let us automatically send
-                      it once you are back online!
-                    </p>
-                  </div>
-                </div>
-              </div>
-            `
+          : this.initLoad && this.mail && this.mail.length <= 0
+          ? html` <home-info></home-info> `
           : null}
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

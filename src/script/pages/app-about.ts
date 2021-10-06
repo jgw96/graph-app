@@ -1,9 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators";
 
 import {
   getAnEmail,
@@ -481,7 +477,9 @@ export class AppAbout extends LitElement {
     }
 
     const watchedElement = this.shadowRoot?.querySelector("#subject");
-    const scrollerBar = this.shadowRoot?.querySelector("#scrolledDetailActions");
+    const scrollerBar = this.shadowRoot?.querySelector(
+      "#scrolledDetailActions"
+    );
 
     const intersectionObserver = new IntersectionObserver((entries) => {
       // If intersectionRatio is 0, the target is out of view

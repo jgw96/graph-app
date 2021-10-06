@@ -9,8 +9,12 @@
   --font-family: system-ui, sans-serif;
   --theme: circles;
 
-  --gradient-color: #1A1B3E;
-  --theme-color: radial-gradient(circle, var(--gradient-color) 0%, rgba(0,1,27,1) 100%);
+  --gradient-color: #1a1b3e;
+  --theme-color: radial-gradient(
+    circle,
+    var(--gradient-color) 0%,
+    rgba(0, 1, 27, 1) 100%
+  );
 }
 
 html,
