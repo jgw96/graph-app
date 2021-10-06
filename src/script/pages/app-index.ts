@@ -75,6 +75,11 @@ export class AppIndex extends LitElement {
 
   constructor() {
     super();
+
+    const ref = document.referrer;
+    if (ref.includes("microsoft-store")) {
+      gtag('event', 'msstore', {'fullstring': document.referrer.toString()});
+    }
   }
 
   firstUpdated() {
@@ -110,6 +115,12 @@ export class AppIndex extends LitElement {
       console.log("virtualKeyboard API supported");
       (navigator as any).virtualKeyboard.overlaysContent = true;
     }
+
+    window.addEventListener('vaadin-router-location-changed', (ev: any) => {
+      gtag('set', 'page_path', ev.detail.location.pathname);
+      gtag('event', 'page_view');
+    });
+
   }
 
   authed() {
