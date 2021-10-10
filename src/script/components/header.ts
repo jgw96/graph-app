@@ -31,7 +31,6 @@ export class AppHeader extends LitElement {
         display: flex;
         align-items: center;
 
-        position: fixed;
         top: 0;
         z-index: 9999;
 
@@ -39,8 +38,6 @@ export class AppHeader extends LitElement {
         align-items: center;
         justify-content: center;
         height: env(titlebar-area-height, 33px);
-
-        right: 10px;
       }
 
       .inapp {
@@ -55,8 +52,11 @@ export class AppHeader extends LitElement {
         height: env(titlebar-area-height, 33px);
 
         position: sticky;
-        top: 0;
         z-index: 1;
+
+        left: env(titlebar-area-x, 0);
+        /* Use the environment variable for the top anchoring with a fallback. */
+        top: env(titlebar-area-y, 0);
 
         background: #212121;
         padding-right: 0px;
