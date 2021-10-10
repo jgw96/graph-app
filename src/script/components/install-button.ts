@@ -31,9 +31,15 @@ export class InstallButton extends LitElement {
 
         font-size: 14px;
         padding-left: 1.1em;
-        padding-bottom: 6px;
 
-        display: block;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        border-radius: calc(var(--control-corner-radius) * 1px);
+      }
+
+      #install-info a:hover {
+        background: var(--neutral-layer-3);
       }
 
       #install-button {

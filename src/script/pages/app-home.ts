@@ -152,7 +152,7 @@ export class AppHome extends LitElement {
 
         grid-gap: 10px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(364px, 1fr));
       }
 
       ul email-card:nth-child(-n + 14) {
@@ -206,7 +206,7 @@ export class AppHome extends LitElement {
 
         position: sticky;
         top: 2em;
-        z-index: 2;
+        z-index: 0;
 
         max-height: 4em;
       }
@@ -244,6 +244,10 @@ export class AppHome extends LitElement {
       #homeToolbar #newEmailButton {
         background: var(--app-color-primary);
         margin-left: 12px;
+      }
+
+      #homeToolbar #newEmailButton:hover {
+        background: var(--accent-fill-hover);
       }
 
       #homeToolbar button:hover {
@@ -321,6 +325,10 @@ export class AppHome extends LitElement {
           background: #686bd2;
           margin-top: 8px;
         }
+
+        #desktopNew:hover {
+          background: var(--accent-fill-hover);
+        }
       }
 
       @media (min-width: 1300px) {
@@ -340,6 +348,10 @@ export class AppHome extends LitElement {
 
         #mainListRefresh {
           display: none;
+        }
+
+        #mainListHeader {
+          z-index: 3;
         }
       }
 

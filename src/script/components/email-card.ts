@@ -103,8 +103,16 @@ export class EmailCard extends LitElement {
         margin-right: 6px;
       }
 
+      .flagButton:hover {
+        background: var(--neutral-fill-hover);
+      }
+
       .readButton {
         background: var(--app-color-primary);
+      }
+      
+      .readButton:hover {
+        background: var(--accent-fill-hover);
       }
 
       .fakeCard {
@@ -134,10 +142,6 @@ export class EmailCard extends LitElement {
 
         fast-skeleton {
           --skeleton-fill-default: #131212;
-        }
-
-        .flagButton {
-          background: rgba(75, 75, 75, 0.47);
         }
       }
 

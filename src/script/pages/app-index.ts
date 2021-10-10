@@ -8,6 +8,7 @@ import { Router } from "@vaadin/router";
 
 import "../components/header";
 import "../components/app-settings";
+import "../components/cookie-banner";
 
 @customElement("app-index")
 export class AppIndex extends LitElement {
@@ -136,6 +137,8 @@ export class AppIndex extends LitElement {
   render() {
     return html`
       <div>
+        <cookie-banner></cookie-banner>
+
         <app-header
           @open-settings="${() => this.openSettings()}"
           @user-authed="${() => this.authed()}"
