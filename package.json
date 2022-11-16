@@ -1,0 +1,43 @@
+{
+  "name": "pwa-starter",
+  "version": "0.0.1",
+  "description": "A starter kit for building PWAs!",
+  "main": "index.js",
+  "scripts": {
+    "dev-server": "vite --open",
+    "dev": "npm run dev-server",
+    "dev-task": "vite",
+    "deploy": " npx @azure/static-web-apps-cli login --no-use-keychain && npx @azure/static-web-apps-cli deploy",
+    "build": "tsc && vite build",
+    "start": "npm run dev",
+    "start-remote": "vite --host"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/msal-browser": "^2.30.0",
+    "@dile/dile-toast": "^1.1.1",
+    "@pwabuilder/pwa-inking": "^1.0.16",
+    "@pwabuilder/pwainstall": "^1.6.7",
+    "@shoelace-style/shoelace": "^2.0.0-beta.82",
+    "@vaadin/router": "^1.7.4",
+    "browser-nativefs": "^0.12.0",
+    "font-select": "^1.2.1",
+    "idb-keyval": "^6.2.0",
+    "lit": "^2.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.3",
+    "vite": "^2.9.0"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "consistent",
+    "trailingComma": "es5",
+    "endOfLine": "crlf",
+    "bracketSpacing": true
+  }
+}
