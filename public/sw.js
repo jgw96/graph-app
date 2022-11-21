@@ -14,4 +14,20 @@ workbox.routing.registerRoute(
     new workbox.strategies.StaleWhileRevalidate()
 );
 
+self.addEventListener("widgetclick", (event) => {
+    if (event.action && event.action === "widget-install") {
+        event.waitUntil(renderWidget(event.widget))
+    }
+});
+
+async function renderWidget(widget) {
+    const templateUrl = widget.definition.msAcTemplate;
+    const dataUrl = widget.definition.data;
+
+    const template = await (await fetch(templateUrl)).text();
+    const data = await (await fetch(dataUrl)).text();
+
+    await self.widgets.updateByTag(widget.definition.tag, {template, data});
+}
+
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);

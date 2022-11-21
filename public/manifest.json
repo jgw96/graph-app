@@ -1,7 +1,7 @@
 {
   "id": "/",
   "scope": "/",
-  "name": "Mail GO",
+  "name": "MailGO",
   "display": "standalone",
   "start_url": "/",
   "short_name": "starter",
@@ -56,6 +56,33 @@
       "description": "Open the about page",
       "url": "/about",
       "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+    }
+  ],
+  "widgets": [
+    {
+      "name": "MailGO",
+      "description": "Widget for the MailGO mail app",
+      "tag": "mailgo",
+      "template": "mailgo-template",
+      "ms_ac_template": "widgets/mailgo-template.json",
+      "data": "widgets/mailgo-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "assets/screenshots/screen.png",
+          "sizes": "1617x1012",
+          "type": "image/png"
+        }
+      ],
+      "icons": [
+        {
+          "src": "assets/icons/96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ],
+      "auth": false,
+      "update": 86400
     }
   ]
 }
