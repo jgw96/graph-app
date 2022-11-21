@@ -177,7 +177,7 @@ export class EmailCard extends LitElement {
 
   async firstUpdated() {}
 
-  async read(id: string, button: HTMLElement) {
+  async read(id: string) {
     await Router.go(`/email?id=${id}`);
   }
 
@@ -205,7 +205,7 @@ export class EmailCard extends LitElement {
               <h3>${this.email.subject || "No Subject"}</h3>
               ${this.email.flag.flagStatus === "flagged"
                 ? html`<sl-badge
-                    @click="${($event: any) => this.read(this.email.id, $event.target)}"
+                    @click="${() => this.read(this.email.id)}"
                     appearance="lightweight"
                     >flagged
                     <ion-icon name="alert-circle-outline"></ion-icon>
@@ -239,7 +239,7 @@ export class EmailCard extends LitElement {
               <sl-button
                 class="readButton"
                 id="readButton"
-                @click="${($event: any) => this.read(this.email.id, $event.target)}"
+                @click="${() => this.read(this.email.id)}"
                 >Read</sl-button
               >
             </div>

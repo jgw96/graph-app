@@ -15,10 +15,10 @@ import { getAnEmail, sendMail, reply, saveDraft } from "../services/mail";
 import { Router } from "@vaadin/router";
 
 // @ts-ignore
-import TextWorker from '../workers/text.js?worker'
+// import TextWorker from '../workers/text.js?worker'
 
 // @ts-ignore
-import AIWorker from '../workers/ai.js?worker';
+// import AIWorker from '../workers/ai.js?worker';
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -712,15 +712,15 @@ export class AppNew extends LitElement {
 
     await this.fileHandler();
 
-    const underlying2 = new TextWorker();
-    this.textWorker = Comlink.wrap(underlying2);
+    // const underlying2 = new TextWorker();
+    // this.textWorker = Comlink.wrap(underlying2);
 
     (window as any).requestIdleCallback(
       async () => {
-        const underlying = new AIWorker();
+        // const underlying = new AIWorker();
 
-        this.worker = Comlink.wrap(underlying);
-        await this.worker?.load();
+        // this.worker = Comlink.wrap(underlying);
+        // await this.worker?.load();
       },
       {
         timeout: 1000,
@@ -1621,7 +1621,7 @@ export class AppNew extends LitElement {
                       id="textPreview"
                       .innerHTML="${this.textPreviewContent
                         ? this.textPreviewContent
-                        : null}"
+                        : ""}"
                     ></div>`
                   : null}
               </section>`
@@ -1710,7 +1710,7 @@ export class AppNew extends LitElement {
               : null}
             ${this.emailReplyTo
               ? html`<sl-button
-                  variant="secondary"
+                  variant="primary"
                   id="sendButton"
                   @click="${() => this.reply()}"
                 >
@@ -1719,7 +1719,7 @@ export class AppNew extends LitElement {
                   <ion-icon name="mail-outline"></ion-icon>
                 </sl-button>`
               : html`<sl-button
-                  variant="secondary"
+                  variant="primary"
                   ?disabled="${this.subject && this.subject.length > 1
                     ? false
                     : true}"

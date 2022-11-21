@@ -39,32 +39,32 @@ export class AppLoading extends LitElement {
     if ("animationWorklet" in CSS) {
       // AnimationWorklet is supported!
 
-      await (CSS as any).animationWorklet.addModule("../workers/loading.js");
+      // await (CSS as any).animationWorklet.addModule("../workers/loading.js");
 
-      if (this.shadowRoot) {
-        //@ts-ignore
-        new WorkletAnimation(
-          "loading",
-          new KeyframeEffect(
-            this.shadowRoot?.querySelector("#loadingContainer"),
-            [
-              {
-                opacity: 0.5,
-                transform: "translateX(0)",
-              },
-              {
-                opacity: 1,
-                transform: "translateX(100%)",
-              },
-            ],
-            {
-              duration: 2000,
-              iterations: Number.POSITIVE_INFINITY,
-            }
-          ),
-          document.timeline
-        ).play();
-      }
+      // if (this.shadowRoot) {
+      //   //@ts-ignore
+      //   new WorkletAnimation(
+      //     "loading",
+      //     new KeyframeEffect(
+      //       this.shadowRoot?.querySelector("#loadingContainer"),
+      //       [
+      //         {
+      //           opacity: 0.5,
+      //           transform: "translateX(0)",
+      //         },
+      //         {
+      //           opacity: 1,
+      //           transform: "translateX(100%)",
+      //         },
+      //       ],
+      //       {
+      //         duration: 2000,
+      //         iterations: Number.POSITIVE_INFINITY,
+      //       }
+      //     ),
+      //     document.timeline
+      //   ).play();
+      // }
     } else {
       this.fallbackLoading = true;
     }

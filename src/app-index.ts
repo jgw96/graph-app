@@ -132,6 +132,7 @@ export class AppIndex extends LitElement {
     }
 
     window.addEventListener('vaadin-router-location-changed', (ev: any) => {
+      console.log(ev.detail.location.pathname);
       // gtag('set', 'page_path', ev.detail.location.pathname);
      // gtag('event', 'page_view');
     });

@@ -27,7 +27,7 @@ export class AppDictate extends LitElement {
     (window as any).requestIdleCallback(
       async () => {
         //@ts-ignore
-        await (import("../workers/speech.js") as any);
+        // await (import("../workers/speech.js") as any);
 
         const audioConfig = (
           window as any

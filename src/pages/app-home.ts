@@ -16,7 +16,7 @@ import "../components/home-info";
 import "../components/header";
 
 //@ts-ignore
-import "../workers/search.js";
+// import "../workers/search.js";
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
