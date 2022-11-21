@@ -3,6 +3,8 @@ import { LitElement, css, html } from "lit";
 import { customElement, state, property } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
+import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 
 import { login, logout, getAccount, getPhoto } from "../services/auth";
 
@@ -142,13 +144,15 @@ export class AppLogin extends LitElement {
               </sl-button
             >
           </div> `
-        : html` <sl-button
+        : html`
+        <sl-button
             part="loginButton"
             @click="${() => this.login()}"
             id="loginButton"
             size="small"
             >Login with Microsoft</sl-button
-          >`}
+          >
+          `}
     `;
   }
 }

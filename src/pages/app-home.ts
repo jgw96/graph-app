@@ -297,11 +297,11 @@ export class AppHome extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         #homeToolbar {
-          background: rgb(29 29 29 / 78%);
+          background: rgb(41 41 68 / 48%);
         }
 
         #mainListHeader {
-          background: rgb(39 42 53 / 84%);
+          background: rgb(41 41 68 / 48%);
         }
 
         sl-menu-item {
@@ -355,7 +355,7 @@ export class AppHome extends LitElement {
           height: 88vh;
 
           border-radius: 8px;
-          background: rgb(39 42 53 / 84%);
+          background: rgb(41 41 68 / 48%);
           padding: 8px;
         }
 

@@ -45,6 +45,11 @@ export class EmailCard extends LitElement {
         justify-content: space-between;
       }
 
+      .emailHeader h2 {
+        view-transition-name: subject;
+        contain: layout;
+      }
+
       .preview {
         white-space: nowrap;
         overflow: hidden;
@@ -123,7 +128,7 @@ export class EmailCard extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         li {
-          background: rgb(39 42 53 / 84%);
+          background: rgb(41 41 68 / 48%);
           color: white;
         }
 
@@ -138,7 +143,7 @@ export class EmailCard extends LitElement {
 
       @media (min-width: 1000px) and (prefers-color-scheme: dark) {
         li {
-          background: rgb(39 42 53 / 84%);;
+          background: rgb(41 41 68 / 48%);
 
           content-visibility: auto;
           contain-intrinsic-size: 156px;
@@ -172,8 +177,8 @@ export class EmailCard extends LitElement {
 
   async firstUpdated() {}
 
-  async read(id: string) {
-    Router.go(`/email?id=${id}`);
+  async read(id: string, button: HTMLElement) {
+    await Router.go(`/email?id=${id}`);
   }
 
   async bookmark(email: any) {
@@ -200,7 +205,7 @@ export class EmailCard extends LitElement {
               <h3>${this.email.subject || "No Subject"}</h3>
               ${this.email.flag.flagStatus === "flagged"
                 ? html`<sl-badge
-                    @click="${() => this.read(this.email.id)}"
+                    @click="${($event: any) => this.read(this.email.id, $event.target)}"
                     appearance="lightweight"
                     >flagged
                     <ion-icon name="alert-circle-outline"></ion-icon>
@@ -234,7 +239,7 @@ export class EmailCard extends LitElement {
               <sl-button
                 class="readButton"
                 id="readButton"
-                @click="${() => this.read(this.email.id)}"
+                @click="${($event: any) => this.read(this.email.id, $event.target)}"
                 >Read</sl-button
               >
             </div>

@@ -28,6 +28,11 @@ export class AppHeader extends LitElement {
         z-index: 1;
       }
 
+      app-login {
+        view-transition-name: login-button;
+        contain: layout;
+      }
+
       #headerActions {
         display: flex;
         align-items: center;

@@ -53,9 +53,6 @@ export class AppAbout extends LitElement {
         border: solid 1px var(--app-color-primary);
         margin-top: 1em;
         min-height: 70vh;
-
-        animation-name: fadeIn;
-        animation-duration: 280ms;
       }
 
       #mail-loader {
@@ -78,6 +75,9 @@ export class AppAbout extends LitElement {
       #subject {
         font-size: 1.6em;
         padding-top: 1em;
+
+        view-transition-name: subject;
+        contain: layout;
       }
 
       #detailActions button.back {
@@ -481,6 +481,11 @@ export class AppAbout extends LitElement {
       @media (prefers-color-scheme: dark) {
         #detailBlock {
           color: white;
+        }
+
+        sl-drawer::part(panel) {
+          background: #24242866;
+          backdrop-filter: blur(20px);
         }
 
         @media (max-width: 800px) {

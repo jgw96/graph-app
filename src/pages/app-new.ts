@@ -28,6 +28,7 @@ import "../components/app-drawing";
 import "../components/app-camera";
 import "../components/app-dictate";
 import "../components/app-files";
+import "../components/address-bar";
 // import "../components/app-textarea";
 
 import { del } from "idb-keyval";
@@ -434,7 +435,6 @@ export class AppNew extends LitElement {
       #attachmentsBlock {
         position: fixed;
         width: 100%;
-        bottom: 60px;
         left: 0;
         right: 0;
         padding-bottom: 10px;
@@ -615,11 +615,16 @@ export class AppNew extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         #newEmailActions {
-          background: rgb(39 42 53 / 84%);
+          background: rgb(41 41 68 / 48%);
         }
 
         h2 {
           color: white;
+        }
+
+        sl-drawer::part(panel) {
+          background: #24242866;
+          backdrop-filter: blur(20px);
         }
       }
 
@@ -721,6 +726,35 @@ export class AppNew extends LitElement {
         timeout: 1000,
       }
     );
+
+    window.requestIdleCallback(async () => {
+      await this.doDragDrop();
+    }, {
+      timeout: 1000
+    })
+  }
+
+  async doDragDrop() {
+    const elem = this.shadowRoot;
+    elem?.addEventListener('dragover', (e) => {
+      // Prevent navigation.
+      e.preventDefault();
+    });
+
+    elem?.addEventListener('drop', async (e: any) => {
+      e.preventDefault();
+
+      const fileHandlesPromises = [...e.dataTransfer.items]
+        .filter((item) => item.kind === 'file')
+        .map((item) => item.getAsFileSystemHandle());
+
+      for await (const handle of fileHandlesPromises) {
+        console.log(`File: ${handle.name}`);
+
+        const blob = await handle.getFile();
+        this.attachments = [blob];
+      }
+    });
   }
 
   async handleIdle() {
@@ -1003,8 +1037,8 @@ export class AppNew extends LitElement {
     }
   }
 
-  updateAddress(event: any) {
-    this.address = event.target.value;
+  updateAddress(address: string) {
+    this.address = address;
   }
 
   handleContacts(ev: CustomEvent) {
@@ -1070,57 +1104,60 @@ export class AppNew extends LitElement {
   }
 
   async presentActionSheet() {
-    const actionSheet: any = document.createElement("ion-action-sheet");
+    // const actionSheet: any = document.createElement("ion-action-sheet");
 
-    actionSheet.header = "Attach";
-    actionSheet.cssClass = "my-custom-class";
-    actionSheet.buttons = [
-      {
-        text: "Local File",
-        icon: "document-outline",
-        handler: async () => {
-          await actionSheet.dismiss();
+    // actionSheet.header = "Attach";
+    // actionSheet.cssClass = "my-custom-class";
+    // actionSheet.buttons = [
+    //   {
+    //     text: "Local File",
+    //     icon: "document-outline",
+    //     handler: async () => {
+    //       await actionSheet.dismiss();
 
-          await this.attachFile();
-        },
-      },
-      {
-        text: "OneDrive",
-        icon: "cloud-outline",
-        handler: async () => {
-          await actionSheet.dismiss();
+    //       await this.attachFile();
+    //     },
+    //   },
+    //   {
+    //     text: "OneDrive",
+    //     icon: "cloud-outline",
+    //     handler: async () => {
+    //       await actionSheet.dismiss();
 
-          this.pickFiles = true;
-        },
-      },
-      {
-        text: "Take Photo",
-        icon: "camera-outline",
-        handler: async () => {
-          await actionSheet.dismiss();
-          await this.attachPhoto();
-        },
-      },
-      {
-        text: "Drawing",
-        icon: "brush-outline",
-        handler: async () => {
-          await actionSheet.dismiss();
+    //       this.pickFiles = true;
+    //     },
+    //   },
+    //   {
+    //     text: "Take Photo",
+    //     icon: "camera-outline",
+    //     handler: async () => {
+    //       await actionSheet.dismiss();
+    //       await this.attachPhoto();
+    //     },
+    //   },
+    //   {
+    //     text: "Drawing",
+    //     icon: "brush-outline",
+    //     handler: async () => {
+    //       await actionSheet.dismiss();
 
-          await this.attachDrawing();
-        },
-      },
-      {
-        text: "Cancel",
-        icon: "close",
-        role: "cancel",
-        handler: () => {
-          console.log("Cancel clicked");
-        },
-      },
-    ];
-    document.body.appendChild(actionSheet);
-    return actionSheet.present();
+    //       await this.attachDrawing();
+    //     },
+    //   },
+    //   {
+    //     text: "Cancel",
+    //     icon: "close",
+    //     role: "cancel",
+    //     handler: () => {
+    //       console.log("Cancel clicked");
+    //     },
+    //   },
+    // ];
+    // document.body.appendChild(actionSheet);
+    // return actionSheet.present();
+
+    const drawer: any = this.shadowRoot?.querySelector("#attach-file-drawer");
+    await drawer?.show();
   }
 
   async openFile(handle: any) {
@@ -1415,6 +1452,18 @@ export class AppNew extends LitElement {
         </sl-button>
       </sl-drawer>
 
+      <sl-drawer label="Attach" placement="end" id="attach-file-drawer">
+        <sl-button @click="${() => this.attachFile()}">
+            Attach File
+            <ion-icon name="document-outline"></ion-icon>
+          </sl-button>
+
+          <sl-button @click="${() => this.attachPhoto()}">
+            Attach Photo
+            <ion-icon name="camera-outline"></ion-icon>
+          </sl-button>
+      </sl-drawer>
+
 
       <div id="appNewBody">
         ${this.loading ? html`<sl-progress></sl-progress>` : null}
@@ -1425,14 +1474,7 @@ export class AppNew extends LitElement {
         <div id="subjectBar">
           <div id="addressBlock">
             <span>To:</span>
-            <sl-input
-              class="contacts"
-              .value="${this.address}"
-              @change="${(event: CustomEvent) => this.updateAddress(event)}"
-              type="text"
-              id="recip"
-              placeholder="test@email.com"
-            ></sl-input>
+            <address-bar @address-changed="${(event: CustomEvent) => this.updateAddress(typeof(event) === "string" ? event : event.detail.address)}"></address-bar>
             <app-contacts
               @got-contacts="${(ev: CustomEvent) => this.handleContacts(ev)}"
             ></app-contacts>

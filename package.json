@@ -19,7 +19,7 @@
     "@dile/dile-toast": "^1.1.1",
     "@pwabuilder/pwa-inking": "^1.0.16",
     "@pwabuilder/pwainstall": "^1.6.7",
-    "@shoelace-style/shoelace": "^2.0.0-beta.82",
+    "@shoelace-style/shoelace": "^2.0.0-beta.83",
     "@vaadin/router": "^1.7.4",
     "browser-nativefs": "^0.12.0",
     "font-select": "^1.2.1",

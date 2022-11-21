@@ -3,10 +3,11 @@ import { LitElement, css, html, PropertyValueMap } from "lit";
 import { customElement, state, property } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 
 import { clear, set, get } from "idb-keyval";
+import { getAccount, getPhoto } from "../services/auth";
 
 @customElement("app-settings")
 export class AppSettings extends LitElement {
@@ -16,6 +17,8 @@ export class AppSettings extends LitElement {
   @state() themeChecked: boolean | null = false;
   @state() chosenTheme: any | undefined;
   @state() themeColor: string = "#1A1B3E";
+  @state() user: any | undefined;
+  @state() imageBlob: any | undefined;
 
   static get styles() {
     return css`
@@ -23,9 +26,6 @@ export class AppSettings extends LitElement {
         margin-top: 12px;
         margin-bottom: 8px;
         font-weight: bold;
-      }
-      #storage-button {
-        margin-top: 1em;
       }
 
       #colorPicker {
@@ -67,7 +67,30 @@ export class AppSettings extends LitElement {
         align-items: center;
         flex-direction: row-reverse;
         gap: 6px;
-        color: #b6b6be;
+
+        width: 100%;
+        justify-content: flex-end;
+        background: #ffffff0d;
+        border-radius: 8px;
+        padding: 8px;
+        height: 3em;
+      }
+
+      .settings-block#profileInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        height: fit-content;
+      }
+
+      .settings-block#profileInfo img {
+        border-radius: 50%;
+        height: 5em;
+        width: 5em;
+      }
+
+      #username {
+        font-weight: bold;
+        font-size: 1.4em;
       }
 
       @media (screen-spanning: single-fold-vertical) {
@@ -92,6 +115,14 @@ export class AppSettings extends LitElement {
           color: black;
         }
       }
+
+      @media(prefers-color-scheme: dark) {
+        sl-drawer::part(panel) {
+          background: #24242866;
+          backdrop-filter: blur(20px);
+        }
+      }
+
       #settingsHeader {
         display: flex;
         align-items: center;
@@ -155,20 +186,30 @@ export class AppSettings extends LitElement {
         this.openSettings = false;
       });
     }
+
+    const userAccount = await getAccount();
+    console.log("userAccount", userAccount);
+    if (userAccount) {
+      this.user = userAccount;
+
+      const blob = await getPhoto();
+      console.log(blob);
+      this.imageBlob = URL.createObjectURL(blob);
+    }
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     if (_changedProperties.has("openSettings")) {
       if (this.openSettings === true) {
-        const dialog: any = this.shadowRoot?.querySelector("sl-dialog");
-        if (dialog) {
-          await dialog.show();
+        const drawer: any = this.shadowRoot?.querySelector("sl-drawer");
+        if (drawer) {
+          await drawer.show();
         }
       }
       else {
-        const dialog: any = this.shadowRoot?.querySelector("sl-dialog");
-        if (dialog) {
-          await dialog.hide();
+        const drawer: any = this.shadowRoot?.querySelector("sl-drawer");
+        if (drawer) {
+          await drawer.hide();
         }
       }
     }
@@ -282,28 +323,46 @@ export class AppSettings extends LitElement {
 
   render() {
     return html`
-
-      <sl-dialog label="Settings">
+      <sl-drawer label="Settings">
         <div id="settingsActions">
 
           <div class="settings-block">
             <p>Theme Color</p>
 
-            <sl-color-picker .value="${this.themeColor}" @change="${(ev: any) => this.handleThemeColor(ev.target!.value)}" label="Primary Theme Color"></sl-color-picker>
+            <sl-color-picker .value="${this.themeColor}" @change="${(ev: any) => this.handleThemeColor(ev.target!.value)}"
+              label="Primary Theme Color"></sl-color-picker>
           </div>
 
+          <div class="settings-block">
             <sl-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
               <span slot="checked-message">On</span>
               <span slot="unchecked-message">Off</span>
 
               Update mail in the background
             </sl-switch>
+          </div>
+
+          <div class="settings-block">
+
+            Clear all app storage
 
             <sl-button id="storage-button" @click="${() => this.clearStorage()}">
               Clear Storage
             </sl-button>
+          </div>
+
+          <div class="settings-block" id="profileInfo">
+          ${this.imageBlob
+                  ? html`<img .src="${this.imageBlob}" alt="profile photo" />`
+                  : html`<sl-skeleton
+                      shape="circle"
+                    ></sl-skeleton>`}
+
+            <span id="username">${this.user?.name}</span>
+            <span id="useremail">${this.user?.username}</span>
+          </div>
         </div>
-      </sl-dialog>
+      </sl-drawer>
     `;
   }
 }

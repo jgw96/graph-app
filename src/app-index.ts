@@ -92,13 +92,19 @@ export class AppIndex extends LitElement {
       {
         path: "",
         children: [
-          { path: "/", component: "app-home", animate: true } as any,
+          { path: "/", component: "app-home" } as any,
           {
             path: "/email",
             animate: true,
             component: "app-about",
             action: async () => {
-              await import("./pages/app-about.js");
+              if ((document as any).startViewTransition) {
+                await (document as any).startViewTransition();
+                await import("./pages/app-about.js");
+              }
+              else {
+                await import("./pages/app-about.js");
+              }
             },
           } as any,
           {
@@ -106,7 +112,13 @@ export class AppIndex extends LitElement {
             animate: true,
             component: "app-new",
             action: async () => {
-              await import("./pages/app-new.js");
+              if ((document as any).startViewTransition) {
+                await (document as any).startViewTransition();
+                await import("./pages/app-new.js");
+              }
+              else {
+                await import("./pages/app-new.js");
+              }
             },
           } as any,
         ],
