@@ -25,6 +25,7 @@ import { isOffline } from "../utils/network";
 @customElement("app-home")
 export class AppHome extends LitElement {
   @state() mail: any[] = [];
+  @state() searchResults: any[] = [];
   @state() mailCopy: any[] | null = [];
   @state() activeCat: string = "all";
   @state() loading: boolean = false;
@@ -32,6 +33,7 @@ export class AppHome extends LitElement {
   @state() listMode: string = "grid";
   @state() enable_next: boolean = true;
   @state() offline: boolean = false;
+  @state() searchActive: boolean = false;
 
   worker: any | null = null;
 
@@ -41,6 +43,10 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      sl-popup::part(popup) {
+        background: #1e2026;
       }
 
       sl-button[variant="primary"] {
@@ -228,6 +234,21 @@ export class AppHome extends LitElement {
         margin-top: 0;
       }
 
+      #searchResults li {
+        background: var(--app-color-primary);
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      #searchResults li .from {
+        font-weight: normal;
+        display: block;
+        margin-top: 6px;
+      }
+
       #mainListHeader {
         display: flex;
         align-items: flex-end;
@@ -236,7 +257,7 @@ export class AppHome extends LitElement {
         background: #222222;
         border-radius: 6px;
         padding: 10px;
-        z-index: 0;
+        z-index: 9;
 
         max-height: 4em;
       }
@@ -453,10 +474,10 @@ export class AppHome extends LitElement {
       await this.getSavedAndUpdate();
     }
 
-    (window as any).requestIdleCallback(async () => {
-      // const underlying = new SearchWorker();
-      // this.worker = Comlink.wrap(underlying);
+    const worker = new Worker(new URL('/workers/search.js', import.meta.url), {
+      type: 'module'
     });
+    this.worker = Comlink.wrap(worker);
 
     (window as any).requestIdleCallback(async () => {
       if (
@@ -506,9 +527,23 @@ export class AppHome extends LitElement {
   }
 
   async searchMail(query: string) {
+    this.searchActive = true;
+
     const searchResults = await this.worker.search(query);
-    console.log(searchResults);
-    this.mail = [...searchResults];
+    console.log("searchResults", searchResults);
+    this.searchResults = [...searchResults];
+    // this.mail = this.searchResults;
+
+    if (this.mail.length === 0) {
+      this.searchActive = false;
+    }
+    else if (query.length === 0) {
+      this.searchActive = false;
+    }
+  }
+
+  async read(id: string) {
+    await Router.go(`/email?id=${id}`);
   }
 
   public async getSavedAndUpdate() {
@@ -749,14 +784,34 @@ export class AppHome extends LitElement {
 
                 <div id="mainListBlock">
                   <div id="mainListHeader">
-                    <sl-input
-                      id="searchInput"
-                      placeholder="Search..."
-                      @change="${(event: any) =>
-                        this.searchMail(event.target.value)}"
-                      type="search"
-                      >Search Mail</sl-input
-                    >
+                    <sl-popup fixed ?active="${this.searchActive}" placement="bottom" sync="width">
+                      <sl-input
+                        slot="anchor"
+                        id="searchInput"
+                        placeholder="Search..."
+                        @sl-change="${(event: any) =>
+                          this.searchMail(event.target.value)}"
+                        type="search"
+                        >Search Mail</sl-input
+                      >
+
+                      <div id="searchResults">
+                        <ul>
+                          ${this.searchResults?.map(
+                            (mail: any) => html`
+
+                              <li @click="${() => this.read(mail.id)}">
+                                <div class="searchResult">
+                                  <span>${mail.subject}</span>
+
+                                  <span class="from">from ${mail.from.emailAddress.name}</span>
+                                </div>
+                              </li>
+                            `
+                          )}
+                        </ul>
+                      </div>
+                    </sl-popup>
 
                     <div id="extra-controls">
                       ${this.listMode === "grid"

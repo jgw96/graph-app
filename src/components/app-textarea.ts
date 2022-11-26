@@ -102,8 +102,10 @@ export class AppTextarea extends LitElement {
     previewTextList: string[] = [];
 
     firstUpdated() {
-        // const underlying2 = new TextWorker();
-        // this.textWorker = Comlink.wrap(underlying2);
+        const worker = new Worker(new URL('/workers/text.js', import.meta.url), {
+          type: 'module'
+        });
+        this.textWorker = Comlink.wrap(worker);
     }
 
     handleFontSelect(value: string) {
