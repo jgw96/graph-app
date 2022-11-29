@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
 import "@dile/dile-toast/dile-toast";
-import { getMail } from "../services/mail";
+import { getMail, searchMailFullText } from "../services/mail";
 import { Router } from "@vaadin/router";
 
 import "../components/email-card";
@@ -34,6 +34,8 @@ export class AppHome extends LitElement {
   @state() enable_next: boolean = true;
   @state() offline: boolean = false;
   @state() searchActive: boolean = false;
+
+  @state() openEmailID: string | undefined = undefined;
 
   worker: any | null = null;
 
@@ -529,9 +531,14 @@ export class AppHome extends LitElement {
   async searchMail(query: string) {
     this.searchActive = true;
 
-    const searchResults = await this.worker.search(query);
-    console.log("searchResults", searchResults);
-    this.searchResults = [...searchResults];
+    const results: any = await searchMailFullText(query);
+    console.log("full text search results", results);
+
+    this.searchResults = [...results];
+
+    // const searchResults = await this.worker.search(query);
+    // console.log("searchResults", searchResults);
+    // this.searchResults = [...searchResults];
     // this.mail = this.searchResults;
 
     if (this.mail.length === 0) {
@@ -543,7 +550,13 @@ export class AppHome extends LitElement {
   }
 
   async read(id: string) {
-    await Router.go(`/email?id=${id}`);
+    // await Router.go(`/email?id=${id}`);
+
+    const emailDrawer: any = this.shadowRoot?.querySelector("#email-drawer");
+    if (emailDrawer) {
+      this.openEmailID = id;
+      await emailDrawer.show();
+    }
   }
 
   public async getSavedAndUpdate() {
@@ -553,7 +566,8 @@ export class AppHome extends LitElement {
 
     this.enable_next = true;
 
-    const mailCheck = sessionStorage.getItem("latestMail");
+    // const mailCheck = sessionStorage.getItem("latestMail");
+    const mailCheck = false;
 
     if (mailCheck) {
       this.mailCopy = JSON.parse(mailCheck);
@@ -804,7 +818,7 @@ export class AppHome extends LitElement {
                                 <div class="searchResult">
                                   <span>${mail.subject}</span>
 
-                                  <span class="from">from ${mail.from.emailAddress.name}</span>
+                                  <span class="from">from ${mail['from.emailAddress.name']}</span>
                                 </div>
                               </li>
                             `
@@ -875,6 +889,10 @@ export class AppHome extends LitElement {
                       : null}
                   </ul>
                 </div>
+
+                <div id="emailPreview">
+                  <h3>Hello world</h3>
+                </div>
               </section>
 
               <div id="homeToolbar">
@@ -902,6 +920,10 @@ export class AppHome extends LitElement {
           : this.initLoad && this.mail && this.mail.length <= 0
           ? html` <home-info></home-info> `
           : null}
+
+          <sl-drawer id="email-drawer">
+            <app-about></app-about>
+          </sl-drawer>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>
       </div>

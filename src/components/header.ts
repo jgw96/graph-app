@@ -43,7 +43,7 @@ export class AppHeader extends LitElement {
         flex-direction: row;
         height: env(titlebar-area-height, 33px);
 
-        margin-top: 12px;
+        margin-top: 4px;
         width: 9em;
         margin-right: 1em;
         justify-content: space-between;
@@ -61,6 +61,9 @@ export class AppHeader extends LitElement {
         padding-left: 5px;
         height: env(titlebar-area-height, 33px);
 
+        background: transparent;
+        backdrop-filter: none;
+
         position: sticky;
         z-index: 1;
 
@@ -68,12 +71,8 @@ export class AppHeader extends LitElement {
         right: 0;
         /* Use the environment variable for the top anchoring with a fallback. */
         top: env(titlebar-area-y, 0);
-
-        backdrop-filter: blur(40px);
-
-        background: #212121;
         padding-right: 0px;
-        width: env(titlebar-area-width, 99%);
+        width: env(titlebar-area-width, 100%);
       }
 
       header h1 {
@@ -94,6 +93,7 @@ export class AppHeader extends LitElement {
         color: white;
         height: env(titlebar-area-height, 33px);
         margin-right: 0;
+        margin-top: -3px;
 
         -webkit-app-region: no-drag;
         app-region: no-drag;
@@ -139,7 +139,6 @@ export class AppHeader extends LitElement {
       /*keeping seperate for the future */
       @media (prefers-color-scheme: light) {
         header {
-          background: transparent;
           color: black;
         }
 
@@ -153,9 +152,6 @@ export class AppHeader extends LitElement {
       }
 
       @media (prefers-color-scheme: dark) {
-        header {
-          background: transparent;
-        }
         header h1 {
           color: white;
         }

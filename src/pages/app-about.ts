@@ -40,13 +40,29 @@ export class AppAbout extends LitElement {
         justify-content: space-between;
       }
 
+      #emailHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(41, 41, 68, 0.48);
+        backdrop-filter: blur(40px);
+        width: 94.4vw;
+        border-radius: 8px;
+        animation-name: slidein;
+        animation-duration: 280ms;
+        margin-top: 1em;
+        padding-left: 12px;
+      }
+
       sl-drawer sl-textarea {
         margin-top: 8px;
         margin-bottom: 8px;
       }
 
-      sl-button ion-icon {
-        margin-left: 4px;
+      sl-button[circle] ion-icon {
+        width: 20px;
+        height: 20px;
+        margin-top: 9px;
       }
 
       #actual-email {
@@ -78,6 +94,13 @@ export class AppAbout extends LitElement {
 
         view-transition-name: subject;
         contain: layout;
+
+        margin: 0;
+        padding: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 50vw;
+        overflow: hidden;
       }
 
       #detailActions button.back {
@@ -90,11 +113,10 @@ export class AppAbout extends LitElement {
 
       #detailAction {
         flex: 1;
+        width: 95.5vw;
       }
 
       #detailAction h2 {
-        margin-top: 1em;
-        margin-right: 4em;
         color: white !important;
       }
 
@@ -111,16 +133,18 @@ export class AppAbout extends LitElement {
         animation-name: slidedown;
         animation-duration: 380ms;
 
+        background: rgb(29 29 58);
+        backdrop-filter: blur(40px);
+        padding: 0;
+        padding-left: 10px;
+        top: 3.2em;
+        right: 2.4em;
+
         justify-content: space-between;
         align-items: center;
-        background: rgba(33, 33, 33, 0.79);
-        backdrop-filter: blur(10px);
-        padding: 10px;
         border-radius: 8px;
         position: fixed;
-        left: 2em;
         gap: 8px;
-        top: 3em;
       }
 
       #scrolledDetailActions.scrolled {
@@ -131,13 +155,11 @@ export class AppAbout extends LitElement {
         display: flex;
         justify-content: flex-end;
         padding-right: 1em;
-        position: fixed;
-        bottom: 14px;
-        right: 14px;
-        background: rgb(33 33 33 / 79%);
-        backdrop-filter: blur(10px);
         padding: 10px;
-        border-radius: 8px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
         animation-name: slidein;
         animation-duration: 280ms;
@@ -415,6 +437,14 @@ export class AppAbout extends LitElement {
         #detailMoreActions {
           backdrop-filter: none;
           width: initial;
+        }
+
+        #emailHeader {
+          width: initial;
+        }
+
+        #emailHeader h2 {
+          font-size: 1.2em;
         }
       }
 
@@ -761,6 +791,7 @@ export class AppAbout extends LitElement {
               id="openWindow"
               appearance="stealth"
               @click="${() => this.openInNew()}"
+              circle
             >
               <ion-icon name="open"></ion-icon>
             </sl-button>
@@ -771,22 +802,91 @@ export class AppAbout extends LitElement {
               @click="${() => this.back()}"
               class="back"
               aria-label="back button"
+              circle
             >
-              Back
-
               <ion-icon name="chevron-back-outline"></ion-icon>
             </sl-button>
 
-            <sl-button
-              appearance="outline"
-              id="openWindow"
-              appearance="stealth"
-              @click="${() => this.openInNew()}"
-            >
-              <ion-icon name="open"></ion-icon>
-            </sl-button>
+            <div id="detailMoreActions">
+              ${
+                this.email?.flag.flagStatus !== "flagged"
+                  ? html`<sl-button
+                      id="flagButtonAbout"
+                      class="detailActionButton"
+                      @click="${() => this.bookmark(this.email)}"
+                      circle
+                    >
+                      <ion-icon name="flag-outline"></ion-icon>
+                    </sl-button>`
+                  : null
+              }
+              ${
+                "showTrigger" in Notification.prototype
+                  ? html`<sl-button
+                      class="detailActionButton"
+                      id="reminderInitButton"
+                      @click="${() => this.setupReminder()}"
+                      circle
+                    >
+                      <ion-icon name="notifications-circle-outline"></ion-icon>
+                    </sl-button>`
+                  : null
+              }
+
+              <sl-button
+                @click="${() => this.share()}"
+                aria-label="share button"
+                id="share-button"
+                circle
+              >
+
+                <ion-icon name="share-outline"></ion-icon>
+              </sl-button>
+
+              <!--<sl-button @click="${() => this.reader()}" id="reader-button">
+                Reader View
+              </sl-button>-->
+
+              ${
+                this.email?.unsubscribeEnabled
+                  ? html`<sl-button
+                      id="unsubButton"
+                      @click="${() => this.unsubscribe(this.email.id)}"
+                    >
+                      Unsubscribe
+
+                      <ion-icon name="close-outline"></ion-icon>
+                    </sl-button>`
+                  : null
+              }
+              ${
+                this.attachments && this.attachments.length > 0
+                  ? html`
+                      <sl-button
+                        id="unsubButton"
+                        @click="${() => this.openAttach()}"
+                      >
+                        Attachments
+
+                        <ion-icon name="folder-outline"></ion-icon>
+                      </sl-button>
+                    `
+                  : null
+              }
+
+              <sl-button circle id="forwardButton" @click="${() => this.openForward()}">
+                <ion-icon name="arrow-forward-circle-outline"></ion-icon>
+              </sl-button>
+
+              <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
+                Reply
+
+                <ion-icon name="mail-outline"></ion-icon>
+              </sl-button>
+            </div>
           </div>
 
+          <div id="emailHeader">
           ${
             this.email
               ? html`<h2 id="subject">${this.email?.subject}</h2>`
@@ -800,6 +900,84 @@ export class AppAbout extends LitElement {
                   shimmer
                 ></sl-skeleton>`
           }
+
+            <div id="detailMoreActions">
+              ${
+                this.email?.flag.flagStatus !== "flagged"
+                  ? html`<sl-button
+                      id="flagButtonAbout"
+                      class="detailActionButton"
+                      @click="${() => this.bookmark(this.email)}"
+                      circle
+                    >
+                      <ion-icon name="flag-outline"></ion-icon>
+                    </sl-button>`
+                  : null
+              }
+              ${
+                "showTrigger" in Notification.prototype
+                  ? html`<sl-button
+                      class="detailActionButton"
+                      id="reminderInitButton"
+                      @click="${() => this.setupReminder()}"
+                      circle
+                    >
+                      <ion-icon name="notifications-circle-outline"></ion-icon>
+                    </sl-button>`
+                  : null
+              }
+
+              <sl-button
+                @click="${() => this.share()}"
+                aria-label="share button"
+                id="share-button"
+                circle
+              >
+                <ion-icon name="share-outline"></ion-icon>
+              </sl-button>
+
+              <!--<sl-button @click="${() => this.reader()}" id="reader-button">
+                Reader View
+              </sl-button>-->
+
+              ${
+                this.email?.unsubscribeEnabled
+                  ? html`<sl-button
+                      id="unsubButton"
+                      @click="${() => this.unsubscribe(this.email.id)}"
+                    >
+                      Unsubscribe
+
+                      <ion-icon name="close-outline"></ion-icon>
+                    </sl-button>`
+                  : null
+              }
+              ${
+                this.attachments && this.attachments.length > 0
+                  ? html`
+                      <sl-button
+                        id="unsubButton"
+                        @click="${() => this.openAttach()}"
+                      >
+                        Attachments
+
+                        <ion-icon name="folder-outline"></ion-icon>
+                      </sl-button>
+                    `
+                  : null
+              }
+
+              <sl-button circle id="forwardButton" @click="${() => this.openForward()}">
+                <ion-icon name="arrow-forward-circle-outline"></ion-icon>
+              </sl-button>
+
+              <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
+                Reply
+
+                <ion-icon name="mail-outline"></ion-icon>
+              </sl-button>
+            </div>
+          </div>
           ${
             this.openAttachments &&
             this.attachments &&
@@ -812,87 +990,7 @@ export class AppAbout extends LitElement {
               : null
           }
 
-          <div id="detailMoreActions">
-            ${
-              this.email?.flag.flagStatus !== "flagged"
-                ? html`<sl-button
-                    id="flagButtonAbout"
-                    class="detailActionButton"
-                    @click="${() => this.bookmark(this.email)}"
-                  >
-                    Flag
 
-                    <ion-icon name="flag-outline"></ion-icon>
-                  </sl-button>`
-                : null
-            }
-            ${
-              "showTrigger" in Notification.prototype
-                ? html`<sl-button
-                    class="detailActionButton"
-                    id="reminderInitButton"
-                    @click="${() => this.setupReminder()}"
-                  >
-                    Reminder
-
-                    <ion-icon name="notifications-circle-outline"></ion-icon>
-                  </sl-button>`
-                : null
-            }
-
-            <sl-button
-              @click="${() => this.share()}"
-              aria-label="share button"
-              id="share-button"
-            >
-              Share
-
-              <ion-icon name="share-outline"></ion-icon>
-            </sl-button>
-
-            <!--<sl-button @click="${() => this.reader()}" id="reader-button">
-              Reader View
-            </sl-button>-->
-
-            ${
-              this.email?.unsubscribeEnabled
-                ? html`<sl-button
-                    id="unsubButton"
-                    @click="${() => this.unsubscribe(this.email.id)}"
-                  >
-                    Unsubscribe
-
-                    <ion-icon name="close-outline"></ion-icon>
-                  </sl-button>`
-                : null
-            }
-            ${
-              this.attachments && this.attachments.length > 0
-                ? html`
-                    <sl-button
-                      id="unsubButton"
-                      @click="${() => this.openAttach()}"
-                    >
-                      Attachments
-
-                      <ion-icon name="folder-outline"></ion-icon>
-                    </sl-button>
-                  `
-                : null
-            }
-
-            <sl-button id="forwardButton" @click="${() => this.openForward()}">
-              Forward
-
-              <ion-icon name="arrow-forward-circle-outline"></ion-icon>
-            </sl-button>
-
-            <sl-button id="replyButton" @click="${() => this.reply()}">
-              Reply
-
-              <ion-icon name="mail-outline"></ion-icon>
-            </sl-button>
-          </div>
         </section>
 
         <div id="content">

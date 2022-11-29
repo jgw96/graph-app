@@ -326,12 +326,12 @@ export class AppSettings extends LitElement {
       <sl-drawer label="Settings">
         <div id="settingsActions">
 
-          <div class="settings-block">
+          <!-- <div class="settings-block">
             <p>Theme Color</p>
 
             <sl-color-picker .value="${this.themeColor}" @change="${(ev: any) => this.handleThemeColor(ev.target!.value)}"
               label="Primary Theme Color"></sl-color-picker>
-          </div>
+          </div> -->
 
           <div class="settings-block">
             <sl-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">

@@ -1,7 +1,27 @@
 import { getToken } from "../services/auth";
 
+import MiniSearch from 'minisearch';
+
 let nextMail: any = null;
 let folders: any[] | undefined = undefined;
+
+let miniSearch = new MiniSearch({
+  fields: ['subject', 'bodyPreview', 'from.emailAddress.name'], // fields to index for full-text search
+  storeFields: ['subject', 'from.emailAddress.name'], // fields to return with search results
+  extractField: (document, fieldName) => {
+    // Access nested fields
+    return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
+  },
+  searchOptions: {
+    fuzzy: 0.2
+  }
+});
+
+let potentialSearchOptions: any = {};
+
+export async function setSearchFilterToTerm(term: string) {
+  potentialSearchOptions.fields = [term];
+}
 
 // function to forward message
 export async function forwardMessage(
@@ -117,6 +137,13 @@ export async function getMail(initLoad?: boolean) {
     const data = await doMailFetch();
     nextMail = data["@odata.nextLink"];
 
+    try {
+      miniSearch.addAllAsync(data.value);
+    }
+    catch(err) {
+      console.error(err);
+    }
+
     return data.value;
   } else {
     const token = await getToken();
@@ -135,6 +162,13 @@ export async function getMail(initLoad?: boolean) {
 
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
+
+    try {
+      miniSearch.addAllAsync(data.value);
+    }
+    catch(err) {
+      console.error(err);
+    }
 
     console.log("mail data", data);
 
@@ -590,4 +624,11 @@ export async function getMailFolder(id: string) {
   const data = await response.json();
 
   return data.value;
+}
+
+export async function searchMailFullText(term: string) {
+  return new Promise((resolve) => {
+    let results = miniSearch.search(term);
+    resolve(results)
+  });
 }
