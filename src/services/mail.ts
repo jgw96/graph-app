@@ -2,11 +2,18 @@ import { getToken } from "../services/auth";
 
 import MiniSearch from 'minisearch';
 
-let nextMail: any = null;
-let folders: any[] | undefined = undefined;
-let currentMail: any = null;
+export let nextMail: any = null;
+export let currentMail: any = null;
 
-let miniSearch = new MiniSearch({
+export function setNextMail(value: any) {
+  nextMail = value;
+};
+
+export function setCurrentMail(value: any) {
+  currentMail = value;
+}
+
+export let miniSearch = new MiniSearch({
   fields: ['subject', 'bodyPreview', 'from.emailAddress.name'], // fields to index for full-text search
   storeFields: ['subject', 'from.emailAddress.name'], // fields to return with search results
   extractField: (document, fieldName) => {
@@ -129,60 +136,6 @@ export async function doMailFetch() {
   console.log("mail data", data);
 
   return parsed;
-}
-
-export async function getMail(initLoad?: boolean) {
-  console.log("getMail");
-
-  if (initLoad) {
-    const data = await doMailFetch();
-    nextMail = data["@odata.nextLink"];
-
-    currentMail = data.value;
-
-    try {
-      miniSearch.addAllAsync(data.value);
-    }
-    catch(err) {
-      console.error(err);
-    }
-
-    return data.value;
-  } else {
-    const token = await getToken();
-    console.log("token", token);
-
-    const headers = new Headers();
-    const bearer = "Bearer " + token;
-    headers.append("Authorization", bearer);
-    const options = {
-      method: "GET",
-      headers: headers,
-    };
-
-    const graphEndpoint =
-      nextMail || "https://graph.microsoft.com/beta/me/messages";
-
-    const response = await fetch(graphEndpoint, options);
-    const data = await response.json();
-
-    try {
-      miniSearch.addAllAsync(data.value);
-    }
-    catch(err) {
-      console.error(err);
-    }
-
-    console.log("mail data", data);
-
-    nextMail = data["@odata.nextLink"];
-
-    currentMail = [...currentMail, ...data.value];
-
-    // nextMail = data.  + '.@' + odata.nextLink;
-
-    return data.value;
-  }
 }
 
 export async function getAnEmail(id: string) {
@@ -587,48 +540,6 @@ export async function downloadAttach(mail: any, attachment: any) {
   } else {
     return null;
   }
-}
-
-export async function getMailFolders() {
-  if (folders) {
-    return folders;
-  }
-
-  const token = await getToken();
-
-  const headers = new Headers();
-  const bearer = "Bearer " + token;
-  headers.append("Authorization", bearer);
-  const options = {
-    method: "GET",
-    headers: headers,
-  };
-  const graphEndpoint = "https://graph.microsoft.com/beta/me/mailFolders";
-
-  const response = await fetch(graphEndpoint, options);
-  const data = await response.json();
-
-  folders = data.value;
-
-  return data.value;
-}
-
-export async function getMailFolder(id: string) {
-  const token = await getToken();
-
-  const headers = new Headers();
-  const bearer = "Bearer " + token;
-  headers.append("Authorization", bearer);
-  const options = {
-    method: "GET",
-    headers: headers,
-  };
-  const graphEndpoint = `https://graph.microsoft.com/beta/me/mailFolders/${id}/messages`;
-
-  const response = await fetch(graphEndpoint, options);
-  const data = await response.json();
-
-  return data.value;
 }
 
 export async function searchMailFullText(term: string) {

@@ -6,8 +6,6 @@ import '@shoelace-style/shoelace/dist/components/badge/badge.js';
 
 import {classMap} from 'lit/directives/class-map.js';
 
-import { flagEmail } from "../services/mail";
-
 @customElement("email-card")
 export class EmailCard extends LitElement {
   @property({ type: Object }) email: any = null;
@@ -194,6 +192,7 @@ export class EmailCard extends LitElement {
 
   async bookmark(email: any) {
     try {
+      const { flagEmail } = await import("../services/mail");
       await flagEmail(email);
 
       let event = new CustomEvent("flag-email", {

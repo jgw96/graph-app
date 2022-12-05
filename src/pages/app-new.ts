@@ -12,7 +12,6 @@ import { classMap } from "lit-html/directives/class-map.js";
 import "@dile/dile-toast/dile-toast";
 // import "font-select";
 
-import { getAnEmail, sendMail, reply, saveDraft } from "../services/mail";
 import { Router } from "@vaadin/router";
 
 // @ts-ignore
@@ -698,6 +697,8 @@ export class AppNew extends LitElement {
     const id = search.get("id");
 
     if (id) {
+      const { getAnEmail } = await import("../services/mail");
+
       this.emailReplyTo = await getAnEmail(id);
       console.log("email to reply too", this.emailReplyTo);
       this.address = this.emailReplyTo.sender.emailAddress.address;
@@ -863,6 +864,7 @@ export class AppNew extends LitElement {
 
     try {
       if (recip && htmlBody) {
+        const { reply } = await import('../services/mail');
         await reply(this.emailReplyTo.id, htmlBody, recip);
 
         let toastElement: any = this.shadowRoot?.getElementById("myToast");
@@ -938,6 +940,8 @@ export class AppNew extends LitElement {
 
           canvas.toBlob(async (blob) => {
             if (blob) {
+              const { sendMail } = await import("../services/mail");
+
               await sendMail(this.subject, htmlBody, recip, [
                 new File([blob], "email", {
                   type: "image/png",
@@ -946,6 +950,7 @@ export class AppNew extends LitElement {
             }
           });
         } else {
+          const { sendMail } = await import("../services/mail");
           await sendMail(
             this.subject,
             email_style + htmlBody,
@@ -1300,6 +1305,7 @@ export class AppNew extends LitElement {
     console.log(htmlBody);
 
     try {
+      const { saveDraft } = await import("../services/mail")
       await saveDraft(
         this.subject || "",
         htmlBody,

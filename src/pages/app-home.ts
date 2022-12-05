@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
 import "@dile/dile-toast/dile-toast";
-import { getMail, searchMailFullText, sortMailByDateNewer, sortMailByDateOlder, sortMailByUnRead } from "../services/mail";
+import { getMail } from "../services/getMail";
 import { Router } from "@vaadin/router";
 
 import "../components/email-card";
@@ -14,8 +14,6 @@ import "../components/app-loading";
 import "../components/mail-folders";
 import "../components/home-info";
 import "../components/header";
-
-import './app-about';
 
 //@ts-ignore
 // import "../workers/search.js";
@@ -648,6 +646,8 @@ export class AppHome extends LitElement {
   async searchMail(query: string) {
     this.searchActive = true;
 
+    const { searchMailFullText } = await import("../services/mail")
+
     const results: any = await searchMailFullText(query);
     console.log("full text search results", results);
 
@@ -668,6 +668,8 @@ export class AppHome extends LitElement {
 
   async read(id: string) {
     // await Router.go(`/email?id=${id}`);
+
+    await import("./app-about");
 
     const emailDrawer: any = this.shadowRoot?.querySelector("#email-drawer");
     if (emailDrawer) {
@@ -877,16 +879,21 @@ export class AppHome extends LitElement {
 
   async sort(type: string) {
     if (type === "date-old") {
+      const { sortMailByDateOlder } = await import("../services/mail");
+
       const results: any = await sortMailByDateOlder();
       console.log("results", results);
       this.mail = [...results];
     }
     else if (type === "date-new") {
+      const { sortMailByDateNewer } = await import("../services/mail");
+
       const results: any = await sortMailByDateNewer();
       console.log("results", results);
       this.mail = [...results];
     }
     else if (type === "read") {
+      const { sortMailByUnRead } = await import("../services/mail");
       const results: any = await sortMailByUnRead();
       console.log("results", results);
       this.mail = [...results];

@@ -10,6 +10,13 @@ export default defineConfig({
   build: {
     sourcemap: true,
     assetsDir: "code",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "mail": ["./src/services/mail.ts"],
+        }
+      }
+    }
   },
   plugins: [
 

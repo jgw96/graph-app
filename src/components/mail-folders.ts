@@ -3,8 +3,6 @@ import { customElement, state } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 
-import { getMailFolder, getMailFolders } from "../services/mail";
-
 @customElement("mail-folders")
 export class MailFolders extends LitElement {
   @state() folders: any[] | undefined;
@@ -85,17 +83,23 @@ export class MailFolders extends LitElement {
   }
 
   async firstUpdated() {
-    const folders = await getMailFolders();
+    window.requestIdleCallback(async () => {
+      const { getMailFolders } = await import("../services/getMailFolders");
+      const folders = await getMailFolders();
 
-    console.log("folders", folders);
+      console.log("folders", folders);
 
-    if (folders) {
-      this.folders = folders;
-    }
+      if (folders) {
+        this.folders = folders;
+      }
+    }, {
+      timeout: 3000
+    })
   }
 
   async openFolder(id: string) {
     console.log("folder", id);
+    const { getMailFolder } = await import("../services/getMailFolders");
     const mail = await getMailFolder(id);
     console.log("mail", mail);
 
