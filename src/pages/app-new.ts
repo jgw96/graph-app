@@ -5,6 +5,7 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
 import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 import { classMap } from "lit-html/directives/class-map.js";
 
@@ -15,10 +16,10 @@ import { getAnEmail, sendMail, reply, saveDraft } from "../services/mail";
 import { Router } from "@vaadin/router";
 
 // @ts-ignore
-import TextWorker from '../workers/text.js?worker'
+// import TextWorker from '../workers/text.js?worker'
 
 // @ts-ignore
-import AIWorker from '../workers/ai.js?worker';
+// import AIWorker from '../workers/ai.js?worker';
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -75,6 +76,10 @@ export class AppNew extends LitElement {
 
       #sendButton::part(base) {
         color: white;
+      }
+
+      #toneDialog {
+        --width: 80vw;
       }
 
       app-dictate {
@@ -235,6 +240,8 @@ export class AppNew extends LitElement {
         list-style: none;
         overflow-y: scroll;
         height: 50vh;
+        padding: 0;
+        margin: 0;
       }
 
       #toxicityReport::-webkit-scrollbar {
@@ -712,15 +719,16 @@ export class AppNew extends LitElement {
 
     await this.fileHandler();
 
-    const underlying2 = new TextWorker();
-    this.textWorker = Comlink.wrap(underlying2);
+    const worker = new Worker(new URL('/workers/text.js', import.meta.url), {
+      type: 'module'
+    });
+    this.textWorker = Comlink.wrap(worker);
 
     (window as any).requestIdleCallback(
       async () => {
-        const underlying = new AIWorker();
-
-        this.worker = Comlink.wrap(underlying);
-        await this.worker?.load();
+        const aiWorker = new Worker(new URL('/workers/ai.js', import.meta.url));
+        this.worker = Comlink.wrap(aiWorker);
+        await this.worker.load();
       },
       {
         timeout: 1000,
@@ -987,8 +995,8 @@ export class AppNew extends LitElement {
     }
   }
 
-  async updateBody(event: any) {
-    this.body = event.target.value;
+  async updateBody(value: string) {
+    this.body = value;
 
     // user has started typing
     // lets set up our idle watcher
@@ -999,9 +1007,9 @@ export class AppNew extends LitElement {
     }
   }
 
-  async updatePreview(event: any) {
+  async updatePreview(value: any) {
     if (this.textPreview) {
-      const content = event.target.value;
+      const content = value;
 
       if (content) {
         this.previewTextList = [...this.previewTextList, content];
@@ -1213,7 +1221,10 @@ export class AppNew extends LitElement {
   async doAiCheck() {
     this.loading = true;
     this.aiData = await this.worker?.testInput(this.body);
-    console.log(this.aiData);
+    console.log("aiData", this.aiData);
+
+    const toneDialog: any = this.shadowRoot?.querySelector("#toneDialog");
+    await toneDialog?.show();
 
     this.loading = false;
 
@@ -1427,13 +1438,35 @@ export class AppNew extends LitElement {
   render() {
     return html`
 
+    <sl-dialog id="toneDialog" label="Tone Report">
+      <div id="toneBody">
+      ${this.aiData && this.aiData.length > 0
+                  ? html`<ul id="toxicityReport">
+                      ${this.aiData.map((dataPoint: any) => {
+                        return html`
+                          <li>
+                            <h4 class="bad">${dataPoint.label}</h4>
+                            <p>
+                              ${dataPoint.message}
+                            </p>
+                          </li>
+                        `;
+                      })}
+                    </ul>`
+                  : html`<div id="happyReport">
+                      <img src="/assets/robot.svg" />
+                      <h4>Your email sounds good to us!</h4>
+                    </div>`}
+      </div>
+    </sl-dialog>
+
       <sl-drawer label="More Actions" placement="bottom" id="more-actions-drawer">
         <sl-button @click="${() => this.saveToDraft()}">
           Save As Draft
         </sl-button>
 
         <sl-button @click="${() => this.doAiCheck()}">
-          AI Toxicity Check
+          Tone Report
         </sl-button>
 
         <sl-button @click="${() => this.attachFile()}">
@@ -1483,7 +1516,7 @@ export class AppNew extends LitElement {
           ${this.emailReplyTo
             ? null
             : html`<sl-input
-                @change="${(event: any) => this.updateSubject(event)}"
+                @sl-change="${(event: any) => this.updateSubject(event)}"
                 type="text"
                 id="subject"
                 placeholder="Subject.."
@@ -1516,7 +1549,7 @@ export class AppNew extends LitElement {
               </div>
             </div>`
           : null}
-        ${this.aiData
+        <!-- ${this.aiData
           ? html`<div id="aiBlock">
               <div id="aiData">
                 <div id="aiBlockHeader">
@@ -1550,7 +1583,7 @@ export class AppNew extends LitElement {
                 >
               </div>
             </div>`
-          : null}
+          : null} -->
         ${this.drawing === false
           ? html` <div id="text-editor-controls">
                 <label for="font-select">
@@ -1610,8 +1643,8 @@ export class AppNew extends LitElement {
               <section id="textAreaSection">
                 <sl-textarea
                   id="contentTextArea"
-                  @input="${(event: any) => this.updatePreview(event)}"
-                  @change="${(event: any) => this.updateBody(event)}"
+                  @sl-input="${(event: any) => this.updatePreview(event.target.value)}"
+                  @sl-change="${(event: any) => this.updateBody(event.target.value)}"
                   placeholder="Content of email..."
                 >
                 </sl-textarea>
@@ -1621,7 +1654,7 @@ export class AppNew extends LitElement {
                       id="textPreview"
                       .innerHTML="${this.textPreviewContent
                         ? this.textPreviewContent
-                        : null}"
+                        : ""}"
                     ></div>`
                   : null}
               </section>`
@@ -1685,7 +1718,7 @@ export class AppNew extends LitElement {
             ></app-dictate>
 
             <sl-button class="aiCheck" @click="${() => this.doAiCheck()}">
-              AI Toxicity Check
+              Tone Report
 
               <ion-icon name="happy-outline"></ion-icon>
             </sl-button>
@@ -1710,7 +1743,7 @@ export class AppNew extends LitElement {
               : null}
             ${this.emailReplyTo
               ? html`<sl-button
-                  variant="secondary"
+                  variant="primary"
                   id="sendButton"
                   @click="${() => this.reply()}"
                 >
@@ -1719,7 +1752,7 @@ export class AppNew extends LitElement {
                   <ion-icon name="mail-outline"></ion-icon>
                 </sl-button>`
               : html`<sl-button
-                  variant="secondary"
+                  variant="primary"
                   ?disabled="${this.subject && this.subject.length > 1
                     ? false
                     : true}"

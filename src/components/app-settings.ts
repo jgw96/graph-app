@@ -17,6 +17,7 @@ export class AppSettings extends LitElement {
   @state() themeChecked: boolean | null = false;
   @state() chosenTheme: any | undefined;
   @state() themeColor: string = "#1A1B3E";
+  @state() primaryColor: string = "#1A1B3E";
   @state() user: any | undefined;
   @state() imageBlob: any | undefined;
 
@@ -74,6 +75,12 @@ export class AppSettings extends LitElement {
         border-radius: 8px;
         padding: 8px;
         height: 3em;
+      }
+
+      .settings-block.themeColor {
+        flex-direction: column;
+        align-items: flex-start;
+        height: initial;
       }
 
       .settings-block#profileInfo {
@@ -289,11 +296,12 @@ export class AppSettings extends LitElement {
 
   async checkThemeColor() {
     const theme = await get("themeColor");
+    const primary = await get("primaryColor");
 
     if (theme) {
       const r: HTMLElement | null = document.querySelector(":root");
       if (r) {
-        r.style.setProperty("--gradient-color", theme);
+        r.style.setProperty("--theme-color", theme);
       }
 
       this.themeColor = theme;
@@ -301,19 +309,45 @@ export class AppSettings extends LitElement {
       const r: HTMLElement | null = document.querySelector(":root");
       if (r) {
         const rs = getComputedStyle(r);
-        this.themeColor = rs.getPropertyValue("--gradient-color");
+        this.themeColor = rs.getPropertyValue("--theme-color");
+      }
+    }
+
+    if (primary) {
+      const r: HTMLElement | null = document.querySelector(":root");
+      if (r) {
+        r.style.setProperty("--gradient-color", primary);
+      }
+
+      this.primaryColor = primary;
+    } else {
+      const r: HTMLElement | null = document.querySelector(":root");
+      if (r) {
+        const rs = getComputedStyle(r);
+        this.primaryColor = rs.getPropertyValue("--gradient-color");
       }
     }
   }
 
-  async handleThemeColor(ev: InputEvent) {
-    console.log((ev.target as any)?.value);
+  async handleThemeColor(value: any) {
+    console.log(value);
 
     const r: HTMLElement | null = document.querySelector(":root");
     if (r) {
-      r.style.setProperty("--gradient-color", (ev.target as any)?.value);
+      r.style.setProperty("--theme-color", value);
 
-      await set("themeColor", (ev.target as any)?.value);
+      await set("themeColor", value);
+    }
+  }
+
+  async handlePrimaryColor(value: any) {
+    console.log(value);
+
+    const r: HTMLElement | null = document.querySelector(":root");
+    if (r) {
+      r.style.setProperty("--gradient-color", value);
+
+      await set("primaryColor", value);
     }
   }
 
@@ -326,14 +360,7 @@ export class AppSettings extends LitElement {
       <sl-drawer label="Settings">
         <div id="settingsActions">
 
-          <div class="settings-block">
-            <p>Theme Color</p>
-
-            <sl-color-picker .value="${this.themeColor}" @change="${(ev: any) => this.handleThemeColor(ev.target!.value)}"
-              label="Primary Theme Color"></sl-color-picker>
-          </div>
-
-          <div class="settings-block">
+        <div class="settings-block">
             <sl-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
               <span slot="checked-message">On</span>
               <span slot="unchecked-message">Off</span>
@@ -360,6 +387,20 @@ export class AppSettings extends LitElement {
 
             <span id="username">${this.user?.name}</span>
             <span id="useremail">${this.user?.username}</span>
+          </div>
+
+          <div class="settings-block themeColor">
+            <p>Background Color</p>
+
+            <sl-color-picker inline .value="${this.themeColor}" @sl-change="${(ev: any) => this.handleThemeColor(ev.target!.value)}"
+              label="Primary Background Color"></sl-color-picker>
+          </div>
+
+          <div class="settings-block themeColor">
+            <p>Theme Color</p>
+
+            <sl-color-picker inline value="${this.primaryColor}" @sl-change="${(ev: any) => this.handlePrimaryColor(ev.target!.value)}"
+              label="Primary Theme Color"></sl-color-picker>
           </div>
         </div>
       </sl-drawer>

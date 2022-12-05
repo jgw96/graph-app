@@ -1,10 +1,10 @@
 {
   "id": "/",
   "scope": "/",
-  "name": "Mail GO",
+  "name": "MailGO",
   "display": "standalone",
   "start_url": "/",
-  "short_name": "starter",
+  "short_name": "MailGO",
   "theme_color": "#E1477E",
   "description": "This is a Mail GO app",
   "orientation": "any",
@@ -51,11 +51,62 @@
   ],
   "shortcuts": [
     {
-      "name": "Open About",
-      "short_name": "About",
-      "description": "Open the about page",
-      "url": "/about",
-      "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+      "name": "New Email",
+      "short_name": "New",
+      "description": "Create a new email",
+      "url": "/newEmail",
+      "icons": [{ "src": "assets/icons/96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Contacts Book",
+      "short_name": "Contacts",
+      "description": "Manage my contacts",
+      "url": "/newEmail",
+      "icons": [{ "src": "assets/icons/96.png", "sizes": "96x96" }]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "mailto",
+      "uriTemplate": "/newEmail?url=%s",
+      "name": "Open an Email"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/newEmail",
+      "accept": {
+        "image/*": [".png", ".jpg"],
+        "text/*": [".txt"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/attach/file/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["image/jpeg", ".png", ".jpg", ".txt"]
+        }
+      ]
+    }
+  },
+  "widgets": [
+    {
+      "name": "MailGO",
+      "description": "Widget for the MailGO mail app",
+      "tag": "mailgo",
+      "template": "mailgo-template",
+      "ms_ac_template": "widgets/mailgo-template.json",
+      "data": "widgets/mailgo-data.json",
+      "type": "application/json",
+      "auth": false,
+      "update": 86400
     }
   ]
 }

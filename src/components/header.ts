@@ -22,7 +22,7 @@ export class AppHeader extends LitElement {
         position: fixed;
         left: env(titlebar-area-x, 0px);
         top: env(titlebar-area-y, 0);
-        width: env(titlebar-area-width, 100%);
+        width: env(titlebar-area-width, 99%);
         height: env(titlebar-area-height, 33px);
         app-region: drag;
         z-index: 1;
@@ -40,11 +40,12 @@ export class AppHeader extends LitElement {
         top: 0;
         z-index: 9999;
 
+        gap: 6px;
+
         flex-direction: row;
         height: env(titlebar-area-height, 33px);
 
-        margin-top: 12px;
-        width: 9em;
+        margin-top: 4px;
         margin-right: 1em;
         justify-content: space-between;
         align-items: center;
@@ -61,6 +62,9 @@ export class AppHeader extends LitElement {
         padding-left: 5px;
         height: env(titlebar-area-height, 33px);
 
+        background: transparent;
+        backdrop-filter: none;
+
         position: sticky;
         z-index: 1;
 
@@ -68,12 +72,8 @@ export class AppHeader extends LitElement {
         right: 0;
         /* Use the environment variable for the top anchoring with a fallback. */
         top: env(titlebar-area-y, 0);
-
-        backdrop-filter: blur(40px);
-
-        background: #212121;
         padding-right: 0px;
-        width: env(titlebar-area-width, 99%);
+        width: env(titlebar-area-width, 99s%);
       }
 
       header h1 {
@@ -90,16 +90,17 @@ export class AppHeader extends LitElement {
         height: 22px;
       }
 
-      #settingsButton {
+      #settingsButton, #contactsButton {
         color: white;
         height: env(titlebar-area-height, 33px);
         margin-right: 0;
+        margin-top: -3px;
 
         -webkit-app-region: no-drag;
         app-region: no-drag;
       }
 
-      #settingsButton ion-icon {
+      #settingsButton ion-icon, #contactsButton ion-icon {
         font-size: 2em;
 
         padding-top: 4px;
@@ -139,7 +140,6 @@ export class AppHeader extends LitElement {
       /*keeping seperate for the future */
       @media (prefers-color-scheme: light) {
         header {
-          background: transparent;
           color: black;
         }
 
@@ -153,9 +153,6 @@ export class AppHeader extends LitElement {
       }
 
       @media (prefers-color-scheme: dark) {
-        header {
-          background: transparent;
-        }
         header h1 {
           color: white;
         }
@@ -168,14 +165,6 @@ export class AppHeader extends LitElement {
       @media (max-width: 960px) {
         #settingsBlock {
           inset: 0;
-        }
-
-        :host {
-          z-index: 9999;
-        }
-
-        header {
-          z-index: 9999;
         }
       }
 
@@ -241,6 +230,10 @@ export class AppHeader extends LitElement {
           })}
         >
           <install-button></install-button>
+
+          <sl-button id="contactsButton" href="/contacts" size="small" appearance="lightweight">
+            <ion-icon name="people-outline"></ion-icon>
+          </sl-button>
 
           <sl-button
             @click="${() => this.openSettingsModal()}"

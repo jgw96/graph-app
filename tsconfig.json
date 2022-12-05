@@ -17,9 +17,6 @@
       "forceConsistentCasingInFileNames": true,
       "useDefineForClassFields": false,
       "isolatedModules": true,
-      "types": [
-          "vite-plugin-pwa/client"
-      ]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

@@ -1,7 +1,28 @@
 import { getToken } from "../services/auth";
 
+import MiniSearch from 'minisearch';
+
 let nextMail: any = null;
 let folders: any[] | undefined = undefined;
+let currentMail: any = null;
+
+let miniSearch = new MiniSearch({
+  fields: ['subject', 'bodyPreview', 'from.emailAddress.name'], // fields to index for full-text search
+  storeFields: ['subject', 'from.emailAddress.name'], // fields to return with search results
+  extractField: (document, fieldName) => {
+    // Access nested fields
+    return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
+  },
+  searchOptions: {
+    fuzzy: 0.2
+  }
+});
+
+let potentialSearchOptions: any = {};
+
+export async function setSearchFilterToTerm(term: string) {
+  potentialSearchOptions.fields = [term];
+}
 
 // function to forward message
 export async function forwardMessage(
@@ -117,6 +138,15 @@ export async function getMail(initLoad?: boolean) {
     const data = await doMailFetch();
     nextMail = data["@odata.nextLink"];
 
+    currentMail = data.value;
+
+    try {
+      miniSearch.addAllAsync(data.value);
+    }
+    catch(err) {
+      console.error(err);
+    }
+
     return data.value;
   } else {
     const token = await getToken();
@@ -136,9 +166,18 @@ export async function getMail(initLoad?: boolean) {
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
 
+    try {
+      miniSearch.addAllAsync(data.value);
+    }
+    catch(err) {
+      console.error(err);
+    }
+
     console.log("mail data", data);
 
     nextMail = data["@odata.nextLink"];
+
+    currentMail = [...currentMail, ...data.value];
 
     // nextMail = data.  + '.@' + odata.nextLink;
 
@@ -590,4 +629,47 @@ export async function getMailFolder(id: string) {
   const data = await response.json();
 
   return data.value;
+}
+
+export async function searchMailFullText(term: string) {
+  return new Promise((resolve) => {
+    let results = miniSearch.search(term);
+    resolve(results)
+  });
+}
+
+export async function sortMailByDateOlder() {
+  return new Promise((resolve) => {
+    const mailToSort = [...currentMail];
+
+    mailToSort.sort((a, b) => {
+      // sort older first
+      return new Date(a.receivedDateTime).getTime() - new Date(b.receivedDateTime).getTime();
+    });
+
+    resolve(mailToSort);
+  });
+}
+
+export async function sortMailByDateNewer() {
+  return new Promise((resolve) => {
+    const mailToSort = [...currentMail];
+
+    mailToSort.sort((a, b) => {
+      // sort newer first
+      return new Date(b.receivedDateTime).getTime() - new Date(a.receivedDateTime).getTime();
+    });
+
+    resolve(mailToSort);
+  });
+}
+
+export async function sortMailByUnRead() {
+  return new Promise((resolve) => {
+    const mailToSort = [...currentMail];
+
+    resolve(mailToSort.filter((mail) => {
+      return !mail.isRead;
+    }));
+  });
 }

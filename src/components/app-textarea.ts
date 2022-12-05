@@ -5,7 +5,7 @@ import { saveDraft } from '../services/mail';
 import { initIdle } from '../utils/idle';
 
 // @ts-ignore
-import TextWorker from '../workers/text.js?worker';
+// import TextWorker from '../workers/text.js?worker';
 
 //@ts-ignore
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.min.mjs";
@@ -102,8 +102,10 @@ export class AppTextarea extends LitElement {
     previewTextList: string[] = [];
 
     firstUpdated() {
-        const underlying2 = new TextWorker();
-        this.textWorker = Comlink.wrap(underlying2);
+        const worker = new Worker(new URL('/workers/text.js', import.meta.url), {
+          type: 'module'
+        });
+        this.textWorker = Comlink.wrap(worker);
     }
 
     handleFontSelect(value: string) {
@@ -341,7 +343,7 @@ export class AppTextarea extends LitElement {
                       id="textPreview"
                       .innerHTML="${this.textPreviewContent
                         ? this.textPreviewContent
-                        : null}"
+                        : ""}"
                     ></div>`
                   : null}
               </section>
