@@ -1,5 +1,5 @@
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
@@ -31,6 +31,8 @@ export class AppAbout extends LitElement {
   @state() emailLoaded: boolean = false;
   @state() attachments: any[] | null = null;
   @state() openAttachments: boolean = false;
+
+  @property() emailID: string = "";
 
   static get styles() {
     return css`
@@ -133,7 +135,7 @@ export class AppAbout extends LitElement {
         animation-name: slidedown;
         animation-duration: 380ms;
 
-        background: rgb(29 29 58);
+        background-color: rgba(90, 90, 90, 0.23);
         backdrop-filter: blur(40px);
         padding: 0;
         padding-left: 10px;
@@ -199,7 +201,7 @@ export class AppAbout extends LitElement {
 
       #content {
         width: 99%;
-        height: 100%;
+        height: 93%;
 
         background: transparent;
         flex: 2;
@@ -212,6 +214,10 @@ export class AppAbout extends LitElement {
         border: solid 2px var(--app-color-primary);
         border-radius: 6px;
         background: white;
+      }
+
+      #content iframe::-webkit-scrollbar {
+        display: none;
       }
 
       #reminder {
@@ -323,6 +329,10 @@ export class AppAbout extends LitElement {
         height: 88.8vh;
       }
 
+      #replyButton {
+        margin-right: 8px;
+      }
+
       #replyButton, #forwardButton {
         margin-left: 8px;
       }
@@ -393,11 +403,13 @@ export class AppAbout extends LitElement {
           background: #ffffff69;
         }
 
-        #scrolledDetailActions {
-          display: none;
-        }
         #scrolledDetailActions.scrolled {
-          display: none;
+          bottom: 10px;
+          top: initial;
+          left: 10px;
+          right: 10px;
+          justify-content: flex-end;
+          border-radius: 6px;
         }
 
         #reminderInitButton {
@@ -410,7 +422,7 @@ export class AppAbout extends LitElement {
         }
 
         #content {
-          height: 70vh;
+          height: 84vh;
         }
 
         #detailActions div {
@@ -426,6 +438,20 @@ export class AppAbout extends LitElement {
 
           animation-name: slidein;
           animation-duration: 280ms;
+        }
+      }
+
+      @media(max-width: 600px) {
+        #subject {
+          display: none;
+        }
+
+        #emailHeader {
+          display: none;
+        }
+
+        #detailMoreActions {
+          width: initial;
         }
       }
 
@@ -513,6 +539,10 @@ export class AppAbout extends LitElement {
           color: white;
         }
 
+        #replyButton::part(base) {
+          color: white;
+        }
+
         sl-drawer::part(panel) {
           background: #24242866;
           backdrop-filter: blur(20px);
@@ -538,8 +568,14 @@ export class AppAbout extends LitElement {
   }
 
   async firstUpdated() {
-    const search = new URLSearchParams(location.search);
-    const id = search.get("id");
+    let id: string | null;
+    if (this.emailID) {
+      id = this.emailID;
+    }
+    else {
+      const search = new URLSearchParams(location.search);
+      id = search.get("id");
+    }
 
     if (id) {
       try {
@@ -775,7 +811,7 @@ export class AppAbout extends LitElement {
 
       <div id="detailBlock">
         <section id="detailAction">
-          <div id="detailActions">
+          <div id="detailActions" part="detailActions">
             <sl-button
               @click="${() => this.back()}"
               class="back"
@@ -797,12 +833,20 @@ export class AppAbout extends LitElement {
             </sl-button>
           </div>
 
-          <div id="scrolledDetailActions">
+          <div id="scrolledDetailActions" part="scrolledDetailActions">
+          <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
+                Reply
+
+                <ion-icon name="mail-outline"></ion-icon>
+              </sl-button>
+
           <sl-button
               @click="${() => this.back()}"
               class="back"
               aria-label="back button"
+              part="back"
               circle
+
             >
               <ion-icon name="chevron-back-outline"></ion-icon>
             </sl-button>
@@ -820,18 +864,6 @@ export class AppAbout extends LitElement {
                     </sl-button>`
                   : null
               }
-              ${
-                "showTrigger" in Notification.prototype
-                  ? html`<sl-button
-                      class="detailActionButton"
-                      id="reminderInitButton"
-                      @click="${() => this.setupReminder()}"
-                      circle
-                    >
-                      <ion-icon name="notifications-circle-outline"></ion-icon>
-                    </sl-button>`
-                  : null
-              }
 
               <sl-button
                 @click="${() => this.share()}"
@@ -877,16 +909,10 @@ export class AppAbout extends LitElement {
               <sl-button circle id="forwardButton" @click="${() => this.openForward()}">
                 <ion-icon name="arrow-forward-circle-outline"></ion-icon>
               </sl-button>
-
-              <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
-                Reply
-
-                <ion-icon name="mail-outline"></ion-icon>
-              </sl-button>
             </div>
           </div>
 
-          <div id="emailHeader">
+          <div id="emailHeader" part="emailHeader">
           ${
             this.email
               ? html`<h2 id="subject">${this.email?.subject}</h2>`
@@ -902,6 +928,12 @@ export class AppAbout extends LitElement {
           }
 
             <div id="detailMoreActions">
+
+            <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
+                Reply
+
+                <ion-icon name="mail-outline"></ion-icon>
+              </sl-button>
               ${
                 this.email?.flag.flagStatus !== "flagged"
                   ? html`<sl-button
@@ -914,19 +946,6 @@ export class AppAbout extends LitElement {
                     </sl-button>`
                   : null
               }
-              ${
-                "showTrigger" in Notification.prototype
-                  ? html`<sl-button
-                      class="detailActionButton"
-                      id="reminderInitButton"
-                      @click="${() => this.setupReminder()}"
-                      circle
-                    >
-                      <ion-icon name="notifications-circle-outline"></ion-icon>
-                    </sl-button>`
-                  : null
-              }
-
               <sl-button
                 @click="${() => this.share()}"
                 aria-label="share button"
@@ -969,12 +988,6 @@ export class AppAbout extends LitElement {
 
               <sl-button circle id="forwardButton" @click="${() => this.openForward()}">
                 <ion-icon name="arrow-forward-circle-outline"></ion-icon>
-              </sl-button>
-
-              <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
-                Reply
-
-                <ion-icon name="mail-outline"></ion-icon>
               </sl-button>
             </div>
           </div>
@@ -994,13 +1007,13 @@ export class AppAbout extends LitElement {
         </section>
 
         <div id="content">
-          <!--<iframe
+          <iframe
             sandbox="allow-top-navigation"
             .srcdoc="${this.email?.body.content}"
           >
             <a target="_blank"></a>
-          </iframe>-->
-          ${
+          </iframe>
+          <!-- ${
             this.email
               ? html`<div
                   id="actual-email"
@@ -1009,7 +1022,7 @@ export class AppAbout extends LitElement {
               : html`<div id="mail-loader">
                   <sl-progress-ring></sl-progress-ring>
                 </div>`
-          }
+          } -->
           </div>
         </div>
 

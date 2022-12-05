@@ -4,6 +4,7 @@ import MiniSearch from 'minisearch';
 
 let nextMail: any = null;
 let folders: any[] | undefined = undefined;
+let currentMail: any = null;
 
 let miniSearch = new MiniSearch({
   fields: ['subject', 'bodyPreview', 'from.emailAddress.name'], // fields to index for full-text search
@@ -137,6 +138,8 @@ export async function getMail(initLoad?: boolean) {
     const data = await doMailFetch();
     nextMail = data["@odata.nextLink"];
 
+    currentMail = data.value;
+
     try {
       miniSearch.addAllAsync(data.value);
     }
@@ -173,6 +176,8 @@ export async function getMail(initLoad?: boolean) {
     console.log("mail data", data);
 
     nextMail = data["@odata.nextLink"];
+
+    currentMail = [...currentMail, ...data.value];
 
     // nextMail = data.  + '.@' + odata.nextLink;
 
@@ -630,5 +635,41 @@ export async function searchMailFullText(term: string) {
   return new Promise((resolve) => {
     let results = miniSearch.search(term);
     resolve(results)
+  });
+}
+
+export async function sortMailByDateOlder() {
+  return new Promise((resolve) => {
+    const mailToSort = [...currentMail];
+
+    mailToSort.sort((a, b) => {
+      // sort older first
+      return new Date(a.receivedDateTime).getTime() - new Date(b.receivedDateTime).getTime();
+    });
+
+    resolve(mailToSort);
+  });
+}
+
+export async function sortMailByDateNewer() {
+  return new Promise((resolve) => {
+    const mailToSort = [...currentMail];
+
+    mailToSort.sort((a, b) => {
+      // sort newer first
+      return new Date(b.receivedDateTime).getTime() - new Date(a.receivedDateTime).getTime();
+    });
+
+    resolve(mailToSort);
+  });
+}
+
+export async function sortMailByUnRead() {
+  return new Promise((resolve) => {
+    const mailToSort = [...currentMail];
+
+    resolve(mailToSort.filter((mail) => {
+      return !mail.isRead;
+    }));
   });
 }

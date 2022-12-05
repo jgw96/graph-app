@@ -22,7 +22,7 @@ export class AppHeader extends LitElement {
         position: fixed;
         left: env(titlebar-area-x, 0px);
         top: env(titlebar-area-y, 0);
-        width: env(titlebar-area-width, 100%);
+        width: env(titlebar-area-width, 99%);
         height: env(titlebar-area-height, 33px);
         app-region: drag;
         z-index: 1;
@@ -40,11 +40,12 @@ export class AppHeader extends LitElement {
         top: 0;
         z-index: 9999;
 
+        gap: 6px;
+
         flex-direction: row;
         height: env(titlebar-area-height, 33px);
 
         margin-top: 4px;
-        width: 9em;
         margin-right: 1em;
         justify-content: space-between;
         align-items: center;
@@ -72,7 +73,7 @@ export class AppHeader extends LitElement {
         /* Use the environment variable for the top anchoring with a fallback. */
         top: env(titlebar-area-y, 0);
         padding-right: 0px;
-        width: env(titlebar-area-width, 100%);
+        width: env(titlebar-area-width, 99s%);
       }
 
       header h1 {
@@ -89,7 +90,7 @@ export class AppHeader extends LitElement {
         height: 22px;
       }
 
-      #settingsButton {
+      #settingsButton, #contactsButton {
         color: white;
         height: env(titlebar-area-height, 33px);
         margin-right: 0;
@@ -99,7 +100,7 @@ export class AppHeader extends LitElement {
         app-region: no-drag;
       }
 
-      #settingsButton ion-icon {
+      #settingsButton ion-icon, #contactsButton ion-icon {
         font-size: 2em;
 
         padding-top: 4px;
@@ -165,14 +166,6 @@ export class AppHeader extends LitElement {
         #settingsBlock {
           inset: 0;
         }
-
-        :host {
-          z-index: 9999;
-        }
-
-        header {
-          z-index: 9999;
-        }
       }
 
       @media (prefers-color-scheme: light) and (max-width: 800px) {
@@ -237,6 +230,10 @@ export class AppHeader extends LitElement {
           })}
         >
           <install-button></install-button>
+
+          <sl-button id="contactsButton" href="/contacts" size="small" appearance="lightweight">
+            <ion-icon name="people-outline"></ion-icon>
+          </sl-button>
 
           <sl-button
             @click="${() => this.openSettingsModal()}"

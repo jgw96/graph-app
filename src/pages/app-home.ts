@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
 import "@dile/dile-toast/dile-toast";
-import { getMail, searchMailFullText } from "../services/mail";
+import { getMail, searchMailFullText, sortMailByDateNewer, sortMailByDateOlder, sortMailByUnRead } from "../services/mail";
 import { Router } from "@vaadin/router";
 
 import "../components/email-card";
@@ -14,6 +14,8 @@ import "../components/app-loading";
 import "../components/mail-folders";
 import "../components/home-info";
 import "../components/header";
+
+import './app-about';
 
 //@ts-ignore
 // import "../workers/search.js";
@@ -45,6 +47,38 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      #inboxList {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      #mainListBlock #inboxList h2 {
+        margin-top: 0px;
+      }
+
+      #previewImage {
+        display: none;
+      }
+
+      #email-drawer {
+        --size: 100vw;
+      }
+
+      #mainListBlock h2 {
+        margin-bottom: 0;
+        margin-top: 20px;
+      }
+
+      app-about::part(detailActions) {
+        display: none;
+      }
+
+      app-about::part(back) {
+        display: none;
       }
 
       sl-popup::part(popup) {
@@ -132,8 +166,6 @@ export class AppHome extends LitElement {
           left: 0px;
           right: 0px;
           padding: 10px;
-          background: rgb(37 40 50);
-          backdrop-filter: blur(40px);
           display: flex;
           justify-content: flex-end;
           align-items: center;
@@ -258,8 +290,11 @@ export class AppHome extends LitElement {
 
         background: #222222;
         border-radius: 6px;
-        padding: 10px;
         z-index: 9;
+
+        width: fit-content;
+        padding-top: 0;
+        padding: 8px;
 
         max-height: 4em;
       }
@@ -295,12 +330,7 @@ export class AppHome extends LitElement {
       }
 
       #homeToolbar #newEmailButton {
-        background: var(--app-color-primary);
         margin-left: 12px;
-      }
-
-      #homeToolbar #newEmailButton:hover {
-        background: var(--accent-fill-hover);
       }
 
       #homeToolbar button:hover {
@@ -324,7 +354,7 @@ export class AppHome extends LitElement {
         }
 
         #mainListHeader {
-          background: rgb(41 41 68 / 48%);
+          background: #5a5a5a3b;
         }
 
         sl-menu-item {
@@ -342,7 +372,7 @@ export class AppHome extends LitElement {
         }
 
         #searchInput {
-          width: 20em;
+          width: 17em;
         }
 
         #menuActions {
@@ -354,7 +384,9 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          max-height: 84vh;
+          max-height: 76vh;
+
+          margin-top: 4px;
         }
 
         #homeToolbar {
@@ -378,7 +410,7 @@ export class AppHome extends LitElement {
           height: 88vh;
 
           border-radius: 8px;
-          background: rgb(41 41 68 / 48%);
+          background: #5a5a5a3b;
           padding: 8px;
         }
 
@@ -393,11 +425,62 @@ export class AppHome extends LitElement {
 
       @media (min-width: 1300px) {
         #mainSection {
-          grid-template-columns: minmax(240px, 18%) 1fr;
+          grid-template-columns: 20vw 30vw;
+        }
+
+        #previewImage {
+          position: fixed;
+          right: 114px;
+          width: 458px;
+          top: 26vh;
+          display: block;
+        }
+
+        #searchInput {
+          width: 24em;
+        }
+
+        #extra-controls {
+          display: none;
+        }
+
+        #email-drawer {
+          --size: 48vw;
+        }
+
+        app-about::part(emailHeader) {
+          display: none;
+        }
+
+        #email-drawer::part(overlay) {
+          display: none;
+        }
+
+        #email-drawer::part(body) {
+          padding-top: 0em;
+          overflow: hidden;
+        }
+
+        app-about::part(scrolledDetailActions) {
+          right: revert;
+          margin-left: 0;
+          padding-left: 0;
+        }
+
+        #email-drawer::part(panel) {
+          margin-top: 3em;
+          height: 90vh;
+
+          background-color: rgba(90, 90, 90, 0.23);
+          border-radius: 5px;
+          width: 47.4vw;
+          margin-right: 10px;
         }
 
         ul {
-          max-height: 84vh;
+          max-height: 79vh;
+
+          margin-top: 4px;
         }
       }
 
@@ -412,6 +495,16 @@ export class AppHome extends LitElement {
 
         #mainListHeader {
           z-index: 3;
+        }
+      }
+
+      @media(max-width: 400px) {
+        app-about::part(emailHeader) {
+          display: none;
+        }
+
+        #mainListHeader {
+          width: 88vw;
         }
       }
 
@@ -442,8 +535,26 @@ export class AppHome extends LitElement {
 
       @media (horizontal-viewport-segments: 2) {
         #mainSection {
-          grid-template-columns: 47.4vw 50vw;
-          column-gap: 36px;
+          display: flex;
+          gap: 44px;
+          flex-direction: row-reverse;
+        }
+
+        #filterActions {
+          width: 47.5vw;
+        }
+
+        #email-drawer {
+          --size: 49vw;
+        }
+
+        #email-drawer::part(overlay) {
+          display: none;
+        }
+
+        #email-drawer::part(panel) {
+          background: rgba(90, 90, 90, 0.23);
+          backdrop-filter: blur(40px);
         }
 
         #menuActions {
@@ -451,12 +562,18 @@ export class AppHome extends LitElement {
         }
 
         #mainListBlock {
-          width: 96%;
+          width: 50vw;
         }
 
         .listModeButton {
           display: none;
         }
+      }
+
+      @keyframes floating {
+        0% { transform: translate(0,  0px); }
+        50%  { transform: translate(0, 15px); }
+        100%   { transform: translate(0, -0px); }
       }
     `;
   }
@@ -554,6 +671,10 @@ export class AppHome extends LitElement {
 
     const emailDrawer: any = this.shadowRoot?.querySelector("#email-drawer");
     if (emailDrawer) {
+      this.openEmailID = undefined;
+
+      await this.updateComplete;
+
       this.openEmailID = id;
       await emailDrawer.show();
     }
@@ -754,6 +875,24 @@ export class AppHome extends LitElement {
     this.loading = false;
   }
 
+  async sort(type: string) {
+    if (type === "date-old") {
+      const results: any = await sortMailByDateOlder();
+      console.log("results", results);
+      this.mail = [...results];
+    }
+    else if (type === "date-new") {
+      const results: any = await sortMailByDateNewer();
+      console.log("results", results);
+      this.mail = [...results];
+    }
+    else if (type === "read") {
+      const results: any = await sortMailByUnRead();
+      console.log("results", results);
+      this.mail = [...results];
+    }
+  }
+
   render() {
     return html`
       <div>
@@ -826,33 +965,30 @@ export class AppHome extends LitElement {
                         </ul>
                       </div>
                     </sl-popup>
+                  </div>
 
-                    <div id="extra-controls">
-                      ${this.listMode === "grid"
-                        ? html`<sl-button
-                            class="listModeButton"
-                            @click="${() => this.updateList("list")}"
-                            id="gridOrList"
-                          >
-                            List Layout
-                            <ion-icon name="list-outline"></ion-icon>
-                          </sl-button>`
-                        : html`<sl-button
-                            class="listModeButton"
-                            id="gridOrList"
-                            @click="${() => this.updateList("grid")}"
-                          >
-                            Grid Layout
-                            <ion-icon name="grid-outline"></ion-icon>
-                          </sl-button>`}
+                  <div id="inboxList">
+                    <h2>Inbox</h2>
 
-                      <sl-button
-                        id="mainListRefresh"
-                        @click="${() => this.refresh()}"
-                      >
-                        Refresh
+                    <sl-dropdown>
+                      <sl-button size="small" slot="trigger" id="sortButton" caret>
+                        Filter
                       </sl-button>
-                    </div>
+
+                      <sl-menu>
+                        <sl-menu-item @click="${() => this.sort("read")}">
+                          Unread
+                        </sl-menu-item>
+
+                        <sl-menu-item @click="${() => this.sort("date-new")}">
+                          Newer First
+                        </sl-menu-item>
+
+                        <sl-menu-item @click="${() => this.sort("date-old")}">
+                          Older First
+                        </sl-menu-item>
+                      </sl-menu>
+                    </sl-dropdown>
                   </div>
 
                   <ul>
@@ -862,6 +998,7 @@ export class AppHome extends LitElement {
                             <email-card
                               @flag-email="${() => this.bookmark()}"
                               .email="${email}"
+                              @read-email="${() => this.read(email.id)}"
                             ></email-card>
                           `;
                         })
@@ -890,9 +1027,7 @@ export class AppHome extends LitElement {
                   </ul>
                 </div>
 
-                <div id="emailPreview">
-                  <h3>Hello world</h3>
-                </div>
+                <img id="previewImage" src="/assets/newsletter.svg" />
               </section>
 
               <div id="homeToolbar">
@@ -922,7 +1057,7 @@ export class AppHome extends LitElement {
           : null}
 
           <sl-drawer id="email-drawer">
-            <app-about></app-about>
+            ${this.openEmailID ? html`<app-about .emailID="${this.openEmailID}"></app-about>` : null}
           </sl-drawer>
 
         <dile-toast id="myToast" duration="3000"></dile-toast>

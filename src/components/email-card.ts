@@ -1,8 +1,10 @@
-import { Router } from "@vaadin/router";
 import { LitElement, css, html } from "lit";
 import { customElement, state, property } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/badge/badge.js';
+
+import {classMap} from 'lit/directives/class-map.js';
 
 import { flagEmail } from "../services/mail";
 
@@ -14,6 +16,14 @@ export class EmailCard extends LitElement {
 
   static get styles() {
     return css`
+
+    :host {
+      content-visibility: auto;
+      contain-intrinsic-size: 123px;
+
+      cursor: pointer;
+    }
+
       li {
         background: white;
         padding-left: 10px;
@@ -31,7 +41,15 @@ export class EmailCard extends LitElement {
         box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132),
           0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
 
-        height: 10em;
+        height: 7em;
+      }
+
+      li:hover {
+        background: #4041b44d;
+      }
+
+      li.read {
+        background: rgb(71 74 210 / 41%);
       }
 
       li:hover {
@@ -55,6 +73,7 @@ export class EmailCard extends LitElement {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 14px;
+        margin-top: 6px;
       }
 
       #actions {
@@ -69,7 +88,7 @@ export class EmailCard extends LitElement {
         margin-left: 6px;
       }
 
-      #nameBlock {
+      #nameBlock, #dateBlock {
         font-size: 12px;
 
         white-space: nowrap;
@@ -128,7 +147,7 @@ export class EmailCard extends LitElement {
 
       @media (prefers-color-scheme: dark) {
         li {
-          background: rgb(41 41 68 / 48%);
+          background: #5a5a5a3b;
           color: white;
         }
 
@@ -143,29 +162,13 @@ export class EmailCard extends LitElement {
 
       @media (min-width: 1000px) and (prefers-color-scheme: dark) {
         li {
-          background: rgb(41 41 68 / 48%);
-
-          content-visibility: auto;
-          contain-intrinsic-size: 156px;
-        }
-
-        :host {
-          content-visibility: auto;
-          contain-intrinsic-size: 156px;
+          background: #5a5a5a3b;
         }
       }
 
       @media (min-width: 1000px) and (prefers-color-scheme: light) {
         li {
           background: #ebebeb;
-
-          content-visibility: auto;
-          contain-intrinsic-size: 156px;
-        }
-
-        :host {
-          content-visibility: auto;
-          contain-intrinsic-size: 156px;
         }
       }
     `;
@@ -177,8 +180,16 @@ export class EmailCard extends LitElement {
 
   async firstUpdated() {}
 
-  async read(id: string) {
-    await Router.go(`/email?id=${id}`);
+  async read(id: string, element: HTMLElement) {
+    let event = new CustomEvent("read-email", {
+      detail: {
+        id: id,
+      },
+    });
+    this.dispatchEvent(event);
+
+    // remove read class
+    element.classList.remove("read");
   }
 
   async bookmark(email: any) {
@@ -199,13 +210,13 @@ export class EmailCard extends LitElement {
   render() {
     if (this.email) {
       return html`
-        <li>
+        <li  @click="${($event: any) => this.read(this.email.id, $event.target)}" class=${classMap({ read: this.email.isRead === false})}>
           <div>
             <div class="emailHeader">
               <h3>${this.email.subject || "No Subject"}</h3>
               ${this.email.flag.flagStatus === "flagged"
                 ? html`<sl-badge
-                    @click="${() => this.read(this.email.id)}"
+                    @click="${($event: any) => this.read(this.email.id, $event.target)}"
                     appearance="lightweight"
                     >flagged
                     <ion-icon name="alert-circle-outline"></ion-icon>
@@ -226,7 +237,16 @@ export class EmailCard extends LitElement {
               ></span
             >
 
-            <div id="actionsButtons">
+            <span id="dateBlock">
+              <!-- convert to readable date -->
+              ${new Date(this.email.receivedDateTime).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+
+            <!-- <div id="actionsButtons">
               ${this.email.flag.flagStatus !== "flagged"
                 ? html`<sl-button
                     class="flagButton"
@@ -239,10 +259,9 @@ export class EmailCard extends LitElement {
               <sl-button
                 class="readButton"
                 id="readButton"
-                @click="${() => this.read(this.email.id)}"
                 >Read</sl-button
               >
-            </div>
+            </div> -->
           </div>
         </li>
       `;

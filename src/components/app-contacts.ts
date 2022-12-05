@@ -1,5 +1,5 @@
 import { LitElement, css, html } from "lit";
-import { getContacts } from "../services/contacts";
+import { getPeople } from "../services/contacts";
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
@@ -193,7 +193,7 @@ export class AppContacts extends LitElement {
       const drawer: any = this.shadowRoot?.querySelector("sl-drawer");
       drawer?.show();
 
-      this.graphContacts = await getContacts();
+      this.graphContacts = await getPeople();
     }
   }
 

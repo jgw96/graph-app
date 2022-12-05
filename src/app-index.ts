@@ -121,6 +121,22 @@ export class AppIndex extends LitElement {
               }
             },
           } as any,
+          {
+            path: "/contacts",
+            animate: true,
+            component: "contacts-page",
+            action: async () => {
+              if ((document as any).startViewTransition) {
+                await (document as any).startViewTransition();
+                // @ts-ignore
+                await import("./pages/contacts-page.js");
+              }
+              else {
+                // @ts-ignore
+                await import("./pages/contacts-page.js");
+              }
+            }
+          }
         ],
       },
     ]);

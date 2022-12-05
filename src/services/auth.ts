@@ -7,6 +7,7 @@ const scopes = [
   "Mail.ReadWrite",
   "mail.send",
   "files.read",
+  "Contacts.ReadWrite"
 ];
 
 const msalConfig = {
