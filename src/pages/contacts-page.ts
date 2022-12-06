@@ -17,6 +17,7 @@ export class ContactsPage extends LitElement {
         css`
             :host {
                 display: block;
+
             }
 
             h1 {
@@ -154,6 +155,13 @@ export class ContactsPage extends LitElement {
 
               .card-header sl-icon-button {
                 font-size: var(--sl-font-size-medium);
+              }
+
+              @media(min-width: 1000px) {
+                :host {
+                  padding-left: 16px;
+                  padding-right: 16px;
+                }
               }
         `
     ];
@@ -342,7 +350,7 @@ export class ContactsPage extends LitElement {
             </sl-button>
 
             <div>
-                <sl-button id="add" pill variant="primary" @click="${() => this.addContactDrawer()}">
+                <sl-button id="add" variant="primary" @click="${() => this.addContactDrawer()}">
                     Add Contact
                     <ion-icon name="add-outline"></ion-icon>
                 </sl-button>

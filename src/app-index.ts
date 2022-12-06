@@ -18,11 +18,6 @@ export class AppIndex extends LitElement {
 
   static get styles() {
     return css`
-      main {
-        padding: 16px;
-        margin-top: 33px;
-      }
-
       #routerOutlet app-home,
       #routerOutlet app-about,
       #routerOutlet app-index,
@@ -49,8 +44,14 @@ export class AppIndex extends LitElement {
 
           --voronoi-cell-colors: #686bd2, #ff0076;
           --voronoi-number-of-cells: 25;
+        }
+      }
 
-          height: 88vh;
+      @media(max-width: 600px) {
+        main {
+          padding-top: 3em;
+          padding-left: 8px;
+          padding-right: 8px;
         }
       }
 
