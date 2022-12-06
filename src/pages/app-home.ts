@@ -408,7 +408,7 @@ export class AppHome extends LitElement {
           justify-content: space-between;
 
           border-radius: 8px;
-          background: #5a5a5a3b;
+          background: rgba(90, 90, 90, 0.23);
 
           height: 98.2vh;
           z-index: 9;
@@ -437,7 +437,7 @@ export class AppHome extends LitElement {
         }
 
         #searchInput {
-          width: 24em;
+          width: 25.5em;
         }
 
         #extra-controls {
@@ -465,17 +465,18 @@ export class AppHome extends LitElement {
           margin-left: 0;
           padding-left: 0;
 
-          bottom: 10px;
+          bottom: 18px;
           top: initial;
           right: 10px;
         }
 
         #email-drawer::part(panel) {
 
-          background-color: #292e3b;
+          background: rgba(90, 90, 90, 0.23);
           border-radius: 5px;
           width: 49.98vw;
           box-shadow: none;
+          padding-top: 20px;
         }
 
         ul {
@@ -501,7 +502,8 @@ export class AppHome extends LitElement {
 
       @media(max-width: 600px) {
         #mainListHeader {
-          width: 88vw;
+          width: 92vw;
+
         }
       }
 
@@ -511,7 +513,7 @@ export class AppHome extends LitElement {
         }
 
         #mainListHeader {
-          width: 88vw;
+          width: 92vw;
         }
       }
 

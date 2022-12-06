@@ -344,6 +344,7 @@ export class AppAbout extends LitElement {
       @media (min-width: 900px) {
         #detailBlock {
           overflow-y: scroll;
+          overflow-x: hidden;
         }
 
         #detailBlock::-webkit-scrollbar {

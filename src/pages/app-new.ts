@@ -73,6 +73,10 @@ export class AppNew extends LitElement {
         justify-content: space-between;
       }
 
+      #appNewBody {
+        padding: 14px;
+      }
+
       #sendButton::part(base) {
         color: white;
       }

@@ -17,6 +17,7 @@ export class ContactsPage extends LitElement {
         css`
             :host {
                 display: block;
+
             }
 
             h1 {
@@ -154,6 +155,13 @@ export class ContactsPage extends LitElement {
 
               .card-header sl-icon-button {
                 font-size: var(--sl-font-size-medium);
+              }
+
+              @media(min-width: 1000px) {
+                :host {
+                  padding-left: 16px;
+                  padding-right: 16px;
+                }
               }
         `
     ];
