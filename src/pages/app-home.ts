@@ -52,6 +52,7 @@ export class AppHome extends LitElement {
         align-items: center;
         justify-content: space-between;
         margin-top: 20px;
+        padding-right: 8px;
       }
 
       #mainListBlock #inboxList h2 {
@@ -382,7 +383,7 @@ export class AppHome extends LitElement {
         ul {
           overflow-x: hidden;
           overflow-y: scroll;
-          max-height: 76vh;
+          max-height: 88vh;
 
           margin-top: 4px;
         }
@@ -405,11 +406,12 @@ export class AppHome extends LitElement {
           padding: 8px;
 
           justify-content: space-between;
-          height: 88vh;
 
           border-radius: 8px;
           background: #5a5a5a3b;
-          padding: 8px;
+
+          height: 98.2vh;
+          z-index: 9;
         }
 
         #desktopNew {
@@ -460,23 +462,24 @@ export class AppHome extends LitElement {
         }
 
         app-about::part(scrolledDetailActions) {
-          right: revert;
           margin-left: 0;
           padding-left: 0;
+
+          bottom: 10px;
+          top: initial;
+          right: 10px;
         }
 
         #email-drawer::part(panel) {
-          margin-top: 3em;
-          height: 90vh;
 
-          background-color: rgba(90, 90, 90, 0.23);
+          background-color: #292e3b;
           border-radius: 5px;
-          width: 47.4vw;
-          margin-right: 10px;
+          width: 49.98vw;
+          box-shadow: none;
         }
 
         ul {
-          max-height: 79vh;
+          max-height: 88vh;
 
           margin-top: 4px;
         }
@@ -493,6 +496,12 @@ export class AppHome extends LitElement {
 
         #mainListHeader {
           z-index: 3;
+        }
+      }
+
+      @media(max-width: 600px) {
+        #mainListHeader {
+          width: 88vw;
         }
       }
 
@@ -551,7 +560,7 @@ export class AppHome extends LitElement {
         }
 
         #email-drawer::part(panel) {
-          background: rgba(90, 90, 90, 0.23);
+          background-color: #292e3b;
           backdrop-filter: blur(40px);
         }
 
@@ -978,7 +987,7 @@ export class AppHome extends LitElement {
                     <h2>Inbox</h2>
 
                     <sl-dropdown>
-                      <sl-button size="small" slot="trigger" id="sortButton" caret>
+                      <sl-button size="small" pill slot="trigger" id="sortButton" caret>
                         Filter
                       </sl-button>
 
@@ -1054,7 +1063,7 @@ export class AppHome extends LitElement {
               </div>
 
               <div id="mobileToolbar">
-                <sl-button variant="primary" pill @click="${() => this.newEmail()}">
+                <sl-button variant="primary" @click="${() => this.newEmail()}">
                   New Email
                 </sl-button>
               </div>

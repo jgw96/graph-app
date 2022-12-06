@@ -26,6 +26,8 @@ export class AppHeader extends LitElement {
         height: env(titlebar-area-height, 33px);
         app-region: drag;
         z-index: 1;
+
+        background: #1a2032;
       }
 
       app-login {
@@ -57,7 +59,7 @@ export class AppHeader extends LitElement {
 
       header {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         padding-left: 5px;
         height: env(titlebar-area-height, 33px);
@@ -88,6 +90,7 @@ export class AppHeader extends LitElement {
 
       header img {
         height: 22px;
+        display: none;
       }
 
       #settingsButton, #contactsButton {

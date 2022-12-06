@@ -342,7 +342,7 @@ export class ContactsPage extends LitElement {
             </sl-button>
 
             <div>
-                <sl-button id="add" pill variant="primary" @click="${() => this.addContactDrawer()}">
+                <sl-button id="add" variant="primary" @click="${() => this.addContactDrawer()}">
                     Add Contact
                     <ion-icon name="add-outline"></ion-icon>
                 </sl-button>

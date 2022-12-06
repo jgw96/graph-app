@@ -114,13 +114,8 @@ sl-design-system-provider {
 
 @media (prefers-color-scheme: dark) {
   html {
-    background-color: #181818;
-    background: var(--theme-color) !important;
+    background: #1a2032;
     color: white;
-  }
-
-  body {
-    background: var(--theme-color) !important;
   }
 
   :root {
