@@ -1,0 +1,67 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "${messages[0].subject}",
+                    "horizontalAlignment": "Left",
+                    "weight": "bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "size": "Small",
+                    "text": "${messages[0].bodyPreview}",
+                    "horizontalAlignment": "Left",
+                    "wrap": true,
+                    "isSubtle": true,
+                    "maxLines": 2
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "${messages[1].subject}",
+                    "horizontalAlignment": "Left",
+                    "weight": "bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "size": "Small",
+                    "text": "${messages[1].bodyPreview}",
+                    "horizontalAlignment": "Left",
+                    "wrap": true,
+                    "isSubtle": true,
+                    "maxLines": 2
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "${messages[2].subject}",
+                    "horizontalAlignment": "Left",
+                    "weight": "bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "size": "Small",
+                    "text": "${messages[2].bodyPreview}",
+                    "horizontalAlignment": "Left",
+                    "wrap": true,
+                    "isSubtle": true,
+                    "maxLines": 2
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5"
+}

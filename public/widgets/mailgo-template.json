@@ -4,7 +4,13 @@
         {
             "type": "TextBlock",
             "size": "Medium",
-            "text": "Latest",
+            "text": "${subject}",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "TextBlock",
+            "size": "Medium",
+            "text": "${messages[0].subject}",
             "horizontalAlignment": "Center"
         }
     ],

@@ -704,7 +704,6 @@ export class AppNew extends LitElement {
       const { getAnEmail } = await import("../services/mail");
 
       this.emailReplyTo = await getAnEmail(id);
-      console.log("email to reply too", this.emailReplyTo);
       this.address = this.emailReplyTo.sender.emailAddress.address;
 
       this.replying = true;
@@ -720,6 +719,11 @@ export class AppNew extends LitElement {
 
     if (name) {
       await this.shareTarget(name);
+    }
+
+    const urlToSend = search.get("url");
+    if (urlToSend) {
+      this.address = urlToSend.replace("mailto:", "");
     }
 
     await this.fileHandler();
