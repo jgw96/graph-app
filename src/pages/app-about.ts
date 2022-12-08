@@ -135,7 +135,7 @@ export class AppAbout extends LitElement {
         animation-name: slidedown;
         animation-duration: 380ms;
 
-        background-color: rgba(90, 90, 90, 0.23);
+        background: rgb(36 36 40 / 83%);
         backdrop-filter: blur(40px);
         padding: 0;
         padding-left: 10px;
@@ -162,6 +162,7 @@ export class AppAbout extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 8px;
 
         animation-name: slidein;
         animation-duration: 280ms;
@@ -330,15 +331,9 @@ export class AppAbout extends LitElement {
       }
 
       #replyButton {
-        margin-right: 8px;
       }
 
       #replyButton, #forwardButton {
-        margin-left: 8px;
-      }
-
-      #unsubButton {
-        margin-left: 8px;
       }
 
       @media (min-width: 900px) {
@@ -406,11 +401,19 @@ export class AppAbout extends LitElement {
 
         #scrolledDetailActions.scrolled {
           bottom: 10px;
-          top: initial;
-          left: 10px;
           right: 10px;
           justify-content: flex-end;
           border-radius: 6px;
+
+          gap: 0px;
+          width: 90vw;
+          padding-right: 10px;
+
+          top: initial;
+          justify-content: flex-start;
+          width: fit-content;
+          overflow-y: scroll;
+          padding-right: 14px;
         }
 
         #reminderInitButton {
@@ -835,12 +838,6 @@ export class AppAbout extends LitElement {
           </div>
 
           <div id="scrolledDetailActions" part="scrolledDetailActions">
-          <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
-                Reply
-
-                <ion-icon name="mail-outline"></ion-icon>
-              </sl-button>
-
           <sl-button
               @click="${() => this.back()}"
               class="back"
@@ -907,10 +904,17 @@ export class AppAbout extends LitElement {
                   : null
               }
 
-              <sl-button circle id="forwardButton" @click="${() => this.openForward()}">
+              <sl-button id="forwardButton" @click="${() => this.openForward()}">
+                Forward
                 <ion-icon name="arrow-forward-circle-outline"></ion-icon>
               </sl-button>
             </div>
+
+            <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
+                Reply
+
+                <ion-icon name="mail-outline"></ion-icon>
+              </sl-button>
           </div>
 
           <div id="emailHeader" part="emailHeader">

@@ -97,7 +97,7 @@ export async function unsub(id: number) {
 }
 
 export async function doMailFetch() {
-  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages?$top=20";
 
   const token = await getToken();
   console.log("token", token);

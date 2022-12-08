@@ -9,6 +9,58 @@ importScripts(
 // This is your Service Worker, you can put any of your custom Service Worker
 // code in this file, above the `precacheAndRoute` line.
 
+// notifications shit
+self.addEventListener('push', async (event) => {
+  if (event.data) {
+    console.log('This push event has data: ', event.data.json());
+
+    // build notification
+    const data = event.data.json();
+
+    if (data.title && data.title === "New Emails") {
+      const mailData = await getLatestMail();
+
+      // how many unread emails do we have?
+      const unread = mailData.filter((email) => {
+        return email.isRead === false;
+      });
+
+      // set badge
+      await navigator.setAppBadge(unread.length);
+
+      const options = {
+        body: `You have ${unread.length} unread emails`,
+        icon: "/assets/icons/512.png",
+        vibrate: [100, 100, 100],
+      };
+
+      // show notification
+      self.registration.showNotification(data.title, options);
+    }
+    else {
+      const options = {
+        body: data.body || "No body",
+        icon: "/assets/icons/512.png",
+        vibrate: [100, 100, 100],
+      };
+
+      // show notification
+      event.waitUntil(self.registration.showNotification(data.title, options));
+    }
+
+  } else {
+    console.log('This push event has no data.');
+  }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  // close notification
+  event.notification.close();
+
+  const promiseChain = clients.openWindow("/");
+  event.waitUntil(promiseChain);
+});
+
 const syncContent = async () => {
   if (navigator.connection.effectiveType === "4g") {
     const token = await idbKeyval.get("graphToken");
@@ -40,7 +92,7 @@ const syncContent = async () => {
         if (Notification.permission === "granted") {
           const options = {
             body: "New email was received in the background",
-            icon: "/assets/icons/icon_48.png",
+            icon: "/assets/icons/48.png",
             vibrate: [100],
             data: {
               dateOfArrival: Date.now(),
@@ -144,9 +196,29 @@ self.addEventListener("periodicsync", (event) => {
   }
 });
 
-async function shareTargetHandler({ event }) {
-  // event.respondWith(Response.redirect("/newEmail"));
+async function getLatestMail() {
+  const token = await idbKeyval.get("graphToken");
+  console.log("token", token);
 
+  if (token) {
+    const headers = new Headers();
+    const bearer = "Bearer " + token;
+    headers.append("Authorization", bearer);
+    const fetchOptions = {
+      method: "GET",
+      headers: headers,
+    };
+    const graphEndpoint = `https://graph.microsoft.com/beta/me/messages`;
+
+    const response = await fetch(graphEndpoint, fetchOptions);
+
+    const mailData = await response.json();
+
+    return mailData.value;
+  }
+}
+
+async function shareTargetHandler({ event }) {
   const formData = await event.request.formData();
   const mediaFiles = formData.getAll("file");
   const cache = await caches.open("shareTarget");

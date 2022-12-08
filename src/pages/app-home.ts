@@ -47,6 +47,26 @@ export class AppHome extends LitElement {
         justify-content: space-between;
       }
 
+      #new-email::part(base) {
+        height: 55px;
+        border-radius: 14px;
+        line-height: 55px;
+
+        font-weight: 600;
+        width: 130px;
+      }
+
+      #new-email::part(label) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+      }
+
+      #new-email ion-icon {
+        font-size: 24px;
+      }
+
       #inboxList {
         display: flex;
         align-items: center;
@@ -292,6 +312,7 @@ export class AppHome extends LitElement {
         z-index: 9;
 
         width: fit-content;
+        height: fit-content;
         padding-top: 0;
         padding: 8px;
 
@@ -470,13 +491,17 @@ export class AppHome extends LitElement {
           right: 10px;
         }
 
+        #email-drawer::part(header) {
+          height: 2.4em;
+        }
+
         #email-drawer::part(panel) {
 
           background: rgba(90, 90, 90, 0.23);
           border-radius: 5px;
-          width: 49.98vw;
+          width: 47.6vw;
           box-shadow: none;
-          padding-top: 20px;
+          padding-top: 34px;
         }
 
         ul {
@@ -504,6 +529,10 @@ export class AppHome extends LitElement {
         #mainListHeader {
           width: 92vw;
 
+        }
+
+        #mainListBlock ul {
+          overflow-y: scroll;
         }
       }
 
@@ -620,6 +649,14 @@ export class AppHome extends LitElement {
 
     (window as any).requestIdleCallback(() => {
       this.offline = isOffline();
+    });
+
+    window.requestIdleCallback(async () => {
+      const mobileButton = this.shadowRoot?.querySelector("#new-email");
+
+      if (mobileButton) {
+
+      }
     });
   }
 
@@ -1009,7 +1046,7 @@ export class AppHome extends LitElement {
                     </sl-dropdown>
                   </div>
 
-                  <ul>
+                  <ul id="mailList">
                     ${this.mail.length > 0
                       ? this.mail?.map((email) => {
                           return html`
@@ -1021,6 +1058,18 @@ export class AppHome extends LitElement {
                           `;
                         })
                       : html`
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
                           <email-card></email-card>
                           <email-card></email-card>
                           <email-card></email-card>
@@ -1065,7 +1114,9 @@ export class AppHome extends LitElement {
               </div>
 
               <div id="mobileToolbar">
-                <sl-button variant="primary" @click="${() => this.newEmail()}">
+                <sl-button id="new-email" variant="primary" @click="${() => this.newEmail()}">
+                  <ion-icon name="add"></ion-icon>
+
                   New Email
                 </sl-button>
               </div>

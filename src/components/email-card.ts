@@ -129,7 +129,7 @@ export class EmailCard extends LitElement {
       }
 
       .fakeCard {
-        height: 156px;
+        height: 123px;
       }
 
       @media (min-width: 1200px) {

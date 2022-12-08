@@ -49,7 +49,7 @@ export class AppIndex extends LitElement {
 
       @media(max-width: 600px) {
         main {
-          padding-top: 3em;
+          padding-top: 1em;
           padding-left: 8px;
           padding-right: 8px;
         }

@@ -8,6 +8,7 @@ import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 
 import { clear, set, get } from "idb-keyval";
 import { getAccount, getPhoto } from "../services/auth";
+import { getPushSubscription, sendSubscriptionToServer, subscribeToPush, unsubscribeFromPush } from "../services/notifications";
 
 @customElement("app-settings")
 export class AppSettings extends LitElement {
@@ -20,6 +21,8 @@ export class AppSettings extends LitElement {
   @state() primaryColor: string = "#1A1B3E";
   @state() user: any | undefined;
   @state() imageBlob: any | undefined;
+
+  @state() pushChecked: boolean = false;
 
   static get styles() {
     return css`
@@ -69,7 +72,7 @@ export class AppSettings extends LitElement {
         flex-direction: row-reverse;
         gap: 6px;
 
-        width: 100%;
+        width: 95%;
         justify-content: flex-end;
         background: #ffffff0d;
         border-radius: 8px;
@@ -123,6 +126,14 @@ export class AppSettings extends LitElement {
         }
       }
 
+      sl-drawer::part(panel) {
+        overflow: hidden
+      }
+
+      sl-drawer ::-webkit-scrollbar {
+        display: none;
+      }
+
       @media(prefers-color-scheme: dark) {
         sl-drawer::part(panel) {
           background: #24242866;
@@ -169,20 +180,7 @@ export class AppSettings extends LitElement {
 
     await this.checkThemeColor();
 
-    const registration = await navigator.serviceWorker.getRegistration();
-    if (registration && "periodicSync" in registration) {
-      const tags = await (registration as any).periodicSync.getTags();
-      // Only update content if sync isn't set up.
-      if (!tags.includes("mail-sync")) {
-        this.checked = false;
-      } else {
-        this.checked = true;
-      }
-    } else {
-      // If periodic background sync isn't supported, always update.
-
-      this.checked = false;
-    }
+    await this.checkPushSubStatus();
 
     const dialog = this.shadowRoot?.querySelector("sl-dialog");
     if (dialog) {
@@ -225,6 +223,17 @@ export class AppSettings extends LitElement {
   async clearStorage() {
     await clear();
     localStorage.clear();
+  }
+
+  async checkPushSubStatus() {
+    const subscription = await getPushSubscription();
+    console.log("subscription", subscription);
+    if (subscription !== null) {
+      this.pushChecked = true;
+    }
+    else {
+      this.pushChecked = false;
+    }
   }
 
   checkPeriodic = async () => {
@@ -355,28 +364,48 @@ export class AppSettings extends LitElement {
     this.openSettings = false;
   }
 
+  async updatePush(value: boolean) {
+    console.log(value);
+    // subscribe to push notifications
+    if (value === true) {
+      const sub = await subscribeToPush();
+      await sendSubscriptionToServer(sub);
+    } else {
+      await unsubscribeFromPush();
+    }
+  }
+
   render() {
     return html`
       <sl-drawer label="Settings">
         <div id="settingsActions">
 
-        <div class="settings-block">
-            <sl-switch checked="${this.checked}" @change="${(ev: any) => this.updateMail(ev.target.checked)}">
+        <!-- <div class="settings-block">
+            <sl-switch ?checked="${this.checked}" @sl-change="${(ev: any) => this.updateMail(ev.target.checked)}">
               <span slot="checked-message">On</span>
               <span slot="unchecked-message">Off</span>
 
               Update mail in the background
             </sl-switch>
-          </div>
+          </div> -->
 
-          <div class="settings-block">
+        <div class="settings-block">
+            <sl-switch ?checked="${this.pushChecked}" @sl-change="${(ev: any) => this.updatePush(ev.target.checked)}">
+              <span slot="checked-message">On</span>
+              <span slot="unchecked-message">Off</span>
+
+              Push Notifications
+            </sl-switch>
+        </div>
+
+          <!-- <div class="settings-block">
 
             Clear all app storage
 
             <sl-button id="storage-button" @click="${() => this.clearStorage()}">
               Clear Storage
             </sl-button>
-          </div>
+          </div> -->
 
           <div class="settings-block" id="profileInfo">
           ${this.imageBlob
