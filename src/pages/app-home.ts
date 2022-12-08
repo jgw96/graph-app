@@ -29,6 +29,7 @@ export class AppHome extends LitElement {
   @state() mailCopy: any[] | null = [];
   @state() activeCat: string = "all";
   @state() loading: boolean = false;
+  @state() moreLoading: boolean = false;
   @state() initLoad: boolean = false;
   @state() listMode: string = "grid";
   @state() enable_next: boolean = true;
@@ -45,6 +46,33 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      #searchResultsHeader {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 8px;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      #innerSearchResult {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+      }
+
+      #mainListHeader sl-popup::part(popup) {
+        border-radius: 8px;
+      }
+
+      #searchPreview {
+        font-weight: normal;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        margin-top: 6px;
       }
 
       #new-email::part(base) {
@@ -287,6 +315,16 @@ export class AppHome extends LitElement {
         margin-top: 0;
       }
 
+      #searchResults {
+        padding: 8px;
+        max-height: 50vh;
+        overflow-y: scroll;
+      }
+
+      #searchResults ul {
+        max-height: initial;
+      }
+
       #searchResults li {
         background: var(--app-color-primary);
         padding: 8px;
@@ -300,6 +338,7 @@ export class AppHome extends LitElement {
         font-weight: normal;
         display: block;
         margin-top: 6px;
+        font-size: 12px;
       }
 
       #mainListHeader {
@@ -528,7 +567,8 @@ export class AppHome extends LitElement {
       @media(max-width: 600px) {
         #mainListHeader {
           width: 92vw;
-
+          z-index: 9;
+          position: sticky;
         }
 
         #mainListBlock ul {
@@ -543,6 +583,8 @@ export class AppHome extends LitElement {
 
         #mainListHeader {
           width: 92vw;
+          z-index: 9;
+          position: sticky;
         }
       }
 
@@ -694,22 +736,19 @@ export class AppHome extends LitElement {
   async searchMail(query: string) {
     this.searchActive = true;
 
-    const { searchMailFullText } = await import("../services/mail")
+    if (query && query.length > 0) {
+      const searchResults = await this.worker.search(query);
+      console.log("searchResults", searchResults);
+      this.searchResults = [...searchResults];
 
-    const results: any = await searchMailFullText(query);
-    console.log("full text search results", results);
-
-    this.searchResults = [...results];
-
-    // const searchResults = await this.worker.search(query);
-    // console.log("searchResults", searchResults);
-    // this.searchResults = [...searchResults];
-    // this.mail = this.searchResults;
-
-    if (this.mail.length === 0) {
-      this.searchActive = false;
+      if (this.searchResults.length === 0) {
+        this.searchActive = false;
+      }
+      else if (query.length === 0) {
+        this.searchActive = false;
+      }
     }
-    else if (query.length === 0) {
+    else {
       this.searchActive = false;
     }
   }
@@ -766,6 +805,7 @@ export class AppHome extends LitElement {
     }
 
     this.loading = true;
+    this.moreLoading = true;
 
     const newMail = await getMail();
     const oldMail = this.mail;
@@ -784,6 +824,7 @@ export class AppHome extends LitElement {
     }
 
     this.loading = false;
+    this.moreLoading = false;
   }
 
   getFocused() {
@@ -1004,15 +1045,20 @@ export class AppHome extends LitElement {
                       >
 
                       <div id="searchResults">
+                        <span id="searchResultsHeader">Search Results</span>
                         <ul>
                           ${this.searchResults?.map(
                             (mail: any) => html`
 
                               <li @click="${() => this.read(mail.id)}">
                                 <div class="searchResult">
+                                  <div id="innerSearchResult">
                                   <span>${mail.subject}</span>
 
-                                  <span class="from">from ${mail['from.emailAddress.name']}</span>
+                                  <span id="searchPreview">${mail.bodyPreview}</span>
+                                </div>
+
+                                  <span class="from">from ${mail.from.emailAddress.name}</span>
                                 </div>
                               </li>
                             `
@@ -1084,6 +1130,7 @@ export class AppHome extends LitElement {
                           <sl-button
                             appearance="stealth"
                             @click="${() => this.loadMore()}"
+                            ?loading="${this.moreLoading}"
                           >
                             More
 

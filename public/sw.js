@@ -117,7 +117,7 @@ self.addEventListener("message", (event) => {
 
 workbox.routing.registerRoute(
   ({ url }) =>
-    url.href.includes("https://graph.microsoft.com/beta/me/messages"),
+    url.href === "https://graph.microsoft.com/beta/me/messages",
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: "offline-mail",
     plugins: [

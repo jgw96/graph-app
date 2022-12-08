@@ -4,11 +4,6 @@ import { customElement, state, property } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
-import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
-
-import { clear, set, get } from "idb-keyval";
-import { getAccount, getPhoto } from "../services/auth";
-import { getPushSubscription, sendSubscriptionToServer, subscribeToPush, unsubscribeFromPush } from "../services/notifications";
 
 @customElement("app-settings")
 export class AppSettings extends LitElement {
@@ -21,6 +16,7 @@ export class AppSettings extends LitElement {
   @state() primaryColor: string = "#1A1B3E";
   @state() user: any | undefined;
   @state() imageBlob: any | undefined;
+  @state() showColorPickers: boolean = false;
 
   @state() pushChecked: boolean = false;
 
@@ -192,14 +188,31 @@ export class AppSettings extends LitElement {
       });
     }
 
-    const userAccount = await getAccount();
-    console.log("userAccount", userAccount);
-    if (userAccount) {
-      this.user = userAccount;
+    // set up intersection observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(async (entry) => {
+        if (entry.isIntersecting) {
+          const { getAccount } = await import("../services/auth");
+          const userAccount = await getAccount();
+          console.log("userAccount", userAccount);
+          if (userAccount) {
+            this.user = userAccount;
 
-      const blob = await getPhoto();
-      console.log(blob);
-      this.imageBlob = URL.createObjectURL(blob);
+            const { getPhoto } = await import("../services/auth");
+            const blob = await getPhoto();
+            console.log(blob);
+            this.imageBlob = URL.createObjectURL(blob);
+          }
+
+          await import ('@shoelace-style/shoelace/dist/components/color-picker/color-picker.js');
+          this.showColorPickers = true;
+        }
+      });
+    });
+
+    const settingsBlock = this.shadowRoot?.querySelector(".settings-block");
+    if (settingsBlock) {
+      observer.observe(settingsBlock);
     }
   }
 
@@ -221,11 +234,13 @@ export class AppSettings extends LitElement {
   }
 
   async clearStorage() {
+    const { clear } = await import("idb-keyval");
     await clear();
     localStorage.clear();
   }
 
   async checkPushSubStatus() {
+    const { getPushSubscription } = await import("../services/notifications");
     const subscription = await getPushSubscription();
     console.log("subscription", subscription);
     if (subscription !== null) {
@@ -304,6 +319,7 @@ export class AppSettings extends LitElement {
   }
 
   async checkThemeColor() {
+    const { get } = await import("idb-keyval");
     const theme = await get("themeColor");
     const primary = await get("primaryColor");
 
@@ -341,22 +357,29 @@ export class AppSettings extends LitElement {
   async handleThemeColor(value: any) {
     console.log(value);
 
-    const r: HTMLElement | null = document.querySelector(":root");
-    if (r) {
-      r.style.setProperty("--theme-color", value);
+    if (value && value !== "" && value !== "#ffffff") {
 
-      await set("themeColor", value);
+      const r: HTMLElement | null = document.querySelector(":root");
+      if (r) {
+        r.style.setProperty("--theme-color", value);
+
+        const { set } = await import("idb-keyval");
+        await set("themeColor", value);
+      }
     }
   }
 
   async handlePrimaryColor(value: any) {
     console.log(value);
 
-    const r: HTMLElement | null = document.querySelector(":root");
-    if (r) {
-      r.style.setProperty("--gradient-color", value);
+    if (value && value !== "" && value !== "#ffffff") {
+      const r: HTMLElement | null = document.querySelector(":root");
+      if (r) {
+        r.style.setProperty("--gradient-color", value);
 
-      await set("primaryColor", value);
+        const { set } = await import("idb-keyval");
+        await set("primaryColor", value);
+      }
     }
   }
 
@@ -368,9 +391,13 @@ export class AppSettings extends LitElement {
     console.log(value);
     // subscribe to push notifications
     if (value === true) {
+      const { subscribeToPush, sendSubscriptionToServer } = await import("../services/notifications");
+
       const sub = await subscribeToPush();
       await sendSubscriptionToServer(sub);
     } else {
+      const { unsubscribeFromPush } = await import("../services/notifications");
+
       await unsubscribeFromPush();
     }
   }
@@ -418,7 +445,7 @@ export class AppSettings extends LitElement {
             <span id="useremail">${this.user?.username}</span>
           </div>
 
-          <div class="settings-block themeColor">
+          ${this.showColorPickers ? html`<div class="settings-block themeColor">
             <p>Background Color</p>
 
             <sl-color-picker inline .value="${this.themeColor}" @sl-change="${(ev: any) => this.handleThemeColor(ev.target!.value)}"
@@ -430,7 +457,7 @@ export class AppSettings extends LitElement {
 
             <sl-color-picker inline value="${this.primaryColor}" @sl-change="${(ev: any) => this.handlePrimaryColor(ev.target!.value)}"
               label="Primary Theme Color"></sl-color-picker>
-          </div>
+          </div>` : null}
         </div>
       </sl-drawer>
     `;

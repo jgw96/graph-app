@@ -4,6 +4,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
+import '@shoelace-style/shoelace/dist/components/progress-bar/progress-bar.js';
 
 import {
   getAnEmail,
@@ -377,6 +378,12 @@ export class AppAbout extends LitElement {
         #reminder {
           left: 28em;
           right: 28em;
+        }
+
+        sl-progress-bar {
+          width: 30%;
+          position: fixed;
+          bottom: 36vh;
         }
       }
 
@@ -1012,22 +1019,18 @@ export class AppAbout extends LitElement {
         </section>
 
         <div id="content">
-          <iframe
-            sandbox="allow-top-navigation"
-            .srcdoc="${this.email?.body.content}"
-          >
-            <a target="_blank"></a>
-          </iframe>
-          <!-- ${
+
+           ${
+            // @ts-ignore
             this.email
-              ? html`<div
-                  id="actual-email"
-                  .innerHTML="${this.email?.body.content}"
-                ></div>`
+              ? html`<div id="content"
+              .innerHTML="${this.email?.body.content}"
+            >
+           </div>`
               : html`<div id="mail-loader">
-                  <sl-progress-ring></sl-progress-ring>
+                  <sl-progress-bar indeterminate></sl-progress-bar>
                 </div>`
-          } -->
+          }
           </div>
         </div>
 
