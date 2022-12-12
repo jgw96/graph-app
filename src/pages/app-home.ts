@@ -532,6 +532,9 @@ export class AppHome extends LitElement {
 
         #email-drawer::part(header) {
           height: 2.4em;
+
+          flex-direction: row-reverse;
+          margin-bottom: 1em;
         }
 
         #email-drawer::part(panel) {

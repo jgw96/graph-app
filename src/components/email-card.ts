@@ -176,8 +176,6 @@ export class EmailCard extends LitElement {
     super();
   }
 
-  async firstUpdated() {}
-
   async read(id: string, element: HTMLElement) {
     let event = new CustomEvent("read-email", {
       detail: {

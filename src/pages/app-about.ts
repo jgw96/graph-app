@@ -205,7 +205,7 @@ export class AppAbout extends LitElement {
         width: 99%;
         height: 93%;
 
-        background: transparent;
+        background: white;
         flex: 2;
       }
 

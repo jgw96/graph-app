@@ -11,8 +11,9 @@ export class HomeInfo extends LitElement {
         display: block;
 
         overflow-y: hidden;
-        height: 92vh;
         overflow-x: hidden;
+
+        margin-top: 60px;
       }
 
       #introBlock {
