@@ -33,6 +33,7 @@ import "../components/address-bar";
 
 import { del } from "idb-keyval";
 import { initIdle } from "../utils/idle";
+import { getConversation } from "../services/conversation";
 
 @customElement("app-new")
 export class AppNew extends LitElement {
@@ -58,6 +59,8 @@ export class AppNew extends LitElement {
 
   @state() fonts: any[] | undefined = undefined;
 
+  @state() conversation: any[] | undefined = undefined;
+
   worker: any | null = null;
   textWorker: any | null = null;
 
@@ -72,6 +75,41 @@ export class AppNew extends LitElement {
         display: flex;
         justify-content: space-between;
       }
+
+      #replyBlock iframe {
+        height: 78vh;
+      }
+
+      #convoBlock ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      #convoBlock ul iframe {
+
+      }
+
+      #main-block.replying {
+        position: fixed;
+        right: 1em;
+        bottom: 83px;
+        width: 36em;
+        border-radius: 12px;
+        box-shadow: #000000c2 0px 3px 11px 2px;
+        opacity: 0;
+        backdrop-filter: blur(34px);
+
+        animation-name: slideup;
+        animation-duration: 0.3s;
+        animation-delay: 0.5s;
+        animation-fill-mode: forwards;
+      }
+
+      sl-textarea::part(base) {
+        border-radius: 12px;
+      }
+
 
       #appNewBody {
         padding: 14px;
@@ -89,10 +127,6 @@ export class AppNew extends LitElement {
         margin-right: 10px;
       }
 
-      sl-button ion-icon {
-        margin-left: 4px;
-      }
-
       #more-actions-drawer::part(body) {
         display: flex;
         flex-direction: column;
@@ -100,7 +134,7 @@ export class AppNew extends LitElement {
       }
 
       #text-editor-controls {
-        display: flex;
+        display: none;
         justify-content: flex-end;
         align-items: center;
         margin-bottom: 6px;
@@ -136,7 +170,6 @@ export class AppNew extends LitElement {
       }
 
       #replyEmailSection {
-        height: 100%;
         width: 100%;
 
         border: solid 2px var(--app-color-primary);
@@ -195,9 +228,10 @@ export class AppNew extends LitElement {
       }
 
       #textAreaActions {
-        display: flex;
         align-items: center;
         justify-content: space-between;
+
+        display: none;
       }
 
       #aiMessage,
@@ -686,6 +720,17 @@ export class AppNew extends LitElement {
         }
       }
 
+      @keyframes slideup {
+        from {
+          transform: translateY(300px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
       @media (prefers-color-scheme: light) {
         #appNewBody::-webkit-scrollbar,
         #toxicityReport::-webkit-scrollbar,
@@ -711,6 +756,12 @@ export class AppNew extends LitElement {
       const ell: any = this.shadowRoot?.querySelector("#appNewBody");
       if (ell) {
         ell.classList.toggle("scrolling");
+      }
+
+      const convo = await getConversation(this.emailReplyTo.conversationId);
+      console.log("convo", convo);
+      if (convo) {
+        this.conversation = convo;
       }
     }
 
@@ -910,11 +961,13 @@ export class AppNew extends LitElement {
     let recip: any[] = [];
 
     addresses.forEach((address) => {
-      recip.push({
-        emailAddress: {
-          address: address.trim(),
-        },
-      });
+      if (address.trim().length > 0) {
+        recip.push({
+          emailAddress: {
+            address: address.trim(),
+          },
+        });
+      }
     });
 
     const htmlBody = await this.textWorker.runMarkdown(this.body);
@@ -924,7 +977,7 @@ export class AppNew extends LitElement {
       this.shadowRoot?.querySelector("#font-select") as HTMLSelectElement
     )?.value;
     const fontSize = (this.shadowRoot?.querySelector("#font-size") as any)
-      .control.value;
+    .value;
 
     console.log("font-styles", fontFamily, fontSize);
 
@@ -1598,7 +1651,8 @@ export class AppNew extends LitElement {
               </div>
             </div>`
           : null} -->
-        ${this.drawing === false
+          <div id="big-block">
+          ${this.drawing === false
           ? html` <div id="text-editor-controls">
                 <label for="font-select">
                   <sl-select
@@ -1654,6 +1708,7 @@ export class AppNew extends LitElement {
                 </label>
               </div>
 
+              <div id="main-block" class="${classMap({ replying: this.emailReplyTo})}">
               <section id="textAreaSection">
                 <sl-textarea
                   id="contentTextArea"
@@ -1693,13 +1748,18 @@ export class AppNew extends LitElement {
           </sl-button>
         </div>
 
-        ${this.emailReplyTo
-          ? html`<iframe
-              id="replyEmailSection"
-              .srcdoc="${this.emailReplyTo.body.content}"
-            >
-            </iframe>`
-          : null}
+        <div id="replyBlock">
+          ${this.emailReplyTo
+            ? html`<iframe
+                id="replyEmailSection"
+                .srcdoc="${this.emailReplyTo.body.content}"
+              >
+              </iframe>`
+            : null}
+
+        </div>
+
+          </div>
 
 
         <div id="newEmailActions">
@@ -1710,9 +1770,7 @@ export class AppNew extends LitElement {
           </sl-button>
 
           <div id="newEmailSubActions">
-            <sl-button class="aiCheck" @click="${() => this.saveToDraft()}">
-              Save as Draft
-
+            <sl-button circle class="aiCheck" @click="${() => this.saveToDraft()}">
               <ion-icon name="save-outline"></ion-icon>
             </sl-button>
 
@@ -1731,9 +1789,7 @@ export class AppNew extends LitElement {
               @start-text="${() => this.startDictate()}"
             ></app-dictate>
 
-            <sl-button class="aiCheck" @click="${() => this.doAiCheck()}">
-              Tone Report
-
+            <sl-button circle class="aiCheck" @click="${() => this.doAiCheck()}">
               <ion-icon name="happy-outline"></ion-icon>
             </sl-button>
 
@@ -1741,7 +1797,8 @@ export class AppNew extends LitElement {
               id="drawing-button"
               class="aiCheck"
               @click="${() => (this.drawing = !this.drawing)}"
-              >Draw
+              circle
+              >
               <ion-icon name="brush-outline"></ion-icon>
             </sl-button>
 
@@ -1749,9 +1806,8 @@ export class AppNew extends LitElement {
               ? html`<sl-button
                   @click="${() => this.presentActionSheet()}"
                   id="attachButton"
+                  circle
                 >
-                  Attach
-
                   <ion-icon name="attach-outline"></ion-icon>
                 </sl-button>`
               : null}

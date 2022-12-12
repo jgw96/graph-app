@@ -153,15 +153,11 @@ export class AppDictate extends LitElement {
   render() {
     return html`
       ${this.started === false
-        ? html`<sl-button id="dictate" @click="${() => this.dictate()}">
-            Dictate
-
+        ? html`<sl-button circle id="dictate" @click="${() => this.dictate()}">
             <ion-icon name="mic-outline"></ion-icon>
           </sl-button>`
         : html`
-            <sl-button variant="danger" id="stop" @click="${() => this.stop()}">
-              Stop
-
+            <sl-button circle variant="danger" id="stop" @click="${() => this.stop()}">
               <ion-icon name="mic-outline"></ion-icon>
             </sl-button>
           `}

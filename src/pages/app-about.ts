@@ -4,6 +4,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
+import '@shoelace-style/shoelace/dist/components/progress-bar/progress-bar.js';
 
 import {
   getAnEmail,
@@ -135,7 +136,7 @@ export class AppAbout extends LitElement {
         animation-name: slidedown;
         animation-duration: 380ms;
 
-        background-color: rgba(90, 90, 90, 0.23);
+        background: rgb(36 36 40 / 83%);
         backdrop-filter: blur(40px);
         padding: 0;
         padding-left: 10px;
@@ -162,6 +163,7 @@ export class AppAbout extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 8px;
 
         animation-name: slidein;
         animation-duration: 280ms;
@@ -203,7 +205,7 @@ export class AppAbout extends LitElement {
         width: 99%;
         height: 93%;
 
-        background: transparent;
+        background: white;
         flex: 2;
       }
 
@@ -330,15 +332,9 @@ export class AppAbout extends LitElement {
       }
 
       #replyButton {
-        margin-right: 8px;
       }
 
       #replyButton, #forwardButton {
-        margin-left: 8px;
-      }
-
-      #unsubButton {
-        margin-left: 8px;
       }
 
       @media (min-width: 900px) {
@@ -383,6 +379,12 @@ export class AppAbout extends LitElement {
           left: 28em;
           right: 28em;
         }
+
+        sl-progress-bar {
+          width: 30%;
+          position: fixed;
+          bottom: 36vh;
+        }
       }
 
       @media (prefers-color-scheme: light) {
@@ -406,11 +408,19 @@ export class AppAbout extends LitElement {
 
         #scrolledDetailActions.scrolled {
           bottom: 10px;
-          top: initial;
-          left: 10px;
           right: 10px;
           justify-content: flex-end;
           border-radius: 6px;
+
+          gap: 0px;
+          width: 90vw;
+          padding-right: 10px;
+
+          top: initial;
+          justify-content: flex-start;
+          width: fit-content;
+          overflow-y: scroll;
+          padding-right: 14px;
         }
 
         #reminderInitButton {
@@ -835,12 +845,6 @@ export class AppAbout extends LitElement {
           </div>
 
           <div id="scrolledDetailActions" part="scrolledDetailActions">
-          <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
-                Reply
-
-                <ion-icon name="mail-outline"></ion-icon>
-              </sl-button>
-
           <sl-button
               @click="${() => this.back()}"
               class="back"
@@ -907,10 +911,17 @@ export class AppAbout extends LitElement {
                   : null
               }
 
-              <sl-button circle id="forwardButton" @click="${() => this.openForward()}">
+              <sl-button id="forwardButton" @click="${() => this.openForward()}">
+                Forward
                 <ion-icon name="arrow-forward-circle-outline"></ion-icon>
               </sl-button>
             </div>
+
+            <sl-button variant="primary" id="replyButton" @click="${() => this.reply()}">
+                Reply
+
+                <ion-icon name="mail-outline"></ion-icon>
+              </sl-button>
           </div>
 
           <div id="emailHeader" part="emailHeader">
@@ -1008,22 +1019,18 @@ export class AppAbout extends LitElement {
         </section>
 
         <div id="content">
-          <iframe
-            sandbox="allow-top-navigation"
-            .srcdoc="${this.email?.body.content}"
-          >
-            <a target="_blank"></a>
-          </iframe>
-          <!-- ${
+
+           ${
+            // @ts-ignore
             this.email
-              ? html`<div
-                  id="actual-email"
-                  .innerHTML="${this.email?.body.content}"
-                ></div>`
+              ? html`<div id="content"
+              .innerHTML="${this.email?.body.content}"
+            >
+           </div>`
               : html`<div id="mail-loader">
-                  <sl-progress-ring></sl-progress-ring>
+                  <sl-progress-bar indeterminate></sl-progress-bar>
                 </div>`
-          } -->
+          }
           </div>
         </div>
 

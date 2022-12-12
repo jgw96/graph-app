@@ -29,6 +29,7 @@ export class AppHome extends LitElement {
   @state() mailCopy: any[] | null = [];
   @state() activeCat: string = "all";
   @state() loading: boolean = false;
+  @state() moreLoading: boolean = false;
   @state() initLoad: boolean = false;
   @state() listMode: string = "grid";
   @state() enable_next: boolean = true;
@@ -45,6 +46,53 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      #searchResultsHeader {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 8px;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      #innerSearchResult {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+      }
+
+      #mainListHeader sl-popup::part(popup) {
+        border-radius: 8px;
+      }
+
+      #searchPreview {
+        font-weight: normal;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        margin-top: 6px;
+      }
+
+      #new-email::part(base) {
+        height: 55px;
+        border-radius: 14px;
+        line-height: 55px;
+
+        font-weight: 600;
+        width: 130px;
+      }
+
+      #new-email::part(label) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+      }
+
+      #new-email ion-icon {
+        font-size: 24px;
       }
 
       #inboxList {
@@ -267,6 +315,16 @@ export class AppHome extends LitElement {
         margin-top: 0;
       }
 
+      #searchResults {
+        padding: 8px;
+        max-height: 50vh;
+        overflow-y: scroll;
+      }
+
+      #searchResults ul {
+        max-height: initial;
+      }
+
       #searchResults li {
         background: var(--app-color-primary);
         padding: 8px;
@@ -280,6 +338,7 @@ export class AppHome extends LitElement {
         font-weight: normal;
         display: block;
         margin-top: 6px;
+        font-size: 12px;
       }
 
       #mainListHeader {
@@ -292,6 +351,7 @@ export class AppHome extends LitElement {
         z-index: 9;
 
         width: fit-content;
+        height: fit-content;
         padding-top: 0;
         padding: 8px;
 
@@ -470,13 +530,20 @@ export class AppHome extends LitElement {
           right: 10px;
         }
 
+        #email-drawer::part(header) {
+          height: 2.4em;
+
+          flex-direction: row-reverse;
+          margin-bottom: 1em;
+        }
+
         #email-drawer::part(panel) {
 
           background: rgba(90, 90, 90, 0.23);
           border-radius: 5px;
-          width: 49.98vw;
+          width: 47.6vw;
           box-shadow: none;
-          padding-top: 20px;
+          padding-top: 34px;
         }
 
         ul {
@@ -503,7 +570,12 @@ export class AppHome extends LitElement {
       @media(max-width: 600px) {
         #mainListHeader {
           width: 92vw;
+          z-index: 9;
+          position: sticky;
+        }
 
+        #mainListBlock ul {
+          overflow-y: scroll;
         }
       }
 
@@ -514,6 +586,8 @@ export class AppHome extends LitElement {
 
         #mainListHeader {
           width: 92vw;
+          z-index: 9;
+          position: sticky;
         }
       }
 
@@ -621,6 +695,14 @@ export class AppHome extends LitElement {
     (window as any).requestIdleCallback(() => {
       this.offline = isOffline();
     });
+
+    window.requestIdleCallback(async () => {
+      const mobileButton = this.shadowRoot?.querySelector("#new-email");
+
+      if (mobileButton) {
+
+      }
+    });
   }
 
   async setupInfinite() {
@@ -657,22 +739,19 @@ export class AppHome extends LitElement {
   async searchMail(query: string) {
     this.searchActive = true;
 
-    const { searchMailFullText } = await import("../services/mail")
+    if (query && query.length > 0) {
+      const searchResults = await this.worker.search(query);
+      console.log("searchResults", searchResults);
+      this.searchResults = [...searchResults];
 
-    const results: any = await searchMailFullText(query);
-    console.log("full text search results", results);
-
-    this.searchResults = [...results];
-
-    // const searchResults = await this.worker.search(query);
-    // console.log("searchResults", searchResults);
-    // this.searchResults = [...searchResults];
-    // this.mail = this.searchResults;
-
-    if (this.mail.length === 0) {
-      this.searchActive = false;
+      if (this.searchResults.length === 0) {
+        this.searchActive = false;
+      }
+      else if (query.length === 0) {
+        this.searchActive = false;
+      }
     }
-    else if (query.length === 0) {
+    else {
       this.searchActive = false;
     }
   }
@@ -729,6 +808,7 @@ export class AppHome extends LitElement {
     }
 
     this.loading = true;
+    this.moreLoading = true;
 
     const newMail = await getMail();
     const oldMail = this.mail;
@@ -747,6 +827,7 @@ export class AppHome extends LitElement {
     }
 
     this.loading = false;
+    this.moreLoading = false;
   }
 
   getFocused() {
@@ -967,15 +1048,20 @@ export class AppHome extends LitElement {
                       >
 
                       <div id="searchResults">
+                        <span id="searchResultsHeader">Search Results</span>
                         <ul>
                           ${this.searchResults?.map(
                             (mail: any) => html`
 
                               <li @click="${() => this.read(mail.id)}">
                                 <div class="searchResult">
+                                  <div id="innerSearchResult">
                                   <span>${mail.subject}</span>
 
-                                  <span class="from">from ${mail['from.emailAddress.name']}</span>
+                                  <span id="searchPreview">${mail.bodyPreview}</span>
+                                </div>
+
+                                  <span class="from">from ${mail.from.emailAddress.name}</span>
                                 </div>
                               </li>
                             `
@@ -1009,7 +1095,7 @@ export class AppHome extends LitElement {
                     </sl-dropdown>
                   </div>
 
-                  <ul>
+                  <ul id="mailList">
                     ${this.mail.length > 0
                       ? this.mail?.map((email) => {
                           return html`
@@ -1029,12 +1115,25 @@ export class AppHome extends LitElement {
                           <email-card></email-card>
                           <email-card></email-card>
                           <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
+                          <email-card></email-card>
                         `}
                     ${this.enable_next
                       ? html`<div id="pagerButtons">
                           <sl-button
                             appearance="stealth"
                             @click="${() => this.loadMore()}"
+                            ?loading="${this.moreLoading}"
                           >
                             More
 
@@ -1065,7 +1164,9 @@ export class AppHome extends LitElement {
               </div>
 
               <div id="mobileToolbar">
-                <sl-button variant="primary" @click="${() => this.newEmail()}">
+                <sl-button id="new-email" variant="primary" @click="${() => this.newEmail()}">
+                  <ion-icon name="add"></ion-icon>
+
                   New Email
                 </sl-button>
               </div>

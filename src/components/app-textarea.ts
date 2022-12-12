@@ -49,7 +49,7 @@ export class AppTextarea extends LitElement {
               }
 
               sl-textarea::part(base), sl-input::part(base), sl-select::part(control) {
-                background: rgb(39 42 53 / 84%);
+                background: rgb(39 42 53 / 22%);
               }
 
               sl-textarea::part(textarea) {

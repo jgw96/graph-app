@@ -1,29 +1,19 @@
 import { getToken } from "../services/auth";
 
-import MiniSearch from 'minisearch';
+// import MiniSearch from 'minisearch';
+import { currentMail } from "./nextMail";
 
-export let nextMail: any = null;
-export let currentMail: any = null;
-
-export function setNextMail(value: any) {
-  nextMail = value;
-};
-
-export function setCurrentMail(value: any) {
-  currentMail = value;
-}
-
-export let miniSearch = new MiniSearch({
-  fields: ['subject', 'bodyPreview', 'from.emailAddress.name'], // fields to index for full-text search
-  storeFields: ['subject', 'from.emailAddress.name'], // fields to return with search results
-  extractField: (document, fieldName) => {
-    // Access nested fields
-    return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
-  },
-  searchOptions: {
-    fuzzy: 0.2
-  }
-});
+// export let miniSearch = new MiniSearch({
+//   fields: ['subject', 'bodyPreview', 'from.emailAddress.name'], // fields to index for full-text search
+//   storeFields: ['subject', 'from.emailAddress.name'], // fields to return with search results
+//   extractField: (document, fieldName) => {
+//     // Access nested fields
+//     return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
+//   },
+//   searchOptions: {
+//     fuzzy: 0.2
+//   }
+// });
 
 let potentialSearchOptions: any = {};
 
@@ -97,7 +87,7 @@ export async function unsub(id: number) {
 }
 
 export async function doMailFetch() {
-  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages";
+  const graphEndpoint = "https://graph.microsoft.com/beta/me/messages?$top=20";
 
   const token = await getToken();
   console.log("token", token);
@@ -109,6 +99,8 @@ export async function doMailFetch() {
     method: "GET",
     headers: headers,
   };
+
+
 
   const response = await fetch(graphEndpoint, options);
   const data = await response.body;
@@ -131,6 +123,13 @@ export async function doMailFetch() {
   }
 
   const parsed = JSON.parse(json);
+
+  try {
+    // miniSearch.addAllAsync(parsed.value);
+  }
+  catch (err) {
+    console.error(err);
+  }
 
 
   console.log("mail data", data);
@@ -542,12 +541,12 @@ export async function downloadAttach(mail: any, attachment: any) {
   }
 }
 
-export async function searchMailFullText(term: string) {
-  return new Promise((resolve) => {
-    let results = miniSearch.search(term);
-    resolve(results)
-  });
-}
+// export async function searchMailFullText(term: string) {
+//   return new Promise((resolve) => {
+//     let results = miniSearch.search(term);
+//     resolve(results)
+//   });
+// }
 
 export async function sortMailByDateOlder() {
   return new Promise((resolve) => {

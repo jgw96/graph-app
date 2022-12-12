@@ -129,7 +129,7 @@ export class EmailCard extends LitElement {
       }
 
       .fakeCard {
-        height: 156px;
+        height: 123px;
       }
 
       @media (min-width: 1200px) {
@@ -175,8 +175,6 @@ export class EmailCard extends LitElement {
   constructor() {
     super();
   }
-
-  async firstUpdated() {}
 
   async read(id: string, element: HTMLElement) {
     let event = new CustomEvent("read-email", {
