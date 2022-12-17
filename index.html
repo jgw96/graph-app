@@ -30,9 +30,9 @@
 
   <!-- light mode and dark mode CSS -->
   <link rel="stylesheet" media="(prefers-color-scheme:light)"
-    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css">
+    href="/src/styles/shoelace-light.css">
   <link rel="stylesheet" media="(prefers-color-scheme:dark)"
-    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/dark.css"
+    href="/src/styles/shoelace-dark.css"
     onload="document.documentElement.classList.add('sl-theme-dark');">
 
   <script type="module" src="/src/app-index.ts"></script>
@@ -44,8 +44,7 @@
   <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
   <app-index></app-index>
 
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script async defer type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 
   <script>
     if ('serviceWorker' in navigator) {

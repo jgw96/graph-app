@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
 import "@dile/dile-toast/dile-toast";
-import { getMail } from "../services/getMail";
+import { findUnread, getMail } from "../services/getMail";
 import { Router } from "@vaadin/router";
 
 import "../components/email-card";
@@ -25,6 +25,7 @@ import { isOffline } from "../utils/network";
 @customElement("app-home")
 export class AppHome extends LitElement {
   @state() mail: any[] = [];
+  @state() unread: any[] = [];
   @state() searchResults: any[] = [];
   @state() mailCopy: any[] | null = [];
   @state() activeCat: string = "all";
@@ -46,6 +47,27 @@ export class AppHome extends LitElement {
         align-items: center;
         display: flex;
         justify-content: space-between;
+      }
+
+      #mailList {
+        margin-top: 0;
+      }
+
+      sl-menu {
+        background: #181818;
+        border: none;
+        padding: 8px;
+      }
+
+      sl-drawer::part(panel) {
+        background: #181818;
+        backdrop-filter: blur(40px);
+      }
+
+      sl-button[variant="default"]::part(base), sl-input::part(base) {
+        background-color: #181818;
+        color: white;
+        border: none;
       }
 
       #searchResultsHeader {
@@ -79,6 +101,7 @@ export class AppHome extends LitElement {
         height: 55px;
         border-radius: 14px;
         line-height: 55px;
+        color: white;
 
         font-weight: 600;
         width: 130px;
@@ -98,13 +121,21 @@ export class AppHome extends LitElement {
       #inboxList {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-top: 20px;
         padding-right: 8px;
+
+        margin-top: 14px;
+        justify-content: flex-end;
       }
 
       #mainListBlock #inboxList h2 {
+        margin-bottom: 0px;
         margin-top: 0px;
+        position: sticky;
+        top: 0px;
+        z-index: 1;
+        background: rgb(24 24 24 / 74%);
+        backdrop-filter: blur(40px);
+        padding-bottom: 10px;
       }
 
       #previewImage {
@@ -116,8 +147,13 @@ export class AppHome extends LitElement {
       }
 
       #mainListBlock h2 {
-        margin-bottom: 0;
+        margin-bottom: 0px;
         margin-top: 20px;
+        position: sticky;
+        top: 0px;
+        z-index: 1;
+        background: rgb(24, 24, 24);
+        padding-bottom: 10px;
       }
 
       app-about::part(detailActions) {
@@ -130,10 +166,6 @@ export class AppHome extends LitElement {
 
       sl-popup::part(popup) {
         background: #1e2026;
-      }
-
-      sl-button[variant="primary"] {
-        --sl-color-neutral-0: white;
       }
 
       #filtersBlock {
@@ -378,6 +410,8 @@ export class AppHome extends LitElement {
         padding: 8px;
         justify-content: flex-end;
         background: #ffffff69;
+
+        z-index: 2;
       }
 
       #homeToolbar button {
@@ -476,6 +510,10 @@ export class AppHome extends LitElement {
 
         #desktopNew {
           margin-top: 8px;
+        }
+
+        #desktopNew::part(base) {
+          color: white;
         }
 
         #desktopNew:hover {
@@ -588,6 +626,12 @@ export class AppHome extends LitElement {
           width: 92vw;
           z-index: 9;
           position: sticky;
+        }
+      }
+
+      @media ((min-width: 1020px) and (max-width: 1300px)) {
+        #mainListBlock #mailList h2 {
+          position: initial;
         }
       }
 
@@ -790,6 +834,9 @@ export class AppHome extends LitElement {
 
     if (this.mailCopy && this.mailCopy.length > 0) {
       this.mail = [...this.mailCopy];
+
+      const unread = await findUnread();
+      this.unread = [...unread];
 
       if (this.initLoad === false) {
         this.loading = false;
@@ -1072,8 +1119,6 @@ export class AppHome extends LitElement {
                   </div>
 
                   <div id="inboxList">
-                    <h2>Inbox</h2>
-
                     <sl-dropdown>
                       <sl-button size="small" pill slot="trigger" id="sortButton" caret>
                         Filter
@@ -1095,7 +1140,22 @@ export class AppHome extends LitElement {
                     </sl-dropdown>
                   </div>
 
+
                   <ul id="mailList">
+                  <h2>Unread</h2>
+                  ${
+                      this.unread.length > 0  ? this.unread?.map((email) => {
+                        return html`
+                          <email-card
+                            @flag-email="${() => this.bookmark()}"
+                            .email="${email}"
+                            @read-email="${() => this.read(email.id)}"
+                          ></email-card>
+                        `;
+                      }) : null
+                    }
+
+                  <h2>Inbox</h2>
                     ${this.mail.length > 0
                       ? this.mail?.map((email) => {
                           return html`

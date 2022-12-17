@@ -28,6 +28,17 @@ export class AppSettings extends LitElement {
         font-weight: bold;
       }
 
+      sl-drawer::part(panel) {
+        background: #181818;
+        backdrop-filter: blur(40px);
+      }
+
+      sl-button[variant="default"]::part(base), sl-input::part(base) {
+        background-color: #181818;
+        color: white;
+        border: none;
+      }
+
       #colorPicker {
         margin-left: 10px;
       }

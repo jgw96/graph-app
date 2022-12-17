@@ -76,6 +76,23 @@ export class AppNew extends LitElement {
         justify-content: space-between;
       }
 
+      sl-menu {
+        background: #181818;
+        border: none;
+        padding: 8px;
+      }
+
+      sl-drawer::part(panel) {
+        background: #181818;
+        backdrop-filter: blur(40px);
+      }
+
+      sl-button[variant="default"]::part(base), sl-input::part(base) {
+        background-color: #181818;
+        color: white;
+        border: none;
+      }
+
       #replyBlock iframe {
         height: 78vh;
       }
@@ -667,7 +684,7 @@ export class AppNew extends LitElement {
         }
 
         sl-drawer::part(panel) {
-          background: #24242866;
+          background: #181818;
           backdrop-filter: blur(20px);
         }
       }
@@ -995,21 +1012,21 @@ export class AppNew extends LitElement {
       ) {
         // im drawing an email
         if (this.drawing === true) {
-          const canvasComp: any =
-            this.shadowRoot?.querySelector("inking-canvas");
-          const canvas: HTMLCanvasElement = canvasComp.getCanvas();
+          // const canvasComp: any =
+          //   this.shadowRoot?.querySelector("inking-canvas");
+          // const canvas: HTMLCanvasElement = canvasComp.getCanvas();
 
-          canvas.toBlob(async (blob) => {
-            if (blob) {
-              const { sendMail } = await import("../services/mail");
+          // canvas.toBlob(async (blob) => {
+          //   if (blob) {
+          //     const { sendMail } = await import("../services/mail");
 
-              await sendMail(this.subject, htmlBody, recip, [
-                new File([blob], "email", {
-                  type: "image/png",
-                }),
-              ]);
-            }
-          });
+          //     await sendMail(this.subject, htmlBody, recip, [
+          //       new File([blob], "email", {
+          //         type: "image/png",
+          //       }),
+          //     ]);
+          //   }
+          // });
         } else {
           const { sendMail } = await import("../services/mail");
           await sendMail(
@@ -1727,13 +1744,7 @@ export class AppNew extends LitElement {
                     ></div>`
                   : null}
               </section>`
-          : html`<inking-canvas name="myInkingCanvas">
-              <inking-toolbar canvas="myInkingCanvas">
-                <inking-toolbar-highlighter></inking-toolbar-highlighter>
-                <inking-toolbar-pen></inking-toolbar-pen>
-                <inking-toolbar-eraser></inking-toolbar-eraser>
-              </inking-toolbar>
-            </inking-canvas>`}
+          : html``}
 
         <!-- <app-textarea></app-textarea> -->
 

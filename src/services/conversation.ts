@@ -5,7 +5,7 @@ import { getAnEmail } from "./mail";
 export async function getConversation(id: string): Promise<any[]> {
   console.log("convo id", id);
 
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     const graphEndpoint = `https://graph.microsoft.com/v1.0/me/messages?$filter= conversationId eq '${id}'`;
 
     const token = await getToken();

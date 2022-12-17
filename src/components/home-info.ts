@@ -9,11 +9,16 @@ export class HomeInfo extends LitElement {
     css`
       :host {
         display: block;
-
-        overflow-y: hidden;
         overflow-x: hidden;
 
         margin-top: 60px;
+
+        overflow-y: scroll;
+        height: 90vh;
+      }
+
+      :host::-webkit-scrollbar {
+        display: none;
       }
 
       #introBlock {
@@ -72,8 +77,8 @@ export class HomeInfo extends LitElement {
 
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-top: 8px;
+        gap: 12px;
+        margin-top: 12px;
       }
 
       #advBlock::-webkit-scrollbar {
@@ -94,7 +99,10 @@ export class HomeInfo extends LitElement {
         flex-direction: row;
         align-items: center;
         border-radius: 8px;
-        width: 50vw;
+        width: 74vw;
+        height: 100%;
+
+        gap: 12px;
       }
 
       #advBlock .advInner li {
@@ -161,6 +169,8 @@ export class HomeInfo extends LitElement {
         }
       }
 
+
+
       @media (min-width: 1200px) {
         #introBlock {
           margin-left: 11em;
@@ -224,6 +234,31 @@ export class HomeInfo extends LitElement {
           background: white;
         }
       }
+
+      @media(horizontal-viewport-segments: 2) {
+        #introBlock {
+          margin: 0;
+          margin: 12px;
+          margin-left: 12px;
+          margin-right: 0px;
+          margin-bottom: 23px;
+          height: fit-content;
+          align-self: center;
+        }
+
+        #advBlock .advInner {
+          width: initial;
+        }
+
+        :host {
+          display: grid;
+          grid-template-columns: 48vw 47vw;
+          margin: 0;
+          padding: 0;
+          gap: 45px;
+          height: 100vh;
+        }
+      }
     `,
   ];
 
@@ -231,8 +266,7 @@ export class HomeInfo extends LitElement {
     return html`
       <div id="introBlock">
         <h2>
-          Sign in to quickly access your latest email and save them for offline
-          use!
+          MailGO is the most lightweight, fast and beautiful email client for Outlook. Sign in below to get started.
         </h2>
 
         <span id="introSpan">Powered by the Microsoft Graph.</span>
@@ -247,10 +281,9 @@ export class HomeInfo extends LitElement {
           <div class="advInner">
             <img src="/assets/home_one.svg" alt="app icon" />
 
-            <ul>
-              <li>Easily access your mail, even when offline!</li>
-              <li>Set reminders for your mail that also work offline!</li>
-            </ul>
+            <p>
+              Simplify your inbox and save time with the sleek and intuitive design of MailGO.
+            </p>
           </div>
         </div>
 
@@ -258,8 +291,27 @@ export class HomeInfo extends LitElement {
           <div class="advInner">
             <img src="/assets/home_two.svg" />
             <p>
-              Even send mail while offline and let us automatically send it once
-              you are back online!
+              Ever feel overwhelmed using your current email client? MailGO is here to help!
+              MailGO lets you focus on what matters most, getting through your inbox and moving on with the day.
+            </p>
+          </div>
+        </div>
+
+        <div class="advOuter">
+          <div class="advInner">
+            <img src="/assets/super-woman.svg" />
+            <p>
+              No app to install, no waiting on a billion emails to sync before you can start. Just sign in and start using MailGO!
+            </p>
+          </div>
+        </div>
+
+        <div class="advOuter">
+          <div class="advInner">
+            <img src="/assets/pwa.svg" />
+            <p>
+              MailGO is a Progressive Web App, which means you can install it on your desktop or mobile device and use it offline. Just tap install in your browser
+              to add MailGO to your home screen.
             </p>
           </div>
         </div>
