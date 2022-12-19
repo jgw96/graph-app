@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@azure/msal-browser": "^2.30.0",
+    "@builder.io/partytown": "^0.7.3",
     "@dile/dile-toast": "^1.1.1",
     "@pwabuilder/pwa-inking": "^1.0.16",
     "@pwabuilder/pwainstall": "^1.6.7",

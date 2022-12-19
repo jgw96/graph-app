@@ -19,11 +19,6 @@ export class AppContacts extends LitElement {
         justify-content: center;
       }
 
-      sl-drawer::part(panel) {
-        background: #181818;
-        backdrop-filter: blur(40px);
-      }
-
       .contactInfo .displayName {
         font-weight: bold;
       }
@@ -33,6 +28,9 @@ export class AppContacts extends LitElement {
         align-items: center;
         justify-content: space-between;
         margin-bottom: 10px;
+
+        content-visibility: auto;
+        contain-intrinsic-size: 123px;
       }
 
       sl-drawer ul {

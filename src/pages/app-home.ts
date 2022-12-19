@@ -52,22 +52,18 @@ export class AppHome extends LitElement {
       #mailList {
         margin-top: 0;
       }
+      @media(prefers-color-scheme: dark) {
+        sl-button[variant="default"]::part(base), sl-input::part(base) {
+          background-color: #181818;
+          color: white;
+          border: none;
+        }
 
-      sl-menu {
-        background: #181818;
-        border: none;
-        padding: 8px;
-      }
 
       sl-drawer::part(panel) {
         background: #181818;
         backdrop-filter: blur(40px);
       }
-
-      sl-button[variant="default"]::part(base), sl-input::part(base) {
-        background-color: #181818;
-        color: white;
-        border: none;
       }
 
       #searchResultsHeader {
@@ -154,6 +150,12 @@ export class AppHome extends LitElement {
         z-index: 1;
         background: rgb(24, 24, 24);
         padding-bottom: 10px;
+      }
+
+      @media(prefers-color-scheme: light) {
+        #mainListBlock h2 {
+          background: white;
+        }
       }
 
       app-about::part(detailActions) {

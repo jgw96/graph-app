@@ -76,23 +76,24 @@ export class AppNew extends LitElement {
         justify-content: space-between;
       }
 
-      sl-menu {
-        background: #181818;
-        border: none;
-        padding: 8px;
-      }
-
       sl-drawer::part(panel) {
         background: #181818;
         backdrop-filter: blur(40px);
       }
 
-      sl-button[variant="default"]::part(base), sl-input::part(base) {
-        background-color: #181818;
-        color: white;
-        border: none;
-      }
+      @media(prefers-color-scheme: dark) {
+        sl-button[variant="default"]::part(base), sl-input::part(base) {
+          background-color: #181818;
+          color: white;
+          border: none;
+        }
 
+        sl-menu {
+          background: #181818;
+          border: none;
+          padding: 8px;
+        }
+      }
       #replyBlock iframe {
         height: 78vh;
       }
@@ -202,10 +203,6 @@ export class AppNew extends LitElement {
 
       sl-textarea {
         width: 100%;
-      }
-
-      sl-textarea::part(base), sl-input::part(base), sl-select::part(control) {
-        background: rgb(39 42 53 / 84%);
       }
 
       sl-textarea::part(textarea) {
@@ -622,6 +619,12 @@ export class AppNew extends LitElement {
 
         #drawing-button {
           margin-right: 4px;
+        }
+      }
+
+      @media(prefers-color-scheme: dark) {
+        sl-textarea::part(base), sl-input::part(base), sl-select::part(control) {
+          background: rgb(39 42 53 / 84%);
         }
       }
 

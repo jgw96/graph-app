@@ -21,10 +21,12 @@ export class AppLogin extends LitElement {
         height: 36px;
       }
 
-      sl-button[variant="default"]::part(base), sl-input::part(base) {
-        background-color: #181818;
-        color: white;
-        border: none;
+      @media(prefers-color-scheme: dark) {
+        sl-button[variant="default"]::part(base), sl-input::part(base) {
+          background-color: #181818;
+          color: white;
+          border: none;
+        }
       }
 
       #logoutButton,

@@ -43,21 +43,23 @@ export class AppAbout extends LitElement {
         justify-content: space-between;
       }
 
-      sl-menu {
-        background: #181818;
-        border: none;
-        padding: 8px;
-      }
-
       sl-drawer::part(panel) {
         background: transparent;
         backdrop-filter: blur(40px);
       }
 
-      sl-button[variant="default"]::part(base) {
-        background-color: #181818;
-        color: white;
-        border: none;
+      @media(prefers-color-scheme: dark) {
+        sl-button[variant="default"]::part(base), sl-input::part(base) {
+          background-color: #181818;
+          color: white;
+          border: none;
+        }
+
+        sl-menu {
+          background: #181818;
+          border: none;
+          padding: 8px;
+        }
       }
 
       #emailHeader {

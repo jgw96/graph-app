@@ -29,7 +29,7 @@ export class AddressBar extends LitElement {
             }
 
             sl-popup::part(popup) {
-                background: #1e2026;
+                background: white;
             }
 
             ul {
@@ -39,11 +39,22 @@ export class AddressBar extends LitElement {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
-                background: #1e2026;
+
+                background: white;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                ul, sl-popup::part(popup) {
+                    background: #1e2026;
+                }
+
+                ul li {
+                    background: #2e323e;
+                }
             }
 
             ul li {
-                background: #2e323e;
+                background: #f5f5f5;
                 padding: 10px;
                 border-radius: 6px;
 
@@ -51,7 +62,7 @@ export class AddressBar extends LitElement {
             }
 
             .contact {
-                background: #393d4c;
+                background: #f5f5f5;
                 padding: 4px;
                 border-radius: 6px;
                 padding-left: 8px;
@@ -61,6 +72,16 @@ export class AddressBar extends LitElement {
                 align-items: center;
                 justify-content: space-between;
                 gap: 6px;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                .contact {
+                    background: #393d4c;
+                }
+
+                ul li {
+                    background: #2e323e;
+                }
             }
 
             .contacts {
