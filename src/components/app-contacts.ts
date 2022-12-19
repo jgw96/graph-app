@@ -28,6 +28,9 @@ export class AppContacts extends LitElement {
         align-items: center;
         justify-content: space-between;
         margin-bottom: 10px;
+
+        content-visibility: auto;
+        contain-intrinsic-size: 123px;
       }
 
       sl-drawer ul {

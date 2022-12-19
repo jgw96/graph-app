@@ -20,6 +20,11 @@ export class ContactsPage extends LitElement {
 
             }
 
+            sl-drawer::part(panel) {
+                background: #181818;
+                backdrop-filter: blur(40px);
+              }
+
             h1 {
                 font-size: 1.5rem;
             }
@@ -85,6 +90,9 @@ export class ContactsPage extends LitElement {
                 margin-bottom: 0px;
                 cursor: pointer;
                 height: 85px;
+
+                content-visibility: auto;
+                contain-intrinsic-size: 85px;
             }
 
             #allContacts li:hover {

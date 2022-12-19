@@ -19,6 +19,14 @@ export class FileItem extends LitElement {
         height: 24em;
       }
 
+      @media(prefers-color-scheme: dark) {
+        sl-button[variant="default"]::part(base), sl-input::part(base) {
+          background-color: #181818;
+          color: white;
+          border: none;
+        }
+      }
+
       div {
         display: flex;
         justify-content: space-between;

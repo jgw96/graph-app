@@ -19,6 +19,14 @@ export class MailFolders extends LitElement {
         gap: 8px;
       }
 
+      @media(prefers-color-scheme: dark) {
+        sl-button[variant="default"]::part(base), sl-input::part(base) {
+          background-color: #181818;
+          color: white;
+          border: none;
+        }
+      }
+
       #folder-list::-webkit-scrollbar {
         width: 8px;
         background: #222222;

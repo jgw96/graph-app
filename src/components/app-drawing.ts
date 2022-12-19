@@ -4,8 +4,6 @@ import { customElement } from "lit/decorators.js";
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 
-import "@pwabuilder/pwa-inking";
-
 @customElement("app-drawing")
 export class AppDrawing extends LitElement {
   static get styles() {

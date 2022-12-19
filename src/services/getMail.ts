@@ -44,6 +44,11 @@ export async function doMailFetch() {
   return parsed;
 }
 
+export async function findUnread() {
+  const unread = currentMail.filter((mail: any) => mail.isRead === false);
+  return unread;
+}
+
 export async function getMail(initLoad?: boolean) {
   console.log("getMail");
 
@@ -52,13 +57,6 @@ export async function getMail(initLoad?: boolean) {
     setNextMail(data["@odata.nextLink"]);
 
     setCurrentMail(data.value);
-
-    // try {
-    //   miniSearch.addAllAsync(data.value);
-    // }
-    // catch (err) {
-    //   console.error(err);
-    // }
 
     return data.value;
   } else {
@@ -78,20 +76,12 @@ export async function getMail(initLoad?: boolean) {
     const response = await fetch(graphEndpoint, options);
     const data = await response.json();
 
-    // try {
-    //   miniSearch.addAllAsync(data.value);
-    // }
-    // catch (err) {
-    //   console.error(err);
-    // }
-
     console.log("mail data", data);
 
     setNextMail(data["@odata.nextLink"]);
 
     setCurrentMail([...currentMail, ...data.value]);
 
-    // nextMail = data.  + '.@' + odata.nextLink;
     return data.value;
   }
 }
